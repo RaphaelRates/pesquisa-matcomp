@@ -154,7 +154,7 @@ def preprocess_offers(raw):
             excluded["Capacidade cadastrada igual a zero."] += 1
         else:
             eligible += 1
-            if row["situacao"] == "CONSOLIDADA" or (
+            if (row["situacao"] == "CONSOLIDADA" and row["periodo"] < "2026.2") or (
                 row["situacao"] == "ABERTA" and row["periodo"] == "2026.2"
             ):
                 in_scope += 1

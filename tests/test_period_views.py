@@ -42,7 +42,7 @@ class PeriodViewTests(unittest.TestCase):
         self.assertEqual(self.offers, original)
         self.assertEqual(views['baselinePeriod'], '2026.1')
         self.assertEqual(views['historicalPeriods'], ['2025.2', '2026.1'])
-        for key, counts in [('historical', (3, 40, 21)), ('current', (2, 30, 23)), ('baseline', (2, 30, 19))]:
+        for key, counts in [('historical', (3, 40, 21)), ('current', (2, 30, 23)), ('baseline', (2, 30, 19)), ('accumulated', (5, 70, 44))]:
             summary = panel(views[key], 'evolucao')['summary']['selected']
             self.assertEqual((summary['n'], summary['c'], summary['m']), counts)
         self.assertEqual(panel(views['current'], 'evolucao')['summary']['historico']['n'], 0)

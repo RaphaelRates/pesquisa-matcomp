@@ -1,4 +1,4 @@
-"""Recortes independentes para histórico, oferta aberta e semestre de referência.
+"""Recortes independentes para acumulado, histórico, oferta e referência.
 
 As mesmas famílias de cálculos recebem amostras diferentes. Os registros ABERTA
 continuam ABERTA; não se alteram as situações para simular uma consolidação.
@@ -12,6 +12,7 @@ from services.discipline_metrics import discipline_cohort_analyses
 
 
 CURRENT_PERIOD = '2026.2'
+START_PERIOD = '2023.1'
 SERIES_NAMES = {'Consolidadas': 'Recorte selecionado',
                 'Consolidadas até 2026.1': 'Recorte selecionado'}
 
@@ -32,6 +33,8 @@ def _scope_text(text, scope, *, title=False):
         text = re.sub(r'consolidadas', 'abertas', text, flags=re.I)
         text = re.sub(r'consolidada', 'aberta', text, flags=re.I)
         text = text.replace('histórico', 'recorte selecionado').replace('Histórico', 'Recorte selecionado')
+    elif scope['id'] == 'accumulated':
+        text = re.sub(r'consolidadas?', 'do recorte', text, flags=re.I)
     return text.strip()
 
 
@@ -99,8 +102,10 @@ def _keep_plot(plot):
 
 def _summary(summary, rows, scope):
     summary['selected'] = metrics(rows)
-    summary['historico'] = metrics([] if scope['id'] == 'current' else rows)
-    summary['abertas'] = metrics(rows if scope['id'] == 'current' else [])
+    summary['historico'] = metrics([r for r in rows if r['situacao'] == 'CONSOLIDADA'
+                                   and r['periodo'] < CURRENT_PERIOD])
+    summary['abertas'] = metrics([r for r in rows if r['situacao'] == 'ABERTA'
+                                 and r['periodo'] == CURRENT_PERIOD])
     summary['scope'] = scope
 
 
@@ -151,10 +156,12 @@ def _view(rows, periods, scope, known_disciplines):
 
 
 def build_period_views(offers):
-    """Entrega três recortes independentes, incluindo amostras vazias válidas."""
+    """Entrega quatro recortes independentes, incluindo amostras vazias válidas."""
     eligible = [r for r in offers if r['modalidade'] == 'Presencial' and r['capacidade'] > 0]
     historical = [r for r in eligible if r['situacao'] == 'CONSOLIDADA' and r['periodo'] < CURRENT_PERIOD]
     opened = [r for r in eligible if r['situacao'] == 'ABERTA' and r['periodo'] == CURRENT_PERIOD]
+    accumulated = [r for r in historical + opened if r['periodo'] >= START_PERIOD]
+    accumulated_periods = sorted({r['periodo'] for r in accumulated} | {CURRENT_PERIOD})
     historical_periods = sorted({r['periodo'] for r in historical})
     baseline_period = historical_periods[-1] if historical_periods else None
     baseline = [r for r in historical if r['periodo'] == baseline_period]
@@ -162,6 +169,11 @@ def build_period_views(offers):
     historical_label = (f'{historical_periods[0]} a {historical_periods[-1]}' if len(historical_periods) > 1
                         else historical_periods[0] if historical_periods else 'sem registros')
     scopes = {
+        'accumulated': dict(id='accumulated', label=f'Acumulado · {START_PERIOD} a {CURRENT_PERIOD}',
+                            note=f'Turmas presenciais de {START_PERIOD} a {CURRENT_PERIOD}: '
+                                 'consolidadas até 2026.1 e abertas de 2026.2. '
+                                 'Matrículas e ocupação de 2026.2 ainda podem mudar.',
+                            periods=accumulated_periods, status='MISTA'),
         'historical': dict(id='historical', label=f'Histórico consolidado · {historical_label}',
                            note=f'Somente turmas presenciais consolidadas de {historical_label}. A oferta aberta é consultada separadamente.',
                            periods=historical_periods, status='CONSOLIDADA'),
@@ -173,6 +185,7 @@ def build_period_views(offers):
                          periods=[baseline_period] if baseline_period else [], status='CONSOLIDADA'),
     }
     return {
+        'accumulated': _view(accumulated, accumulated_periods, scopes['accumulated'], known),
         'historical': _view(historical, historical_periods, scopes['historical'], known),
         'current': _view(opened, [CURRENT_PERIOD], scopes['current'], known),
         'baseline': _view(baseline, [baseline_period] if baseline_period else [], scopes['baseline'], known),

@@ -3,6 +3,7 @@
 from bisect import bisect_right
 from collections import Counter, defaultdict
 from math import ceil, fsum, log, sqrt
+from statistics import mean, pvariance
 
 
 PERCENT = {"style": "percent"}
@@ -29,20 +30,22 @@ def distribution_statistics(values):
              "mad", "coefficientVariation", "skewness", "excessKurtosis",
              "tukeyLower", "tukeyUpper", "outliersLow", "outliersHigh"), None
         ) | {"n": 0}
-    mean = fsum(values) / n
+    average = mean(values)
     middle = quantile(values, .5)
     q1, q3 = quantile(values, .25), quantile(values, .75)
     iqr = q3 - q1
-    variance = fsum((value - mean) ** 2 for value in values) / n
+    # A variância da biblioteca padrão usa somas exatas intermediárias. Evita
+    # inventar dispersão quando uma ocupação como 0,1 se repete em todas as turmas.
+    variance = pvariance(values)
     deviation = sqrt(variance)
     lower, upper = q1 - 1.5 * iqr, q3 + 1.5 * iqr
     return {
-        "n": n, "mean": mean, "median": middle, "q1": q1, "q3": q3, "iqr": iqr,
+        "n": n, "mean": average, "median": middle, "q1": q1, "q3": q3, "iqr": iqr,
         "variance": variance, "standardDeviation": deviation,
         "mad": quantile([abs(value - middle) for value in values], .5),
-        "coefficientVariation": deviation / mean if mean else None,
-        "skewness": fsum(((value - mean) / deviation) ** 3 for value in values) / n if deviation else None,
-        "excessKurtosis": fsum(((value - mean) / deviation) ** 4 for value in values) / n - 3 if deviation else None,
+        "coefficientVariation": deviation / average if average else None,
+        "skewness": fsum(((value - average) / deviation) ** 3 for value in values) / n if deviation else None,
+        "excessKurtosis": fsum(((value - average) / deviation) ** 4 for value in values) / n - 3 if deviation else None,
         "tukeyLower": lower, "tukeyUpper": upper,
         "outliersLow": sum(value < lower for value in values),
         "outliersHigh": sum(value > upper for value in values),
@@ -65,9 +68,9 @@ def mean_ranks(values):
 
 
 def pearson(x, y):
-    if len(x) < 2:
+    if len(x) < 2 or len(set(x)) < 2 or len(set(y)) < 2:
         return None
-    mean_x, mean_y = fsum(x) / len(x), fsum(y) / len(y)
+    mean_x, mean_y = mean(x), mean(y)
     xx = fsum((value - mean_x) ** 2 for value in x)
     yy = fsum((value - mean_y) ** 2 for value in y)
     if not xx or not yy:
@@ -83,7 +86,7 @@ def association_statistics(rows):
     rank = pearson(mean_ranks(x), mean_ranks(y))
     slope = intercept = None
     if len(x) > 1:
-        mean_x, mean_y = fsum(x) / len(x), fsum(y) / len(y)
+        mean_x, mean_y = mean(x), mean(y)
         denominator = fsum((value - mean_x) ** 2 for value in x)
         if denominator:
             slope = fsum((a - mean_x) * (b - mean_y) for a, b in zip(x, y, strict=True)) / denominator

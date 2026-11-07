@@ -6,6 +6,7 @@ pareados artificialmente entre os semestres.
 """
 
 from math import isfinite
+from decimal import Decimal
 from numbers import Real
 import re
 import unicodedata
@@ -141,7 +142,13 @@ def _unit(plot, metric=None):
 
 def _point_label(value, percent=False):
     if isinstance(value, Real):
-        return f'{value * 100:g}%' if percent else f'{value:g}'
+        # :g com precisão padrão truncava os limiares a seis dígitos e podia
+        # parear pontos distintos. A representação decimal conserva a origem.
+        number = Decimal(str(value)) * (100 if percent else 1)
+        label = format(number, 'f')
+        if '.' in label:
+            label = label.rstrip('0').rstrip('.')
+        return label + ('%' if percent else '')
     return _category(value)
 
 
@@ -199,9 +206,9 @@ def compare_plots(before, after, baseline_period):
     if plot.get('spec', {}).get('numericX'):
         # Não há interpolação de curvas ou preenchimento de limiares ausentes.
         note += ' As curvas só têm diferença nos mesmos valores do eixo horizontal; não há interpolação.'
-    if any(_category(key[0]) == 'Outras' for key in keys):
+    if any(_fold(key[0]) in {'outras', 'outras capacidades'} for key in keys):
         # O agrupamento de capacidades menos frequentes muda de composição.
-        rows = [r for r in rows if r['category'] != 'Outras']
+        rows = [r for r in rows if _fold(r['category']) not in {'outras', 'outras capacidades'}]
         note += ' O grupo Outras foi omitido da diferença porque sua composição pode variar entre semestres.'
     return _comparison(rows, baseline_period, note)
 

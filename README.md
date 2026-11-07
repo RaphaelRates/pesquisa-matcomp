@@ -4,7 +4,7 @@ Aplicação web para explorar vagas, matrículas, ocupação e distribuição da
 
 O painel lê o arquivo JSON de turmas, calcula os indicadores no servidor e envia os resultados ao navegador. O navegador monta os gráficos com Chart.js e apresenta mapas de calor em tabelas interativas.
 
-O painel apresenta primeiro os **resultados gerais do CCT** e depois **Matemática Computacional**. As abas globais **Histórico consolidado** e **Oferta de 2026.2** recalculam os gráficos, cartões e análises individuais para o recorte escolhido. A quantidade de visualizações depende do recorte; gráficos redundantes da oferta aberta são omitidos.
+O painel apresenta primeiro os **resultados gerais do CCT** e depois **Matemática Computacional**. A aba inicial **Acumulado · 2023.1 a 2026.2** inclui a oferta aberta de 2026.2. As abas **Histórico consolidado** e **2026.2 · oferta aberta** preservam os recortes separados. A escolha recalcula os gráficos, cartões e análises individuais de todo o site. A quantidade de visualizações depende do recorte; gráficos redundantes da oferta aberta são omitidos.
 
 ## Executar o site
 
@@ -34,14 +34,33 @@ python app.py --dados "caminho/para/turmas.json"
 
 Encerre o serviço com `Ctrl+C`.
 
+## Recalcular e conferir todos os gráficos
+
+Cada consulta ao painel relê a base e recalcula todos os gráficos. Uma segunda implementação confere os valores dos cartões, séries, mapas de calor, rankings, estatísticas, cadeiras e diferenças entre semestres. A área **Cálculos recalculados e conferidos** informa a cobertura, as divergências e as somas por semestre. O relatório completo pode ser baixado em `/api/conferencia`.
+
+Para executar essa conferência sem abrir o site e salvar o resultado:
+
+```sh
+python -m services.recalculation
+```
+
+A saída padrão é `data/recalculo-graficos.json`, com a identificação SHA-256 da base, os recortes, as somas, a cobertura e cada verificação. O comando termina com erro se detectar divergência. `--dados` e `--saida` permitem escolher outros arquivos. O arquivo `data/recalculo-base.json` registra a recontagem da fonte incluída, as exclusões e as taxas exatas.
+
+Na base incluída, são conferidos **9.772 conjuntos de dados de gráficos**: 139 gráficos gerais e oito por cada um dos 288 códigos de cadeira, em quatro recortes (acumulado, histórico consolidado, oferta aberta e semestre de referência). As cadeiras de MC compartilham os códigos do CCT e não são contadas duas vezes nessa cobertura. Códigos sem oferta têm seus resultados vazios também conferidos.
+
+O acumulado principal do CCT, de **2023.1 a 2026.2**, tem **1.380 turmas**, **55.721 vagas** e **30.126 matrículas**: **30.126 ÷ 55.721 × 100 = 54,065792…%**, exibidos como **54,1%**. Inclui as 172 turmas abertas de 2026.2 e, portanto, não deve ser chamado de consolidado. O histórico consolidado separado continua com **1.208 turmas**, **48.726 vagas**, **26.094 matrículas** e **53,6%**, até 2026.1. As vagas são ofertas somadas ao longo do período, e matrículas são registros em turmas, não pessoas distintas.
+
+A conferência usa fórmulas independentes das agregações de produção, com tolerância numérica explícita para ponto flutuante; contagens e categorias são conferidas diretamente. As definições curriculares e limites declarativos dos rankings continuam compartilhados, pois determinam o recorte escolhido. A conferência verifica a consistência dos cálculos com o JSON; não certifica a exatidão dos registros perante o sistema acadêmico.
+
 ## Separar os recortes e comparar os resultados
 
+- **Acumulado · 2023.1 a 2026.2:** aba inicial, com a união do histórico consolidado e da oferta aberta de 2026.2. Todos os totais e gráficos incluem os oito semestres.
 - **Histórico consolidado:** somente turmas `CONSOLIDADA` anteriores a 2026.2, de 2023.1 a 2026.1 na base incluída.
-- **Oferta de 2026.2:** somente turmas `ABERTA` de 2026.2. Essa aba recalcula também rankings, horários, distribuição, concentração e associações estatísticas; não reutiliza totais acumulados do histórico.
+- **2026.2 · oferta aberta:** somente turmas `ABERTA` de 2026.2. Essa aba recalcula também rankings, horários, distribuição, concentração e associações estatísticas; não reutiliza totais acumulados do histórico.
 
 As abas valem para todo o painel, incluindo CCT, Matemática Computacional e as cadeiras selecionadas. Cada gráfico informa seu recorte.
 
-As comparações usam **2026.2 versus o último semestre consolidado disponível**, 2026.1 na base incluída. O histórico acumulado continua disponível em sua própria aba, mas seus totais de vários semestres não são usados como base para calcular aumento ou redução de um único semestre.
+As comparações usam **2026.2 versus o último semestre consolidado disponível**, 2026.1 na base incluída. O acumulado de oito semestres e o histórico consolidado ficam em abas próprias; seus totais de vários semestres não são usados como base para calcular aumento ou redução de um único semestre.
 
 | Medida | Leitura da diferença |
 | --- | --- |
@@ -59,7 +78,7 @@ Use **Análise por cadeira** na navegação de cada área. Busque por código ou
 
 As famílias de gráficos incluem vagas e matrículas por semestre, ocupação geral e mediana, vagas não preenchidas e matrículas excedentes, quantidade de turmas, ocupação de cada turma, faixas de ocupação, ocupação por turno e distribuição por dia e horário. O catálogo mantém modelos de faixas para consolidadas e abertas, mas o recorte isolado omite a visualização redundante.
 
-Semestres ou cadeiras sem oferta aparecem sem registro, não com ocupação zero. Cada registro recebe um índice no gráfico por turma para distinguir rótulos repetidos. Os gráficos individuais são montados no navegador para a seleção atual. A exportação HTML legada contém os gráficos gerais do histórico consolidado; as novas abas, comparações e o explorador individual estão disponíveis no painel web.
+Semestres ou cadeiras sem oferta aparecem sem registro, não com ocupação zero. Cada registro recebe um índice no gráfico por turma para distinguir rótulos repetidos. Os gráficos individuais são montados no navegador para a seleção atual. A exportação HTML legada contém os gráficos gerais do acumulado de 2023.1 a 2026.2; as novas abas, comparações e o explorador individual estão disponíveis no painel web.
 
 ## Catálogo editável dos gráficos
 
@@ -82,10 +101,11 @@ Salve o JSON mantendo sua sintaxe válida e clique em **Recalcular dados** no pa
 
 O arquivo padrão é `data/ufca-cct-ofertas-2023-2026.json`. Cada registro representa uma turma de uma disciplina em um semestre.
 
-Entram nos cálculos as turmas com modalidade `Presencial` e capacidade maior que zero. A análise reúne dois recortes.
+Entram nos cálculos as turmas com modalidade `Presencial` e capacidade maior que zero. A análise oferece três abas públicas e usa um semestre consolidado de referência nas comparações.
 
 | Recorte | Registros utilizados |
 | --- | --- |
+| Acumulado · 2023.1 a 2026.2 | União das consolidadas anteriores a 2026.2 com as abertas de 2026.2, sem duplicação. |
 | Histórico consolidado | Turmas com situação `CONSOLIDADA` anteriores a 2026.2. Na base incluída, abrangem 2023.1 a 2026.1. |
 | Oferta aberta | Turmas de 2026.2 com situação `ABERTA`. |
 
@@ -101,9 +121,11 @@ Os quatro indicadores apresentados no início de cada área são o número de tu
 
 | Área | Recorte | Turmas | Vagas | Matrículas | Ocupação geral |
 | --- | --- | ---: | ---: | ---: | ---: |
-| CCT | Consolidadas | 1.208 | 48.726 | 26.094 | 53,6% |
+| CCT | Acumulado · 2023.1 a 2026.2 | 1.380 | 55.721 | 30.126 | 54,1% |
+| CCT | Consolidadas até 2026.1 | 1.208 | 48.726 | 26.094 | 53,6% |
 | CCT | Abertas em 2026.2 | 172 | 6.995 | 4.032 | 57,6% |
-| Matemática Computacional | Consolidadas | 120 | 5.538 | 2.513 | 45,4% |
+| Matemática Computacional | Acumulado · 2023.1 a 2026.2 | 137 | 6.348 | 2.921 | 46,0% |
+| Matemática Computacional | Consolidadas até 2026.1 | 120 | 5.538 | 2.513 | 45,4% |
 | Matemática Computacional | Abertas em 2026.2 | 17 | 810 | 408 | 50,4% |
 
 Esses valores descrevem o JSON incluído nesta versão. O site recalcula os resultados ao consultar a base.
@@ -311,7 +333,7 @@ Um traço nos mapas indica ausência de registro no cruzamento analisado. A pres
 ## Navegação e interação
 
 - A navegação fixa leva primeiro ao CCT e depois a MC.
-- As abas globais alternam histórico consolidado e oferta de 2026.2.
+- As abas globais alternam acumulado até 2026.2, histórico consolidado até 2026.1 e oferta aberta de 2026.2; o acumulado é a seleção inicial.
 - As comparações identificam a referência consolidada e apresentam aumentos, reduções ou ausência de par comparável.
 - Cada área possui um índice de seções e indicadores-resumo.
 - Cada cartão apresenta o formato, o título, a descrição e um link direto para o gráfico.
@@ -324,7 +346,7 @@ Um traço nos mapas indica ausência de registro no cruzamento analisado. A pres
 
 ## Atualizar os dados
 
-Edite ou substitua o JSON e use **Recalcular dados** ou atualize a página do navegador. A consulta a `/api/painel` relê o arquivo, prepara os registros e recalcula os resultados dos dois recortes e da referência.
+Edite ou substitua o JSON e use **Recalcular dados** ou atualize a página do navegador. A consulta a `/api/painel` relê o arquivo, prepara os registros e recalcula os resultados do acumulado, do histórico consolidado, da oferta aberta e do semestre de referência.
 
 O painel calcula uma assinatura **SHA-256** do arquivo fonte e informa se ele mudou desde a última consulta nesta aba do navegador. A primeira consulta estabelece a referência local. A data e a hora de reprocessamento indicam quando o cálculo foi executado; sozinhas, não comprovam que a base mudou. A assinatura detecta mudança no arquivo, inclusive de formatação, e não apenas alteração de matrículas.
 
@@ -361,7 +383,7 @@ Se o arquivo não puder ser lido ou processado, a API responde com HTTP 503 e a 
 | `services/calc_metrics.py` | Recortes, matrizes curriculares, indicadores e definição dos gráficos. |
 | `services/preprocessing.py` | Validação, normalização, deduplicação conservadora e relatório de qualidade. |
 | `services/statistics_metrics.py` | Estatísticas descritivas, concentração, associações e aplicações de Markov e Chebyshev. |
-| `services/period_views.py` | Recortes independentes do histórico, da oferta aberta e do semestre consolidado de referência. |
+| `services/period_views.py` | Recortes do acumulado, do histórico consolidado, da oferta aberta e do semestre consolidado de referência. |
 | `services/period_comparison.py` | Pareamento das métricas e cálculo das diferenças entre 2026.2 e a referência. |
 | `services/chart_catalog.py` | Aplicação e validação do catálogo editável dos gráficos. |
 | `services/discipline_metrics.py` | Indicadores e gráficos individuais por cadeira. |

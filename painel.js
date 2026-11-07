@@ -11,7 +11,7 @@ let stopMounting = () => {};
 let dashboardLoading = false;
 let stopDisciplineExplorers = () => {};
 let dashboardBundle = null;
-let selectedView = 'current';
+let selectedView = 'accumulated';
 let dataStatus = '';
 let refreshStatus = '';
 const activePlots = new Map();
@@ -145,13 +145,36 @@ function links(entries) {
 
 function summaryCards(summary, scope) {
   const m = summary.selected ?? summary.historico;
-  const entries = [[scope?.id === 'current' ? "Turmas abertas em 2026.2" : "Turmas consolidadas", m.n], ["Vagas ofertadas", m.c], ["Matrículas registradas", m.m], ["Ocupação geral", format(m.rate, true)]];
+  const entries = [[scope?.id === 'current' ? "Turmas abertas em 2026.2" : scope?.id === 'accumulated' ? "Turmas no acumulado" : "Turmas consolidadas", m.n], ["Vagas ofertadas", m.c], ["Matrículas registradas", m.m], ["Ocupação geral", format(m.rate, true)]];
   return `<div class="metrics">${entries.map(([name, value]) =>
     `<div class="metric"><span>${name}</span><strong>${typeof value === "number" ? integerFormat.format(value) : value}</strong></div>`).join("")}</div>
-    <p class="data-note">${escapeHtml(scope?.note ?? 'Turmas presenciais do recorte selecionado.')} Matrículas contam registros nas turmas.</p>`;
+    <p class="data-note">${escapeHtml(scope?.note ?? 'Turmas presenciais do recorte selecionado.')}
+    ${['historical', 'accumulated'].includes(scope?.id) ? `Totais acumulados de ${scope.periods.length} semestres; vagas são ofertas somadas ao longo do período.` : ''}
+    Matrículas contam registros nas turmas, não estudantes únicos.</p>`;
 }
 
-function dataQuality(report, generatedAt, source) {
+function auditOverview(audit) {
+  if (!audit) return '';
+  return `<section class="calculation-verification ${audit.passed ? '' : 'audit-failed'}" aria-labelledby="conferencia-titulo">
+    <h3 id="conferencia-titulo">${audit.passed ? 'Cálculos recalculados e conferidos' : 'Divergências encontradas na conferência'}</h3>
+    <p>${format(audit.checkedCharts)} de ${format(audit.expectedCharts)} resultados de gráficos conferidos por uma segunda implementação das contas, incluindo acumulado, histórico, 2026.2 e semestre de referência.
+    Os códigos sem oferta também são verificados.</p>
+    <p>${format(audit.checksRun)} verificações · ${format(audit.failures.length)} divergências. Ocupação geral = soma das matrículas ÷ soma das vagas.</p>
+    <details><summary>Conferir as somas por semestre</summary>
+    ${['cct', 'mc'].map(area => `<h4>${area === 'cct' ? 'CCT' : 'Matemática Computacional'}</h4><div class="scroll"><table>
+      <thead><tr><th>Semestre</th><th>Situação</th><th>Turmas</th><th>Vagas</th><th>Matrículas</th><th>Ocupação</th></tr></thead>
+      <tbody>${audit.bySemester.map(row => `<tr><th scope="row">${escapeHtml(row.period)}</th><td>${row.status === 'ABERTA' ? 'Aberta · separada' : 'Consolidada'}</td>
+        <td>${format(row[area].n)}</td><td>${format(row[area].c)}</td><td>${format(row[area].m)}</td><td>${format(row[area].rate, true)}</td></tr>`).join('')}
+      <tr class="audit-total"><th scope="row">Total do histórico</th><td>Consolidadas</td><td>${format(audit.totals.historical[area].n)}</td>
+        <td>${format(audit.totals.historical[area].c)}</td><td>${format(audit.totals.historical[area].m)}</td><td>${format(audit.totals.historical[area].rate, true)}</td></tr>
+      <tr class="audit-total"><th scope="row">Acumulado · 2023.1 a 2026.2</th><td>Consolidadas + abertas</td><td>${format(audit.totals.accumulated[area].n)}</td>
+        <td>${format(audit.totals.accumulated[area].c)}</td><td>${format(audit.totals.accumulated[area].m)}</td><td>${format(audit.totals.accumulated[area].rate, true)}</td></tr></tbody></table></div>`).join('')}
+      <p>O acumulado inclui 2026.2, ainda aberto. O histórico consolidado fica separado. A ocupação do total é a razão entre as somas, e não a média dos percentuais dos semestres.</p>
+    </details><a href="/api/conferencia" download="conferencia-calculos.json">Baixar relatório completo da conferência (JSON)</a>
+    ${audit.failures.length ? `<p class="quality-warning">${audit.failures.slice(0, 3).map(f => escapeHtml(f.id)).join(' · ')}</p>` : ''}</section>`;
+}
+
+function dataQuality(report, generatedAt, source, audit) {
   if (!report) return "";
   const counts = [
     ["Registros lidos", report.inputRows], ["Registros válidos", report.validRows],
@@ -181,7 +204,7 @@ function dataQuality(report, generatedAt, source) {
     ${report.conflictGroups ? '<p class="quality-warning">Há versões conflitantes de turmas. Os resultados incluem esses registros e devem ser lidos considerando esse conflito.</p>' : ""}
     ${issues ? `<ul class="quality-issues">${issues}</ul>` : ""}
     <p class="muted">O arquivo original é preservado. A preparação ocorre em memória em cada consulta.</p>
-    </details></section>`;
+    </details>${auditOverview(audit)}</section>`;
 }
 
 function statisticalOverview(stats) {
@@ -273,7 +296,7 @@ function comparisonOverview(comparison, heading = 'Comparação entre semestres'
   const rows = (comparison.rows ?? []).slice(0, 4);
   return `<section class="comparison-overview" aria-label="${escapeHtml(heading)}"><div class="comparison-heading"><h3>${escapeHtml(heading)}</h3>
     <span>${escapeHtml(comparison.baselinePeriod ?? 'Sem referência')} → 2026.2</span></div>
-    <p>Compara dois semestres: referência consolidada e oferta aberta. Os totais de todo o histórico ficam na aba Histórico.</p>
+    <p>Compara dois semestres: referência consolidada e oferta aberta. Os totais de 2023.1 a 2026.2 ficam na aba Acumulado.</p>
     <div class="comparison-cards">${rows.map(row => `<div><span>${escapeHtml(row.metric)}</span>
       <small>${comparisonValue(row.before, row.unit)} → ${comparisonValue(row.after, row.unit)}</small>
       <strong class="delta-${row.delta == null ? 'missing' : row.delta > 1e-12 ? 'up' : row.delta < -1e-12 ? 'down' : 'same'}">${deltaValue(row)}</strong>
@@ -284,8 +307,9 @@ function comparisonOverview(comparison, heading = 'Comparação entre semestres'
 
 function periodControls(scope) {
   return `<section class="period-controls" aria-labelledby="recorte-titulo"><div><p class="eyebrow">RECORTES SEPARADOS</p>
-    <h2 id="recorte-titulo">Histórico e oferta de 2026.2</h2><p>Esta escolha atualiza todos os gráficos, rankings, estatísticas e análises por cadeira.</p></div>
+    <h2 id="recorte-titulo">De 2023.1 até 2026.2</h2><p>O acumulado inclui a oferta aberta de 2026.2. Esta escolha atualiza todos os gráficos, rankings, estatísticas e análises por cadeira.</p></div>
     <div class="period-buttons" role="group" aria-label="Recorte dos gráficos">
+      <button type="button" data-view="accumulated" aria-pressed="${selectedView === 'accumulated'}">Acumulado · 2023.1 a 2026.2</button>
       <button type="button" data-view="historical" aria-pressed="${selectedView === 'historical'}">Histórico consolidado</button>
       <button type="button" data-view="current" aria-pressed="${selectedView === 'current'}">2026.2 · oferta aberta</button></div>
     <p class="selected-scope" role="status">${escapeHtml(scope?.note ?? '')}</p></section>`;
@@ -368,7 +392,7 @@ function mountDisciplineExplorers(disciplines, scope) {
   stopDisciplineExplorers = () => cleanups.forEach(clear => clear());
 }
 
-function dashboard({paineis, quality, generatedAt, source, scope}) {
+function dashboard({paineis, quality, generatedAt, source, scope, audit}) {
   const mcId = "matematica-computacional";
   const mc = paineis.find(panel => panel.id === mcId);
   const cct = paineis.filter(panel => panel.id !== mcId);
@@ -377,7 +401,7 @@ function dashboard({paineis, quality, generatedAt, source, scope}) {
   const cctNav = links([...cct.map(panel => [panel.id, panel.title]), ['cadeiras-cct', 'Análise por cadeira']]);
   const mcCount = mc.sections.reduce((sum, section) => sum + section.plots.length, 0);
   const cctCount = cct.reduce((sum, panel) => sum + panel.sections.reduce((n, s) => n + s.plots.length, 0), 0);
-  return `${dataQuality(quality, generatedAt, source)}${periodControls(scope)}<section class="area cct-area" id="cct">
+  return `${dataQuality(quality, generatedAt, source, audit)}${periodControls(scope)}<section class="area cct-area" id="cct">
     <div class="area-heading"><div><p class="eyebrow">01 / VISÃO DO CENTRO</p><h2>Resultados gerais do CCT</h2></div><span class="count-badge">${cctCount} gráficos</span></div>
     <p class="area-description">Oferta presencial do Centro de Ciências e Tecnologia. Os rankings por natureza curricular usam os códigos classificados nas matrizes de referência.</p>
     ${summaryCards(cct.find(panel => panel.id === "evolucao").summary, scope)}
@@ -487,7 +511,7 @@ function chartConfiguration(plot) {
         padding: 13, cornerRadius: 9, bodySpacing: 5,
         filter: item => !points || item.datasetIndex === 0,
         callbacks: {
-          title: items => items.length ? wrapLabel(points ? rows[items[0].dataIndex].values[spec.label] ?? "Turmas consolidadas" :
+          title: items => items.length ? wrapLabel(points ? rows[items[0].dataIndex].values[spec.label] ?? "Turmas do recorte" :
             numericX ? `${spec.x}: ${format(rows[items[0].dataIndex].values[spec.x], spec.xValueFormat?.style === "percent")}` :
               labels[items[0].dataIndex], 48) : "",
           label: item => {
@@ -676,7 +700,7 @@ async function loadDashboard() {
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data = await response.json();
     if (!data.views) throw new Error('Reinicie o servidor Python para carregar os recortes separados.');
-    for (const key of ['historical', 'current']) {
+    for (const key of ['accumulated', 'historical', 'current']) {
       const view = data.views[key];
       const plots = [...view.paineis.flatMap(panel => panel.sections.flatMap(section => section.plots)),
         ...Object.values(view.disciplines).flatMap(items => items.flatMap(d => d.plots))];

@@ -1,0 +1,689 @@
+{
+  "versao": 2,
+  "fonte": {
+    "arquivo": "data/ufca-cct-ofertas-2023-2026.json",
+    "sha256": "0130a6f708315b05750b88fd8c0d287c32a274b34cb668108f950c21d949607b"
+  },
+  "metodo": "Recontagem independente do JSON original; somas inteiras e ocupação calculada com Fraction/Decimal. Nenhuma chamada a metrics(), datasets() ou estatísticas do painel para obter os totais esperados.",
+  "formulas": {
+    "acumulado": "União sem duplicação do histórico consolidado anterior a 2026.2 e da oferta ABERTA de 2026.2, com modalidade Presencial e capacidade > 0.",
+    "turmas": "Quantidade de registros elegíveis, por semestre/código/turma/modalidade.",
+    "vagas": "Soma de capacidade em cada registro elegível.",
+    "matriculas": "Soma de matriculas em cada registro elegível.",
+    "ocupacao": "Soma(matriculas) / soma(capacidade); a razão não é a média simples das ocupações das turmas.",
+    "historico": "Presencial, capacidade > 0, situação CONSOLIDADA, período anterior a 2026.2.",
+    "abertas": "Presencial, capacidade > 0, situação ABERTA e período 2026.2."
+  },
+  "contagem": {
+    "lidos": 1390,
+    "validos": 1390,
+    "descartadosInvalidos": 0,
+    "duplicatasExatas": 0,
+    "identidadesConflitantes": 0,
+    "capacidadeZero": 0,
+    "elegiveisPresenciais": 1385,
+    "noRecorte": 1380,
+    "foraDosRecortes": 5,
+    "outrasModalidades": 5
+  },
+  "distribuicaoOriginal": [
+    {
+      "periodo": "2023.1",
+      "modalidade": "Presencial",
+      "situacao": "A DEFINIR DOCENTE",
+      "registros": 1
+    },
+    {
+      "periodo": "2023.1",
+      "modalidade": "Presencial",
+      "situacao": "CONSOLIDADA",
+      "registros": 171
+    },
+    {
+      "periodo": "2023.2",
+      "modalidade": "Presencial",
+      "situacao": "CONSOLIDADA",
+      "registros": 176
+    },
+    {
+      "periodo": "2024.1",
+      "modalidade": "Presencial",
+      "situacao": "CONSOLIDADA",
+      "registros": 173
+    },
+    {
+      "periodo": "2024.2",
+      "modalidade": "A Distância",
+      "situacao": "CONSOLIDADA",
+      "registros": 1
+    },
+    {
+      "periodo": "2024.2",
+      "modalidade": "Presencial",
+      "situacao": "ABERTA",
+      "registros": 1
+    },
+    {
+      "periodo": "2024.2",
+      "modalidade": "Presencial",
+      "situacao": "CONSOLIDADA",
+      "registros": 176
+    },
+    {
+      "periodo": "2024.2",
+      "modalidade": "Presencial",
+      "situacao": "INTERROMPIDA",
+      "registros": 1
+    },
+    {
+      "periodo": "2025.1",
+      "modalidade": "A Distância",
+      "situacao": "CONSOLIDADA",
+      "registros": 1
+    },
+    {
+      "periodo": "2025.1",
+      "modalidade": "Presencial",
+      "situacao": "CONSOLIDADA",
+      "registros": 174
+    },
+    {
+      "periodo": "2025.2",
+      "modalidade": "A Distância",
+      "situacao": "CONSOLIDADA",
+      "registros": 1
+    },
+    {
+      "periodo": "2025.2",
+      "modalidade": "Presencial",
+      "situacao": "A DEFINIR DOCENTE",
+      "registros": 1
+    },
+    {
+      "periodo": "2025.2",
+      "modalidade": "Presencial",
+      "situacao": "CONSOLIDADA",
+      "registros": 168
+    },
+    {
+      "periodo": "2026.1",
+      "modalidade": "A Distância",
+      "situacao": "CONSOLIDADA",
+      "registros": 1
+    },
+    {
+      "periodo": "2026.1",
+      "modalidade": "Presencial",
+      "situacao": "CONSOLIDADA",
+      "registros": 170
+    },
+    {
+      "periodo": "2026.1",
+      "modalidade": "Presencial",
+      "situacao": "INTERROMPIDA",
+      "registros": 1
+    },
+    {
+      "periodo": "2026.2",
+      "modalidade": "A Distância",
+      "situacao": "ABERTA",
+      "registros": 1
+    },
+    {
+      "periodo": "2026.2",
+      "modalidade": "Presencial",
+      "situacao": "ABERTA",
+      "registros": 172
+    }
+  ],
+  "recortes": {
+    "acumulado": {
+      "cct": {
+        "turmas": 1380,
+        "disciplinas": 288,
+        "vagas": 55721,
+        "matriculas": 30126,
+        "ocupacao": 0.5406579207121193,
+        "fracaoOcupacao": "30126/55721",
+        "fracaoReduzida": "30126/55721",
+        "ocupacaoPercentualPrecisao32": "54.065792071211930869869528543996",
+        "ocupacaoPercentualArredondada1Casa": "54.1",
+        "vagasNaoPreenchidas": 25756,
+        "matriculasExcedentes": 161,
+        "turmasAbaixoDe25": 311,
+        "turmasLotadasOuAcima": 91,
+        "turmasAcimaCapacidade": 51
+      },
+      "matematicaComputacional": {
+        "turmas": 137,
+        "disciplinas": 38,
+        "vagas": 6348,
+        "matriculas": 2921,
+        "ocupacao": 0.4601449275362319,
+        "fracaoOcupacao": "2921/6348",
+        "fracaoReduzida": "127/276",
+        "ocupacaoPercentualPrecisao32": "46.014492753623188405797101449275",
+        "ocupacaoPercentualArredondada1Casa": "46.0",
+        "vagasNaoPreenchidas": 3438,
+        "matriculasExcedentes": 11,
+        "turmasAbaixoDe25": 51,
+        "turmasLotadasOuAcima": 6,
+        "turmasAcimaCapacidade": 3
+      }
+    },
+    "historico": {
+      "cct": {
+        "turmas": 1208,
+        "disciplinas": 273,
+        "vagas": 48726,
+        "matriculas": 26094,
+        "ocupacao": 0.5355251816278783,
+        "fracaoOcupacao": "26094/48726",
+        "fracaoReduzida": "4349/8121",
+        "ocupacaoPercentualPrecisao32": "53.552518162787834010589828838813",
+        "ocupacaoPercentualArredondada1Casa": "53.6",
+        "vagasNaoPreenchidas": 22773,
+        "matriculasExcedentes": 141,
+        "turmasAbaixoDe25": 277,
+        "turmasLotadasOuAcima": 72,
+        "turmasAcimaCapacidade": 43
+      },
+      "matematicaComputacional": {
+        "turmas": 120,
+        "disciplinas": 37,
+        "vagas": 5538,
+        "matriculas": 2513,
+        "ocupacao": 0.45377392560491153,
+        "fracaoOcupacao": "2513/5538",
+        "fracaoReduzida": "2513/5538",
+        "ocupacaoPercentualPrecisao32": "45.377392560491152040447815095702",
+        "ocupacaoPercentualArredondada1Casa": "45.4",
+        "vagasNaoPreenchidas": 3036,
+        "matriculasExcedentes": 11,
+        "turmasAbaixoDe25": 47,
+        "turmasLotadasOuAcima": 5,
+        "turmasAcimaCapacidade": 3
+      }
+    },
+    "abertas2026_2": {
+      "cct": {
+        "turmas": 172,
+        "disciplinas": 163,
+        "vagas": 6995,
+        "matriculas": 4032,
+        "ocupacao": 0.5764117226590422,
+        "fracaoOcupacao": "4032/6995",
+        "fracaoReduzida": "4032/6995",
+        "ocupacaoPercentualPrecisao32": "57.641172265904217298070050035740",
+        "ocupacaoPercentualArredondada1Casa": "57.6",
+        "vagasNaoPreenchidas": 2983,
+        "matriculasExcedentes": 20,
+        "turmasAbaixoDe25": 34,
+        "turmasLotadasOuAcima": 19,
+        "turmasAcimaCapacidade": 8
+      },
+      "matematicaComputacional": {
+        "turmas": 17,
+        "disciplinas": 17,
+        "vagas": 810,
+        "matriculas": 408,
+        "ocupacao": 0.5037037037037037,
+        "fracaoOcupacao": "408/810",
+        "fracaoReduzida": "68/135",
+        "ocupacaoPercentualPrecisao32": "50.370370370370370370370370370370",
+        "ocupacaoPercentualArredondada1Casa": "50.4",
+        "vagasNaoPreenchidas": 402,
+        "matriculasExcedentes": 0,
+        "turmasAbaixoDe25": 4,
+        "turmasLotadasOuAcima": 1,
+        "turmasAcimaCapacidade": 0
+      }
+    },
+    "referencia": {
+      "periodo": "2026.1",
+      "cct": {
+        "turmas": 170,
+        "disciplinas": 157,
+        "vagas": 7036,
+        "matriculas": 4114,
+        "ocupacao": 0.5847072200113701,
+        "fracaoOcupacao": "4114/7036",
+        "fracaoReduzida": "2057/3518",
+        "ocupacaoPercentualPrecisao32": "58.470722001137009664582148948266",
+        "ocupacaoPercentualArredondada1Casa": "58.5",
+        "vagasNaoPreenchidas": 2923,
+        "matriculasExcedentes": 1,
+        "turmasAbaixoDe25": 31,
+        "turmasLotadasOuAcima": 6,
+        "turmasAcimaCapacidade": 1
+      },
+      "matematicaComputacional": {
+        "turmas": 18,
+        "disciplinas": 16,
+        "vagas": 858,
+        "matriculas": 465,
+        "ocupacao": 0.541958041958042,
+        "fracaoOcupacao": "465/858",
+        "fracaoReduzida": "155/286",
+        "ocupacaoPercentualPrecisao32": "54.195804195804195804195804195804",
+        "ocupacaoPercentualArredondada1Casa": "54.2",
+        "vagasNaoPreenchidas": 393,
+        "matriculasExcedentes": 0,
+        "turmasAbaixoDe25": 4,
+        "turmasLotadasOuAcima": 1,
+        "turmasAcimaCapacidade": 0
+      }
+    }
+  },
+  "porSemestre": [
+    {
+      "periodo": "2023.1",
+      "situacao": "CONSOLIDADA",
+      "cct": {
+        "turmas": 171,
+        "disciplinas": 154,
+        "vagas": 6819,
+        "matriculas": 3661,
+        "ocupacao": 0.5368822407977709,
+        "fracaoOcupacao": "3661/6819",
+        "fracaoReduzida": "3661/6819",
+        "ocupacaoPercentualPrecisao32": "53.688224079777093415456811849245",
+        "ocupacaoPercentualArredondada1Casa": "53.7",
+        "vagasNaoPreenchidas": 3183,
+        "matriculasExcedentes": 25,
+        "turmasAbaixoDe25": 40,
+        "turmasLotadasOuAcima": 11,
+        "turmasAcimaCapacidade": 8
+      },
+      "matematicaComputacional": {
+        "turmas": 14,
+        "disciplinas": 13,
+        "vagas": 639,
+        "matriculas": 266,
+        "ocupacao": 0.4162754303599374,
+        "fracaoOcupacao": "266/639",
+        "fracaoReduzida": "266/639",
+        "ocupacaoPercentualPrecisao32": "41.627543035993740219092331768388",
+        "ocupacaoPercentualArredondada1Casa": "41.6",
+        "vagasNaoPreenchidas": 373,
+        "matriculasExcedentes": 0,
+        "turmasAbaixoDe25": 8,
+        "turmasLotadasOuAcima": 0,
+        "turmasAcimaCapacidade": 0
+      }
+    },
+    {
+      "periodo": "2023.2",
+      "situacao": "CONSOLIDADA",
+      "cct": {
+        "turmas": 176,
+        "disciplinas": 157,
+        "vagas": 7191,
+        "matriculas": 3448,
+        "ocupacao": 0.47948824920038935,
+        "fracaoOcupacao": "3448/7191",
+        "fracaoReduzida": "3448/7191",
+        "ocupacaoPercentualPrecisao32": "47.948824920038937560839938812404",
+        "ocupacaoPercentualArredondada1Casa": "47.9",
+        "vagasNaoPreenchidas": 3764,
+        "matriculasExcedentes": 21,
+        "turmasAbaixoDe25": 49,
+        "turmasLotadasOuAcima": 8,
+        "turmasAcimaCapacidade": 5
+      },
+      "matematicaComputacional": {
+        "turmas": 18,
+        "disciplinas": 16,
+        "vagas": 852,
+        "matriculas": 344,
+        "ocupacao": 0.40375586854460094,
+        "fracaoOcupacao": "344/852",
+        "fracaoReduzida": "86/213",
+        "ocupacaoPercentualPrecisao32": "40.375586854460093896713615023474",
+        "ocupacaoPercentualArredondada1Casa": "40.4",
+        "vagasNaoPreenchidas": 517,
+        "matriculasExcedentes": 9,
+        "turmasAbaixoDe25": 10,
+        "turmasLotadasOuAcima": 1,
+        "turmasAcimaCapacidade": 1
+      }
+    },
+    {
+      "periodo": "2024.1",
+      "situacao": "CONSOLIDADA",
+      "cct": {
+        "turmas": 173,
+        "disciplinas": 156,
+        "vagas": 6993,
+        "matriculas": 3781,
+        "ocupacao": 0.5406835406835406,
+        "fracaoOcupacao": "3781/6993",
+        "fracaoReduzida": "3781/6993",
+        "ocupacaoPercentualPrecisao32": "54.068354068354068354068354068354",
+        "ocupacaoPercentualArredondada1Casa": "54.1",
+        "vagasNaoPreenchidas": 3247,
+        "matriculasExcedentes": 35,
+        "turmasAbaixoDe25": 45,
+        "turmasLotadasOuAcima": 18,
+        "turmasAcimaCapacidade": 12
+      },
+      "matematicaComputacional": {
+        "turmas": 16,
+        "disciplinas": 14,
+        "vagas": 725,
+        "matriculas": 323,
+        "ocupacao": 0.44551724137931037,
+        "fracaoOcupacao": "323/725",
+        "fracaoReduzida": "323/725",
+        "ocupacaoPercentualPrecisao32": "44.551724137931034482758620689655",
+        "ocupacaoPercentualArredondada1Casa": "44.6",
+        "vagasNaoPreenchidas": 403,
+        "matriculasExcedentes": 1,
+        "turmasAbaixoDe25": 7,
+        "turmasLotadasOuAcima": 2,
+        "turmasAcimaCapacidade": 1
+      }
+    },
+    {
+      "periodo": "2024.2",
+      "situacao": "CONSOLIDADA",
+      "cct": {
+        "turmas": 176,
+        "disciplinas": 159,
+        "vagas": 7006,
+        "matriculas": 3469,
+        "ocupacao": 0.49514701684270623,
+        "fracaoOcupacao": "3469/7006",
+        "fracaoReduzida": "3469/7006",
+        "ocupacaoPercentualPrecisao32": "49.514701684270625178418498429917",
+        "ocupacaoPercentualArredondada1Casa": "49.5",
+        "vagasNaoPreenchidas": 3539,
+        "matriculasExcedentes": 2,
+        "turmasAbaixoDe25": 42,
+        "turmasLotadasOuAcima": 7,
+        "turmasAcimaCapacidade": 2
+      },
+      "matematicaComputacional": {
+        "turmas": 19,
+        "disciplinas": 18,
+        "vagas": 860,
+        "matriculas": 339,
+        "ocupacao": 0.3941860465116279,
+        "fracaoOcupacao": "339/860",
+        "fracaoReduzida": "339/860",
+        "ocupacaoPercentualPrecisao32": "39.418604651162790697674418604651",
+        "ocupacaoPercentualArredondada1Casa": "39.4",
+        "vagasNaoPreenchidas": 521,
+        "matriculasExcedentes": 0,
+        "turmasAbaixoDe25": 8,
+        "turmasLotadasOuAcima": 0,
+        "turmasAcimaCapacidade": 0
+      }
+    },
+    {
+      "periodo": "2025.1",
+      "situacao": "CONSOLIDADA",
+      "cct": {
+        "turmas": 174,
+        "disciplinas": 157,
+        "vagas": 6857,
+        "matriculas": 3835,
+        "ocupacao": 0.5592824850517719,
+        "fracaoOcupacao": "3835/6857",
+        "fracaoReduzida": "3835/6857",
+        "ocupacaoPercentualPrecisao32": "55.928248505177191191483155899081",
+        "ocupacaoPercentualArredondada1Casa": "55.9",
+        "vagasNaoPreenchidas": 3049,
+        "matriculasExcedentes": 27,
+        "turmasAbaixoDe25": 36,
+        "turmasLotadasOuAcima": 12,
+        "turmasAcimaCapacidade": 7
+      },
+      "matematicaComputacional": {
+        "turmas": 18,
+        "disciplinas": 16,
+        "vagas": 774,
+        "matriculas": 433,
+        "ocupacao": 0.5594315245478036,
+        "fracaoOcupacao": "433/774",
+        "fracaoReduzida": "433/774",
+        "ocupacaoPercentualPrecisao32": "55.943152454780361757105943152455",
+        "ocupacaoPercentualArredondada1Casa": "55.9",
+        "vagasNaoPreenchidas": 342,
+        "matriculasExcedentes": 1,
+        "turmasAbaixoDe25": 4,
+        "turmasLotadasOuAcima": 1,
+        "turmasAcimaCapacidade": 1
+      }
+    },
+    {
+      "periodo": "2025.2",
+      "situacao": "CONSOLIDADA",
+      "cct": {
+        "turmas": 168,
+        "disciplinas": 161,
+        "vagas": 6824,
+        "matriculas": 3786,
+        "ocupacao": 0.5548065650644783,
+        "fracaoOcupacao": "3786/6824",
+        "fracaoReduzida": "1893/3412",
+        "ocupacaoPercentualPrecisao32": "55.480656506447831184056271981243",
+        "ocupacaoPercentualArredondada1Casa": "55.5",
+        "vagasNaoPreenchidas": 3068,
+        "matriculasExcedentes": 30,
+        "turmasAbaixoDe25": 34,
+        "turmasLotadasOuAcima": 10,
+        "turmasAcimaCapacidade": 8
+      },
+      "matematicaComputacional": {
+        "turmas": 17,
+        "disciplinas": 17,
+        "vagas": 830,
+        "matriculas": 343,
+        "ocupacao": 0.41325301204819276,
+        "fracaoOcupacao": "343/830",
+        "fracaoReduzida": "343/830",
+        "ocupacaoPercentualPrecisao32": "41.325301204819277108433734939759",
+        "ocupacaoPercentualArredondada1Casa": "41.3",
+        "vagasNaoPreenchidas": 487,
+        "matriculasExcedentes": 0,
+        "turmasAbaixoDe25": 6,
+        "turmasLotadasOuAcima": 0,
+        "turmasAcimaCapacidade": 0
+      }
+    },
+    {
+      "periodo": "2026.1",
+      "situacao": "CONSOLIDADA",
+      "cct": {
+        "turmas": 170,
+        "disciplinas": 157,
+        "vagas": 7036,
+        "matriculas": 4114,
+        "ocupacao": 0.5847072200113701,
+        "fracaoOcupacao": "4114/7036",
+        "fracaoReduzida": "2057/3518",
+        "ocupacaoPercentualPrecisao32": "58.470722001137009664582148948266",
+        "ocupacaoPercentualArredondada1Casa": "58.5",
+        "vagasNaoPreenchidas": 2923,
+        "matriculasExcedentes": 1,
+        "turmasAbaixoDe25": 31,
+        "turmasLotadasOuAcima": 6,
+        "turmasAcimaCapacidade": 1
+      },
+      "matematicaComputacional": {
+        "turmas": 18,
+        "disciplinas": 16,
+        "vagas": 858,
+        "matriculas": 465,
+        "ocupacao": 0.541958041958042,
+        "fracaoOcupacao": "465/858",
+        "fracaoReduzida": "155/286",
+        "ocupacaoPercentualPrecisao32": "54.195804195804195804195804195804",
+        "ocupacaoPercentualArredondada1Casa": "54.2",
+        "vagasNaoPreenchidas": 393,
+        "matriculasExcedentes": 0,
+        "turmasAbaixoDe25": 4,
+        "turmasLotadasOuAcima": 1,
+        "turmasAcimaCapacidade": 0
+      }
+    },
+    {
+      "periodo": "2026.2",
+      "situacao": "ABERTA",
+      "cct": {
+        "turmas": 172,
+        "disciplinas": 163,
+        "vagas": 6995,
+        "matriculas": 4032,
+        "ocupacao": 0.5764117226590422,
+        "fracaoOcupacao": "4032/6995",
+        "fracaoReduzida": "4032/6995",
+        "ocupacaoPercentualPrecisao32": "57.641172265904217298070050035740",
+        "ocupacaoPercentualArredondada1Casa": "57.6",
+        "vagasNaoPreenchidas": 2983,
+        "matriculasExcedentes": 20,
+        "turmasAbaixoDe25": 34,
+        "turmasLotadasOuAcima": 19,
+        "turmasAcimaCapacidade": 8
+      },
+      "matematicaComputacional": {
+        "turmas": 17,
+        "disciplinas": 17,
+        "vagas": 810,
+        "matriculas": 408,
+        "ocupacao": 0.5037037037037037,
+        "fracaoOcupacao": "408/810",
+        "fracaoReduzida": "68/135",
+        "ocupacaoPercentualPrecisao32": "50.370370370370370370370370370370",
+        "ocupacaoPercentualArredondada1Casa": "50.4",
+        "vagasNaoPreenchidas": 402,
+        "matriculasExcedentes": 0,
+        "turmasAbaixoDe25": 4,
+        "turmasLotadasOuAcima": 1,
+        "turmasAcimaCapacidade": 0
+      }
+    }
+  ],
+  "registrosExcluidos": [
+    {
+      "periodo": "2023.1",
+      "codigo": "EM0005",
+      "turma": "Turma 01",
+      "modalidade": "Presencial",
+      "situacao": "A DEFINIR DOCENTE",
+      "matriculas": 0,
+      "capacidade": 50,
+      "motivo": "Situação ou semestre fora dos dois recortes."
+    },
+    {
+      "periodo": "2024.2",
+      "codigo": "ADS0036",
+      "turma": "Turma 01",
+      "modalidade": "A Distância",
+      "situacao": "CONSOLIDADA",
+      "matriculas": 89,
+      "capacidade": 200,
+      "motivo": "Modalidade diferente de Presencial."
+    },
+    {
+      "periodo": "2024.2",
+      "codigo": "EM0083",
+      "turma": "Turma 01",
+      "modalidade": "Presencial",
+      "situacao": "INTERROMPIDA",
+      "matriculas": 0,
+      "capacidade": 30,
+      "motivo": "Situação ou semestre fora dos dois recortes."
+    },
+    {
+      "periodo": "2024.2",
+      "codigo": "EM0114",
+      "turma": "Turma 01",
+      "modalidade": "Presencial",
+      "situacao": "ABERTA",
+      "matriculas": 0,
+      "capacidade": 30,
+      "motivo": "Situação ou semestre fora dos dois recortes."
+    },
+    {
+      "periodo": "2025.1",
+      "codigo": "ADS0039",
+      "turma": "Turma 01",
+      "modalidade": "A Distância",
+      "situacao": "CONSOLIDADA",
+      "matriculas": 48,
+      "capacidade": 210,
+      "motivo": "Modalidade diferente de Presencial."
+    },
+    {
+      "periodo": "2025.2",
+      "codigo": "ADS0037",
+      "turma": "Turma 01",
+      "modalidade": "A Distância",
+      "situacao": "CONSOLIDADA",
+      "matriculas": 138,
+      "capacidade": 210,
+      "motivo": "Modalidade diferente de Presencial."
+    },
+    {
+      "periodo": "2025.2",
+      "codigo": "EM0046",
+      "turma": "Turma 01",
+      "modalidade": "Presencial",
+      "situacao": "A DEFINIR DOCENTE",
+      "matriculas": 0,
+      "capacidade": 30,
+      "motivo": "Situação ou semestre fora dos dois recortes."
+    },
+    {
+      "periodo": "2026.1",
+      "codigo": "ADS0038",
+      "turma": "Turma 01",
+      "modalidade": "A Distância",
+      "situacao": "CONSOLIDADA",
+      "matriculas": 98,
+      "capacidade": 210,
+      "motivo": "Modalidade diferente de Presencial."
+    },
+    {
+      "periodo": "2026.1",
+      "codigo": "ECI0126",
+      "turma": "Turma 01",
+      "modalidade": "Presencial",
+      "situacao": "INTERROMPIDA",
+      "matriculas": 0,
+      "capacidade": 30,
+      "motivo": "Situação ou semestre fora dos dois recortes."
+    },
+    {
+      "periodo": "2026.2",
+      "codigo": "ADS0039",
+      "turma": "Turma 01",
+      "modalidade": "A Distância",
+      "situacao": "ABERTA",
+      "matriculas": 85,
+      "capacidade": 210,
+      "motivo": "Modalidade diferente de Presencial."
+    }
+  ],
+  "conferenciaTexto2026_2": {
+    "disponivel": true,
+    "registros": 173,
+    "coincidemIntegralmenteComBase": 173,
+    "diferencas": 0,
+    "sha256Texto": "2462a36330c00f5adb1c32461aaec17dd16d118999c673cd441c53b580e16f93"
+  },
+  "limitesDeInterpretacao": [
+    "O acumulado principal soma oito semestres, de 2023.1 a 2026.2, incluindo a oferta aberta. O histórico consolidado separado soma sete semestres, até 2026.1; nenhum desses totais representa uma única oferta semestral.",
+    "Matrículas são registros em turmas, não estudantes únicos. Uma pessoa pode contribuir em várias turmas ou semestres.",
+    "As turmas de 2026.2 estão abertas; este relatório confere o conteúdo do arquivo, sem consultar um sistema acadêmico ao vivo."
+  ],
+  "recortePrincipal": {
+    "id": "acumulado",
+    "rotulo": "Acumulado · 2023.1 a 2026.2",
+    "periodoInicial": "2023.1",
+    "periodoFinal": "2026.2",
+    "nota": "Inclui as turmas consolidadas de 2023.1 a 2026.1 e as turmas abertas de 2026.2; não é um recorte integralmente consolidado."
+  }
+}

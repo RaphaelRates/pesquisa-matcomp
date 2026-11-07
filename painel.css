@@ -209,6 +209,13 @@ details table {margin-top: 12px}
 .scope-note {display:inline-block; font-size:.67rem; line-height:1.6; color:#315981; background:#eef5fc; padding:5px 8px; border-radius:5px; margin-top:10px}
 .source-verification {font-size:.73rem; padding:14px 16px; margin-top:15px; background:#f0f8f5; border-left:3px solid #149485; border-radius:5px; line-height:1.7}
 .source-verification p {color:var(--muted); margin-top:5px}
+.calculation-verification {border-top:1px solid var(--line); margin-top:22px; padding-top:20px}
+.calculation-verification h3 {font-size:.95rem; color:#16695e; margin-bottom:10px}
+.calculation-verification > p,.calculation-verification > a {font-size:.75rem; line-height:1.8; margin-bottom:8px; color:var(--muted)}
+.calculation-verification > a {display:inline-block; margin-top:16px; color:#2565b4}
+.calculation-verification h4 {font-size:.8rem; margin:20px 0 8px}
+.calculation-verification .audit-total {font-weight:700; background:#edf5f9}
+.audit-failed h3 {color:#9a4d24}
 .comparison-overview {margin:24px 0; padding:22px; border:1px solid #cbdced; border-radius:12px; background:#fff}
 .comparison-heading {display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:12px}
 .comparison-heading h3 {font-size:.95rem}

@@ -11,6 +11,7 @@ import webbrowser
 from services.preprocessing import preprocess_offers
 from services.period_views import build_period_views
 from services.period_comparison import attach_comparisons
+from services.recalculation import audit_calculations
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -378,13 +379,17 @@ def page(bundle):
 """
 
 
-def dashboard_data(data_path):
+def dashboard_data(data_path, *, include_audit_details=False):
     source_bytes = data_path.read_bytes()
     raw = json.loads(source_bytes.decode("utf-8-sig"))
     offers, report = preprocess_offers(raw)
     views = build_period_views(offers)
-    baseline = views.pop('baseline')
+    baseline = views['baseline']
     attach_comparisons(views['current'], baseline, views['baselinePeriod'])
+    audit = audit_calculations(offers, views)
+    if not include_audit_details:
+        audit.pop('checks')
+    views.pop('baseline')
 
     def plots(view):
         return [p for panel in view['paineis'] for section in panel['sections'] for p in section['plots']] + [
@@ -395,43 +400,47 @@ def dashboard_data(data_path):
     for plot in current_plots.values():
         if views['baselinePeriod'] and plot['id'] in reference_plots:
             plot['comparison']['baselinePlot'] = reference_plots[plot['id']]
-    # A aba histórica conserva seus totais acumulados. Suas tabelas de diferença
-    # continuam comparando dois semestres, nunca sete semestres contra um.
-    for plot in plots(views['historical']):
-        if plot['id'] in current_plots:
-            plot['comparison'] = current_plots[plot['id']]['comparison']
+    # O acumulado inclui 2026.2; as diferenças continuam comparando dois
+    # semestres, sem usar oito semestres como base de um único semestre.
+    for scope in ('historical', 'accumulated'):
+        for plot in plots(views[scope]):
+            if plot['id'] in current_plots:
+                plot['comparison'] = current_plots[plot['id']]['comparison']
     current_panels = {p['id']: p for p in views['current']['paineis']}
-    for panel in views['historical']['paineis']:
-        current = current_panels[panel['id']]
-        for key in ('summary', 'statisticalSummary'):
-            if key in panel and 'comparison' in current.get(key, {}):
-                panel[key]['comparison'] = current[key]['comparison']
+    for scope in ('historical', 'accumulated'):
+        for panel in views[scope]['paineis']:
+            current = current_panels[panel['id']]
+            for key in ('summary', 'statisticalSummary'):
+                if key in panel and 'comparison' in current.get(key, {}):
+                    panel[key]['comparison'] = current[key]['comparison']
     current_disciplines = {d['code']: d for d in views['current']['disciplines']['cct']}
-    for discipline in views['historical']['disciplines']['cct']:
-        discipline['summary']['comparison'] = current_disciplines[discipline['code']]['summary']['comparison']
+    for scope in ('historical', 'accumulated'):
+        for discipline in views[scope]['disciplines']['cct']:
+            discipline['summary']['comparison'] = current_disciplines[discipline['code']]['summary']['comparison']
     # Registros auxiliares completos dos rankings servem ao cálculo das diferenças.
     # O navegador recebe apenas os resultados e os gráficos de referência.
-    for view in (views['current'], views['historical'], baseline):
+    for view in (views['current'], views['historical'], views['accumulated'], baseline):
         for plot in plots(view):
             plot.pop('comparisonRecords', None)
     # Uma comparação por ID atende as duas abas e os códigos compartilhados com
     # MC, sem repetir grandes tabelas e gráficos de referência na transferência.
     comparisons = {key: plot.pop('comparison') for key, plot in current_plots.items()}
-    for plot in plots(views['historical']):
-        plot.pop('comparison', None)
+    for scope in ('historical', 'accumulated'):
+        for plot in plots(views[scope]):
+            plot.pop('comparison', None)
     source = dict(name=data_path.name, sha256=hashlib.sha256(source_bytes).hexdigest(),
                   currentRows=sum(isinstance(r, dict) and r.get('periodo') == '2026.2' for r in raw),
                   currentEligibleRows=sum(r['periodo'] == '2026.2' and r['modalidade'] == 'Presencial'
                                           and r['situacao'] == 'ABERTA' and r['capacidade'] > 0 for r in offers))
-    return {"titulo": TITLE, "views": views, "plotComparisons": comparisons, "source": source, "quality": report,
+    return {"titulo": TITLE, "views": views, "plotComparisons": comparisons, "source": source, "quality": report, "audit": audit,
             "generatedAt": datetime.now(timezone.utc).isoformat()}
 
 
 def render_dashboard(data_path):
     bundle = dashboard_data(data_path)
-    # A exportação legada apresenta o histórico; recortes e diferenças ficam na web.
-    return page({**bundle, 'paineis': bundle['views']['historical']['paineis'],
-                 'scopeNote': bundle['views']['historical']['scope']['note']})
+    # A exportação acompanha o acumulado principal até 2026.2.
+    return page({**bundle, 'paineis': bundle['views']['accumulated']['paineis'],
+                 'scopeNote': bundle['views']['accumulated']['scope']['note']})
 
 
 def main():

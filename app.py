@@ -77,11 +77,13 @@ class DashboardHandler(BaseHTTPRequestHandler):
             path, media_type = ASSETS[route]
             self.respond(HTTPStatus.OK, path.read_text(encoding="utf-8"), media_type)
             return
-        if route != "/api/painel":
+        if route not in {"/api/painel", "/api/conferencia"}:
             self.respond(HTTPStatus.NOT_FOUND, "Página não encontrada.", "text/plain")
             return
         try:
-            payload = json.dumps(dashboard_data(self.server.data_path), ensure_ascii=False, allow_nan=False)
+            bundle = dashboard_data(self.server.data_path, include_audit_details=route == '/api/conferencia')
+            result = {**bundle['audit'], 'source': bundle['source'], 'quality': bundle['quality']} if route == '/api/conferencia' else bundle
+            payload = json.dumps(result, ensure_ascii=False, allow_nan=False)
         except (OSError, ValueError, TypeError, KeyError) as error:
             self.log_error("Falha ao carregar os dados: %s", error)
             self.respond(HTTPStatus.SERVICE_UNAVAILABLE,
