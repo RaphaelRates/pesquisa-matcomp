@@ -1,0 +1,153 @@
+:root {
+  color-scheme: light;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  color: #1b2d43;
+  background: #f3f6fa;
+  --muted: #61738a;
+  --line: #dfe6ef;
+  --accent: #167e73;
+  --page-width: 1840px;
+}
+* {box-sizing: border-box}
+body {margin: 0}
+h1,h2,h3,h4,h5,p {margin: 0}
+a {color: #2565b4; text-underline-offset: .22em}
+button,a,summary,canvas {touch-action: manipulation}
+:focus-visible {outline: 3px solid #e7a23b; outline-offset: 4px}
+[hidden] {display: none !important}
+.skip-link {position: fixed; top: -80px; left: 16px; z-index: 30; padding: 12px; background: white}
+.skip-link:focus {top: 12px}
+.hero {background: #11263c; color: #fff; overflow: hidden}
+.site-bar,.hero-content,main,.site-footer {max-width: var(--page-width); margin: auto; padding-inline: clamp(18px,3vw,56px)}
+.site-bar {display: flex; align-items: center; gap: 12px; min-height: 86px; color: #d5e0ec; font-size: .85rem; border-bottom: 1px solid #ffffff14}
+.brand-mark {display: grid; place-items: center; height: 37px; width: 37px; border: 1px solid #ffffff35; border-radius: 10px; font-size: 1.5rem; color: #7bdfcc}
+.brand-divider {margin-inline: 12px; color: #6e879f}
+.source-tag {margin-left: auto; font-size: .65rem; letter-spacing: .12em; color: #8ba5c0}
+.hero-content {display: grid; grid-template-columns: 1.7fr 1fr; gap: 4rem; padding-block: 48px 52px}
+.eyebrow {font-size: .69rem; font-weight: 700; letter-spacing: .15em; color: var(--accent)}
+.hero .eyebrow {color: #79d9c5; margin-bottom: 16px}
+h1 {font-size: clamp(2rem,3vw,3.6rem); line-height: 1.12; letter-spacing: -.04em; font-weight: 650}
+h1 > span {color: #79d9c5}
+.hero-description {color: #aebfd1; max-width: 610px; font-size: 1rem; line-height: 1.7; margin-top: 20px}
+.hero-tags {display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px}
+.hero-tags > span {border: 1px solid #ffffff22; border-radius: 6px; padding: 7px 11px; font-size: .72rem; color: #c8d8e8}
+.hero-aside {align-self: center; max-width: 380px; width: 100%; justify-self: end; padding: 25px; border-radius: 15px; background: #ffffff04; border: 1px solid #ffffff10}
+.aside-label {font-size: .6rem; letter-spacing: .16em; color: #7293b4}
+.aside-caption {color: #7f9cb8; font-size: .75rem; display: block; margin-top: 12px}
+.hero-chart {height: 134px; display: flex; align-items: end; gap: 12px; border-bottom: 1px solid #ffffff15; padding-top: 20px;
+  background: repeating-linear-gradient(to top,transparent 0,transparent 31px,#ffffff06 31px,#ffffff06 32px)}
+.hero-chart i {flex: 1; height: 45%; background: linear-gradient(#66c8ba,#296a77); border-radius: 5px 5px 0 0}
+.hero-chart i:nth-child(2) {height: 63%}
+.hero-chart i:nth-child(3) {height: 52%}
+.hero-chart i:nth-child(4) {height: 82%}
+.hero-chart i:nth-child(5) {height: 68%}
+.hero-chart i:nth-child(6) {height: 94%}
+.hero-chart i:nth-child(7) {height: 75%}
+.hero-chart i:nth-child(8) {height: 88%; background: transparent; border: 1px dashed #70c5bc}
+.global-nav {position: sticky; top: 0; z-index: 10; background: #ffffffed; backdrop-filter: blur(14px); border-bottom: 1px solid var(--line)}
+.global-nav ul {list-style: none; display: flex; gap: 2rem; max-width: var(--page-width); margin: auto; padding-inline: clamp(18px,3vw,56px)}
+.global-nav a {display: block; padding: 19px 0 17px; font-size: .85rem; font-weight: 650; text-decoration: none; border-bottom: 3px solid transparent; color: #597089}
+.global-nav a:hover,.global-nav a:focus-visible {color: var(--accent); border-bottom-color: var(--accent)}
+main {padding-block: 44px 70px}
+.area,.panel,.chart-card {scroll-margin-top: 92px}
+.area + .area {margin-top: 80px; border-top: 1px solid #cbd6e4; padding-top: 55px}
+.cct-area {--accent: #326dc0}
+.area-heading {display: flex; gap: 18px; align-items: center; justify-content: space-between; margin-bottom: 13px}
+.area-heading .eyebrow {margin-bottom: 9px}
+h2 {font-size: clamp(1.55rem,2.2vw,2.4rem); letter-spacing: -.035em; line-height: 1.2; font-weight: 650}
+.count-badge {white-space: nowrap; color: var(--accent); background: white; border: 1px solid var(--line); border-radius: 7px; font-size: .75rem; padding: 8px 11px}
+.area-description {color: var(--muted); font-size: .91rem; line-height: 1.7; max-width: 900px}
+.metrics {display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 16px; margin-top: 25px}
+.metric {background: white; padding: 22px 24px; border: 1px solid var(--line); border-radius: 12px}
+.metric > span {display: block; color: var(--muted); font-size: .75rem; margin-bottom: 12px}
+.metric strong {font-size: clamp(1.7rem,2.5vw,2.35rem); font-weight: 650; letter-spacing: -.04em; font-variant-numeric: tabular-nums}
+.metric:last-child strong {color: var(--accent)}
+.data-note {font-size: .73rem; color: var(--muted); margin: 13px 0 24px; line-height: 1.7}
+.data-note span {margin-left: 12px}
+.section-nav {margin-bottom: 35px; padding-bottom: 25px; border-bottom: 1px solid var(--line)}
+.section-nav ul {display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 0}
+.section-nav a {display: block; padding: 9px 13px; font-size: .74rem; font-weight: 600; border: 1px solid var(--line);
+  color: #4b627b; border-radius: 7px; text-decoration: none; background: #ffffff85}
+.section-nav a:hover {border-color: #a5b8d1; color: var(--accent); background: white}
+.interaction-note {font-size: .72rem; color: #73879d; margin: -15px 0 28px; line-height: 1.7}
+.panel + .panel {margin-top: 36px}
+.panel-heading {display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 19px}
+.panel-heading h3 {font-size: 1.12rem; font-weight: 650; letter-spacing: -.02em}
+.panel-heading > span {font-size: .7rem; color: #7b8da2; white-space: nowrap}
+.section-heading {font-size: .85rem; color: #64788d; margin: 26px 0 14px; font-weight: 600}
+.chart-grid {display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 20px; align-items: start}
+.chart-card {min-width: 0; background: white; border: 1px solid var(--line); border-radius: 13px; padding: 24px;
+  box-shadow: 0 3px 8px #183a6210}
+.chart-card h4,.chart-card h5 {font-size: 1.03rem; line-height: 1.4; font-weight: 650; letter-spacing: -.015em}
+.card-kicker {display: flex; justify-content: space-between; align-items: center; margin-bottom: 13px}
+.chart-type {font-size: .62rem; letter-spacing: .06em; text-transform: uppercase; color: #68809a}
+.card-kicker a {color: #94a4b6; font-size: 1rem; text-decoration: none}
+.description {color: var(--muted); font-size: .8rem; line-height: 1.65; margin-top: 10px; min-height: 3.3em}
+.chart-frame {position: relative; height: var(--chart-height,330px); width: 100%; margin-top: 16px}
+.chart-frame canvas {display: block; max-width: 100%}
+.wide-card {grid-column: 1 / -1}
+.back {display: inline-block; margin-top: 15px; font-size: .73rem; color: #7d8fa3; text-decoration: none}
+.scroll {overflow-x: auto}
+table {border-collapse: collapse; width: 100%; font-size: .75rem}
+th,td {padding: 10px 12px; text-align: left; white-space: nowrap; border-bottom: 1px solid #e8edf3}
+th {font-weight: 600; color: #586d85}
+.heat-scroll {margin-top: 22px; border: 1px solid #e5ecf4; border-radius: 8px}
+.heat td {text-align: center; font-variant-numeric: tabular-nums; background: color-mix(in srgb,#54a3c5 var(--intensity,0%),#f6f9fc)}
+.heat th:first-child {position: sticky; left: 0; background: white; z-index: 1}
+.heat .missing {background: #f5f7fa; color: #a3b1c0}
+.heat td:hover {box-shadow: inset 0 0 0 2px #3276dd}
+.heat-key {display: flex; align-items: center; gap: 8px; color: #75879b; font-size: .65rem; margin-top: 12px}
+.heat-key i {width: 85px; height: 7px; border-radius: 3px; background: linear-gradient(to right,#f6f9fc,#54a3c5)}
+.heat-key .muted {margin-left: 10px}
+details {border-top: 1px solid #e9eef4; margin-top: 18px; padding-top: 13px}
+summary {color: #688099; cursor: pointer; font-size: .7rem; font-weight: 600}
+details table {margin-top: 12px}
+[data-tooltip] {cursor: help}
+#chart-tooltip {position: fixed; z-index: 20; max-width: min(25rem,calc(100vw - 16px)); padding: 12px 14px; border-radius: 9px;
+  background: #142940; color: #eff6ff; font-size: .8rem; line-height: 1.6; white-space: pre-line; overflow-wrap: anywhere;
+  pointer-events: none; box-shadow: 0 4px 18px #132a4730}
+.empty-state,.loading-state {padding: 40px 24px; border: 1px solid var(--line); border-radius: 12px; background: white; color: var(--muted); font-size: .9rem}
+.loading-dot {display: inline-block; width: 9px; height: 9px; background: var(--accent); border-radius: 50%; margin-right: 10px}
+.site-footer {padding-block: 28px 40px; display: flex; gap: 24px; align-items: start; border-top: 1px solid var(--line); color: #76899e; font-size: .73rem}
+.site-footer strong {white-space: nowrap; color: #48647e}
+.site-footer p {max-width: 630px; line-height: 1.6}
+.site-footer a {margin-left: auto; white-space: nowrap}
+.sr-only {position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap}
+@media (min-width: 1800px) {
+  .chart-grid {grid-template-columns: repeat(3,minmax(0,1fr))}
+}
+@media (max-width: 900px) {
+  .hero-content {grid-template-columns: 1fr; padding-block: 35px; gap: 0}
+  .hero-aside {display: none}
+  .metrics {gap: 10px}
+  .metric {padding: 16px}
+  .chart-grid {grid-template-columns: 1fr}
+}
+@media (max-width: 540px) {
+  .site-bar {min-height: 70px; font-size: .7rem; gap: 8px}
+  .brand-divider {margin-inline: 4px}
+  .source-tag {display: none}
+  .hero-description {font-size: .86rem}
+  .hero-tags {gap: 7px}
+  .hero-tags > span {font-size: .65rem; padding: 6px 8px}
+  .global-nav ul {gap: 18px}
+  .global-nav a {font-size: .7rem; padding-block: 16px 13px}
+  main {padding-top: 28px}
+  .area-heading {align-items: start}
+  .count-badge {font-size: .62rem; padding: 6px}
+  .area-heading h2 {font-size: 1.5rem}
+  .metrics {grid-template-columns: repeat(2,minmax(0,1fr))}
+  .metric > span {font-size: .65rem}
+  .metric strong {font-size: 1.8rem}
+  .data-note span {display: block; margin-left: 0}
+  .chart-card {padding: 18px 14px}
+  .chart-frame {height: max(310px,var(--chart-height))}
+  .description {font-size: .76rem}
+  .area + .area {margin-top: 45px; padding-top: 35px}
+  .site-footer {flex-direction: column; gap: 12px}
+  .site-footer a {margin-left: 0}
+}
+@media (prefers-reduced-motion: no-preference) {
+  .chart-card {transition: border-color .15s,box-shadow .15s}
+  .chart-card:hover {border-color: #bacce1; box-shadow: 0 6px 18px #183a6212}
+}
