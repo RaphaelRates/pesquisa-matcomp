@@ -70,6 +70,38 @@ h2 {font-size: clamp(1.55rem,2.2vw,2.4rem); letter-spacing: -.035em; line-height
   color: #4b627b; border-radius: 7px; text-decoration: none; background: #ffffff85}
 .section-nav a:hover {border-color: #a5b8d1; color: var(--accent); background: white}
 .interaction-note {font-size: .72rem; color: #73879d; margin: -15px 0 28px; line-height: 1.7}
+.quality-panel {background: white; border: 1px solid var(--line); border-radius: 13px; padding: 24px; margin-bottom: 40px; scroll-margin-top: 90px}
+.quality-heading {display: flex; justify-content: space-between; align-items: center; gap: 20px}
+.quality-heading h2 {font-size: 1.1rem; margin-top: 8px; letter-spacing: -.02em}
+.refresh-button {font: inherit; font-size: .75rem; font-weight: 600; padding: 11px 15px; border: 1px solid #bacfdd;
+  border-radius: 7px; color: #167e73; background: #f3faf8; cursor: pointer; white-space: nowrap}
+.refresh-button:hover {background: #e9f5ef}
+.refresh-button:disabled {opacity: .6; cursor: wait}
+.quality-lead {font-size: .78rem; color: var(--muted); margin-top: 15px; line-height: 1.8}
+.quality-lead > span {display: block; font-size: .7rem; color: #8393a4}
+.quality-counts {display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); gap: 12px; margin: 18px 0}
+.quality-counts strong {display: block; font-size: 1.4rem; font-weight: 600}
+.quality-counts span {font-size: .7rem; color: var(--muted)}
+.quality-panel details p {font-size: .77rem; line-height: 1.8; color: var(--muted); max-width: 1050px; margin-top: 10px}
+.quality-warning {border-left: 3px solid #e7a23b; padding-left: 12px}
+.quality-issues {font-size: .75rem; line-height: 1.8; color: #99712d}
+.quality-issues strong {margin-left: 12px}
+.statistical-overview {margin: 24px 0; padding: 20px; border: 1px solid #d8e4f1; background: #eef4fb; border-radius: 12px}
+.statistical-heading {display: flex; gap: 16px; justify-content: space-between; align-items: center; margin-bottom: 17px}
+.statistical-heading h3 {font-size: .86rem; font-weight: 650}
+.statistical-heading > span {font-size: .7rem; color: #73879d; white-space: nowrap}
+.statistical-cards {display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 15px}
+.statistical-cards > div {border-left: 2px solid #c9daee; padding-left: 14px}
+.statistical-cards span,.statistical-cards small {display: block; color: #657a94; font-size: .69rem; line-height: 1.5}
+.statistical-cards strong {display: block; font-size: clamp(1.2rem,2vw,1.8rem); font-weight: 650; margin: 8px 0; font-variant-numeric: tabular-nums}
+.statistical-values {display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 0 30px; margin: 18px 0}
+.statistical-values > div {display: flex; justify-content: space-between; gap: 16px; font-size: .75rem; padding: 10px 0; border-bottom: 1px solid #dce6f1}
+.statistical-values dt {color: #61738a}
+.statistical-values dd {font-weight: 600; white-space: nowrap; margin: 0; font-variant-numeric: tabular-nums}
+.statistical-caution {font-size: .74rem; color: #657a94; line-height: 1.7}
+.method-note {border-top: 0; border-left: 3px solid #bbd4ec; background: #f5f9fd; padding: 10px 13px; border-radius: 0 5px 5px 0}
+.method-note p {font-size: .75rem; color: #61738a; line-height: 1.8; margin-top: 10px}
+.panel-description {font-size: .8rem; line-height: 1.8; color: #657a94; margin: -6px 0 20px; max-width: 1100px}
 .panel + .panel {margin-top: 36px}
 .panel-heading {display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 19px}
 .panel-heading h3 {font-size: 1.12rem; font-weight: 650; letter-spacing: -.02em}
@@ -122,6 +154,8 @@ details table {margin-top: 12px}
   .metrics {gap: 10px}
   .metric {padding: 16px}
   .chart-grid {grid-template-columns: 1fr}
+  .quality-counts {grid-template-columns: repeat(3,minmax(0,1fr))}
+  .statistical-values {grid-template-columns: repeat(2,minmax(0,1fr))}
 }
 @media (max-width: 540px) {
   .site-bar {min-height: 70px; font-size: .7rem; gap: 8px}
@@ -146,6 +180,15 @@ details table {margin-top: 12px}
   .area + .area {margin-top: 45px; padding-top: 35px}
   .site-footer {flex-direction: column; gap: 12px}
   .site-footer a {margin-left: 0}
+  .quality-panel,.statistical-overview {padding: 18px 14px}
+  .quality-heading {align-items: start; gap: 12px}
+  .quality-heading .eyebrow {font-size: .58rem}
+  .quality-heading h2 {font-size: .95rem}
+  .refresh-button {font-size: .66rem; padding: 9px}
+  .quality-counts {grid-template-columns: repeat(2,minmax(0,1fr))}
+  .statistical-cards {grid-template-columns: repeat(2,minmax(0,1fr)); gap: 18px}
+  .statistical-values {grid-template-columns: 1fr}
+  .statistical-heading {align-items: start}
 }
 @media (prefers-reduced-motion: no-preference) {
   .chart-card {transition: border-color .15s,box-shadow .15s}

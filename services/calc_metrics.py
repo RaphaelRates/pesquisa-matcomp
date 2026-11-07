@@ -5,6 +5,7 @@ from collections import Counter, defaultdict
 from fractions import Fraction
 import re
 from statistics import median
+from services.statistics_metrics import statistical_panel
 
 
 timere = re.compile(r"\b(SEG|TER|QUA|QUI|SEX|SÁB|SAB|DOM) (\d{2}):(\d{2})-(\d{2}):(\d{2})")
@@ -746,5 +747,12 @@ def build_panels(offers):
                 plot.update(id=f"ufca-ranking-{slug}-{i}-{j}", formato="ranking", description=description,
                             columns=["Posição e categoria", "Valor exibido", "Largura da barra (%)"])
         panels.append(dict(id=f"ranking-{slug}", title=f"Rankings · {title}", sections=sections))
+    course = "Matemática Computacional"
+    mc_codes = codes(course, 2) | codes(course)
+    mc_stats = statistical_panel("matcomp", "Análises estatísticas de MC",
+                                 select(hist, mc_codes), select(latest, mc_codes), periods)
+    panels[0]["sections"].extend(mc_stats["sections"])
+    panels[0]["statisticalSummary"] = mc_stats["statisticalSummary"]
+    panels.append(statistical_panel("ufca", "Análises estatísticas do CCT", hist, latest, periods))
     return panels
 

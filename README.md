@@ -4,7 +4,7 @@ Aplicação web para explorar vagas, matrículas, ocupação e distribuição da
 
 O painel lê o arquivo JSON de turmas, calcula os indicadores no servidor e envia os resultados ao navegador. O navegador monta os gráficos com Chart.js e apresenta mapas de calor em tabelas interativas.
 
-Com a base incluída no projeto, o site apresenta **129 visualizações**, sendo **36 de Matemática Computacional** e **93 dos resultados gerais do CCT**.
+Com a base incluída no projeto, o site apresenta **157 visualizações**, sendo **50 de Matemática Computacional** e **107 dos resultados gerais do CCT**.
 
 ## Executar o site
 
@@ -66,7 +66,7 @@ Esses valores descrevem o JSON incluído nesta versão. O site recalcula os resu
 
 ## Matemática Computacional
 
-Esta área contém cinco seções.
+Esta área contém nove seções, incluindo quatro conjuntos de análises estatísticas.
 
 ### Evolução por semestre — 7 gráficos
 
@@ -119,7 +119,7 @@ Esta seção reúne linhas, roscas, pizza, radar, dispersão, bolhas, colunas pr
 
 ## Resultados gerais do CCT
 
-Esta área contém 93 visualizações, organizadas em oito painéis.
+Esta área contém 107 visualizações, organizadas em nove painéis.
 
 ### Oferta e matrículas por semestre — 6 gráficos
 
@@ -197,6 +197,47 @@ Os gráficos abaixo aparecem uma vez em MC e uma vez no CCT, sempre com os dados
 | Dimensão da oferta por disciplina | Bolhas | Cada bolha representa um código. Os eixos somam vagas e matrículas e a área da bolha é proporcional ao número de turmas. |
 | Matrículas por natureza curricular | Áreas empilhadas | Soma matrículas por semestre em obrigatórias, optativas e compartilhadas ou sem classificação. |
 
+## Análises estatísticas — 14 gráficos adicionais em cada área
+
+As áreas de MC e CCT apresentam indicadores de distribuição, concentração, associação e limites matemáticos. Os cartões-resumo mostram a mediana, o desvio-padrão em pontos percentuais, o Gini das matrículas por disciplina e a correlação de Pearson entre capacidade e ocupação.
+
+A opção **Explorar os indicadores estatísticos** apresenta média aritmética, quartis, IQR, MAD, coeficiente de variação, assimetria, excesso de curtose, sinalizadores de Tukey, HHI, número efetivo de disciplinas, entropia normalizada, parcela das maiores disciplinas, Spearman e R².
+
+| Conjunto | Gráfico | Aplicação |
+| --- | --- | --- |
+| Distribuição e robustez | Distribuição detalhada da ocupação | Histograma com seis classes e proporções separadas para consolidadas e abertas de 2026.2. |
+| Distribuição e robustez | Faixa central de ocupação por semestre | Faixa entre Q1 e Q3 e linha da mediana. Quartis por interpolação linear inclusiva, posição (n − 1)p. |
+| Distribuição e robustez | Dispersão relativa da ocupação | Compara desvio-padrão / média e MAD / mediana. |
+| Distribuição e robustez | Assimetria e caudas da ocupação | Momentos populacionais de ordem 3 e 4, com excesso de curtose em relação a 3. |
+| Distribuição e robustez | Turmas sinalizadas pela regra de Tukey | Conta ocupações fora das cercas Q1 − 1,5 IQR e Q3 + 1,5 IQR de cada semestre. As turmas sinalizadas permanecem nos cálculos. |
+| Distribuição e robustez | Distribuição acumulada da ocupação | Mostra a parcela de turmas com ocupação menor ou igual a um limiar. |
+| Concentração e diversidade | Concentração das matrículas entre disciplinas | Curva de Lorenz dos totais por código e diagonal de igualdade. |
+| Concentração e diversidade | Índices de concentração por semestre | Evolução de Gini e HHI. |
+| Concentração e diversidade | Disciplinas ofertadas e diversidade efetiva | Compara códigos ofertados com o número efetivo de disciplinas, 1 / HHI. |
+| Concentração e diversidade | Participação das dez maiores disciplinas nas matrículas | Participações individuais dos códigos com mais matrículas no total do recorte. |
+| Associações e ajuste | Relação entre capacidade e ocupação por semestre | Coeficientes de Pearson e Spearman. Spearman usa postos médios nos empates. |
+| Associações e ajuste | Capacidade e ocupação com ajuste descritivo | Dispersão com reta de mínimos quadrados e R². |
+| Limites matemáticos | Ocupação acima de um limiar e limite de Markov | Compara a parcela observada de turmas com ocupação ≥ t com o limite superior média / t. |
+| Limites matemáticos | Concentração em torno da média e limite de Chebyshev | Compara a parcela observada dentro de k desvios-padrão com o limite inferior 1 − 1/k². |
+
+As estatísticas usam as turmas consolidadas, com peso igual por turma. Histograma e distribuição acumulada também mostram as abertas em uma série própria. Variância e desvio-padrão são populacionais, com divisor n. Índices com denominador zero são apresentados como indefinidos.
+
+As desigualdades de Markov e Chebyshev são aplicadas à distribuição empírica obtida ao escolher uma turma uniformemente entre os registros consolidados. Markov exige ocupação não negativa e limiar positivo. Chebyshev usa a média aritmética e a variância dessa distribuição. Para variância zero, o painel identifica o caso em que todas as ocupações coincidem. As garantias se referem ao recorte observado.
+
+Os coeficientes de associação e o ajuste linear descrevem a base. A capacidade integra o denominador da ocupação, e as observações incluem disciplinas repetidas em diferentes semestres. Esses aspectos devem acompanhar a interpretação das relações observadas.
+
+Os indicadores de concentração usam matrículas somadas por código. HHI é a soma dos quadrados das participações, na escala de 0 a 1. O número efetivo 1 / HHI corresponde à quantidade de disciplinas com participações iguais que produziria o mesmo HHI. A entropia de Shannon é dividida pelo logaritmo do número de códigos. A parcela das 20% maiores disciplinas utiliza o número de códigos arredondado para cima.
+
+Cada novo gráfico oferece **Método e interpretação**, com sua definição e orientações de leitura.
+
+As definições de quartis e cercas de inspeção seguem a análise exploratória de dados. As cercas de Tukey servem para localizar observações que merecem revisão. [NIST — boxplot](https://www.itl.nist.gov/div898/handbook/eda/section3/boxplot.htm)
+
+Pearson e Spearman são usados como medidas descritivas de associação. [NIST — Pearson](https://www.itl.nist.gov/div898/software/dataplot/refman2/auxillar/correlat.htm), [NIST — correlação por postos](https://www.itl.nist.gov/div898/software/dataplot/refman2/ch2/rankcorr.pdf)
+
+As aplicações de Markov e Chebyshev utilizam suas condições para variáveis aleatórias e momentos. [University of British Columbia — desigualdades de concentração](https://www.cs.ubc.ca/~dsuth/532D/26w1/notes/html/chap_concentration.html)
+
+Lorenz, Gini e HHI são adaptados aos totais de matrículas por disciplina. [Banco Mundial — índice de Gini](https://databank.worldbank.org/metadataglossary/world-development-indicators/series/SI.POV.GINI), [DOJ — definição do HHI](https://www.justice.gov/atr/herfindahl-hirschman-index)
+
 ## Como os indicadores são calculados
 
 | Indicador | Cálculo |
@@ -246,7 +287,13 @@ Um traço nos mapas indica ausência de registro no cruzamento analisado. A pres
 
 ## Atualizar os dados
 
-Edite ou substitua o JSON e atualize a página do navegador. A consulta a `/api/painel` relê o arquivo e recalcula os resultados.
+Edite ou substitua o JSON e use **Recalcular dados** ou atualize a página do navegador. A consulta a `/api/painel` relê o arquivo, prepara os registros e recalcula os resultados.
+
+Antes dos indicadores, o pré-processamento valida e normaliza textos, códigos, semestres, horários e contagens. Números ausentes, negativos ou fracionários são descartados com o registro correspondente e aparecem no relatório. Contagens numéricas em texto são convertidas quando representam inteiros válidos.
+
+A deduplicação exige identidade de turma preenchida e conteúdo coincidente após a normalização, desconsiderando apenas os campos de proveniência `origem` e `linha`. Versões conflitantes de uma mesma turma permanecem na base tratada e são sinalizadas. O arquivo de origem é preservado.
+
+A seção **Qualidade e preparação da base** informa quantos registros foram lidos, normalizados, descartados, deduplicados e incluídos no recorte. Também apresenta exclusões por modalidade, capacidade, situação ou semestre e avisos de horário. O processamento é realizado novamente em cada consulta.
 
 A estrutura esperada é uma lista de objetos. Os campos utilizados nos cálculos são
 
@@ -273,6 +320,8 @@ Se o arquivo não puder ser lido ou processado, a API responde com HTTP 503 e a 
 | --- | --- |
 | `app.py` | Servidor HTTP, página inicial, arquivos locais e rota de indicadores. |
 | `services/calc_metrics.py` | Recortes, matrizes curriculares, indicadores e definição dos gráficos. |
+| `services/preprocessing.py` | Validação, normalização, deduplicação conservadora e relatório de qualidade. |
+| `services/statistics_metrics.py` | Estatísticas descritivas, concentração, associações e aplicações de Markov e Chebyshev. |
 | `services/graph.py` | Leitura do JSON, montagem da resposta de dados e recursos de apresentação compartilhados. Inclui exportação estática. |
 | `painel.js` | Montagem dos cartões, gráficos Chart.js, mapas de calor e interações no navegador. |
 | `painel.css` | Layout, tipografia, cores e adaptação a diferentes telas. |

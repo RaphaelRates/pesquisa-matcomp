@@ -1,12 +1,14 @@
 """Calcula os gráficos e gera o painel local a partir do JSON de turmas."""
 
 import argparse
+from datetime import datetime, timezone
 from html import escape
 import json
 import math
 from pathlib import Path
 import webbrowser
 from services.calc_metrics import build_panels
+from services.preprocessing import preprocess_offers
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -375,8 +377,10 @@ def page(bundle):
 
 
 def dashboard_data(data_path):
-    offers = json.loads(data_path.read_text(encoding="utf-8"))
-    return {"titulo": TITLE, "paineis": build_panels(offers)}
+    raw = json.loads(data_path.read_text(encoding="utf-8-sig"))
+    offers, report = preprocess_offers(raw)
+    return {"titulo": TITLE, "paineis": build_panels(offers), "quality": report,
+            "generatedAt": datetime.now(timezone.utc).isoformat()}
 
 
 def render_dashboard(data_path):

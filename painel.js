@@ -4,13 +4,18 @@ const colors = ["#3276dd", "#149485", "#e7a23b", "#9164ca", "#de6474", "#66798d"
 const integerFormat = new Intl.NumberFormat("pt-BR", {maximumFractionDigits: 0});
 const percentFormat = new Intl.NumberFormat("pt-BR", {style: "percent", minimumFractionDigits: 1, maximumFractionDigits: 1});
 const decimalFormat = new Intl.NumberFormat("pt-BR", {maximumFractionDigits: 1});
+const preciseFormat = new Intl.NumberFormat("pt-BR", {maximumFractionDigits: 3});
+const indexFormat = new Intl.NumberFormat("pt-BR", {maximumFractionDigits: 4});
 const chartInstances = new Map();
+let stopMounting = () => {};
+let dashboardLoading = false;
 const kinds = {
   bar: "Barras", horizontalBar: "Barras horizontais", ranking: "Ranking",
   stackedBar: "Barras empilhadas", stackedPercent: "Composição · 100%",
   line: "Linhas", area: "Área empilhada", mixed: "Barras + linha",
   donut: "Rosca", pie: "Pizza", radar: "Radar",
   scatter: "Dispersão", bubble: "Bolhas", heatmap: "Mapa de calor",
+  distributionBand: "Faixa interquartil", statisticalScatter: "Associação descritiva",
 };
 
 function escapeHtml(value) {
@@ -20,6 +25,12 @@ function escapeHtml(value) {
 
 function format(value, percent = false) {
   return value == null ? "Sem registro" : (percent ? percentFormat : decimalFormat).format(value);
+}
+
+function measure(value, valueFormat = {}) {
+  if (value == null) return "Sem registro";
+  if (valueFormat.style === "percent") return percentFormat.format(value);
+  return valueFormat.style === "decimal" ? preciseFormat.format(value) : decimalFormat.format(value);
 }
 
 function records(plot) {
@@ -80,12 +91,21 @@ function table(plot) {
   const columns = plot.formato === "ranking" ? plot.columns.slice(0, 2) : plot.columns;
   const header = columns.map(col => `<th scope="col">${escapeHtml(col)}</th>`).join("");
   const body = plot.rows.map(row => `<tr>${row.slice(0, columns.length).map((value, i) => {
-    const percent = spec?.valueFormat?.style === "percent" && valueColumns.includes(columns[i]);
-    const text = value == null ? "—" : typeof value === "number" ? format(value, percent) : value;
+    const percent = (spec?.valueFormat?.style === "percent" && valueColumns.includes(columns[i])) ||
+      (spec?.xValueFormat?.style === "percent" && columns[i] === spec.x);
+    const text = value == null ? "—" : typeof value === "number" ?
+      (percent ? format(value, true) : preciseFormat.format(value)) : value;
     return `<td>${escapeHtml(text)}</td>`;
   }).join("")}</tr>`).join("");
   return `<details id="${escapeHtml(plot.id)}-dados"><summary>Consultar dados</summary><div class="scroll">
     <table><thead><tr>${header}</tr></thead><tbody>${body}</tbody></table></div></details>`;
+}
+
+function methodNote(plot) {
+  if (!plot.method && !plot.interpretation) return "";
+  return `<details class="method-note"><summary>Método e interpretação</summary>
+    ${plot.method ? `<p>${escapeHtml(plot.method)}</p>` : ""}
+    ${plot.interpretation ? `<p>${escapeHtml(plot.interpretation)}</p>` : ""}</details>`;
 }
 
 function chartGrid(plots, heading) {
@@ -104,7 +124,8 @@ function chartGrid(plots, heading) {
       <div class="card-kicker"><span class="chart-type">${kinds[kind]}</span><a href="#${escapeHtml(plot.id)}" aria-label="Link para este gráfico">↗</a></div>
       <${heading}>${escapeHtml(plot.title)}</${heading}>
       <p class="description">${escapeHtml(plot.description)}</p>
-      ${hasValues ? graphic + table(plot) : '<p class="empty-state">Sem turmas neste recorte.</p>'}</article>`;
+      ${hasValues ? graphic + methodNote(plot) + table(plot) :
+        '<p class="empty-state">Sem turmas neste recorte.</p>' + methodNote(plot)}</article>`;
   }).join("")}</div>`;
 }
 
@@ -121,12 +142,78 @@ function summaryCards(summary) {
     <span>2026.2 tem ${integerFormat.format(summary.abertas.n)} turmas abertas, exibidas separadamente.</span></p>`;
 }
 
+function dataQuality(report, generatedAt) {
+  if (!report) return "";
+  const counts = [
+    ["Registros lidos", report.inputRows], ["Registros válidos", report.validRows],
+    ["Normalizados", report.normalizedRows], ["Inválidos descartados", report.discardedRows],
+    ["Duplicatas removidas", report.duplicateRows], ["Grupos com conflito", report.conflictGroups],
+  ];
+  const issues = [...(report.issues ?? []), ...(report.exclusionReasons ?? []),
+    ...(report.outOfScopeReasons ?? []), ...(report.warnings ?? [])].map(issue =>
+    `<li>${escapeHtml(issue.reason)} <strong>${integerFormat.format(issue.count)}</strong></li>`).join("");
+  const timestamp = generatedAt ? new Intl.DateTimeFormat("pt-BR", {dateStyle: "short", timeStyle: "medium"}).format(new Date(generatedAt)) : "";
+  return `<section class="quality-panel" id="qualidade-dados" aria-labelledby="qualidade-titulo">
+    <div class="quality-heading"><div><p class="eyebrow">DADOS PROCESSADOS NESTA CONSULTA</p>
+    <h2 id="qualidade-titulo">Qualidade e preparação da base</h2></div>
+    <button type="button" class="refresh-button" id="refresh-data">Recalcular dados ↻</button></div>
+    <p class="quality-lead">${integerFormat.format(report.inputRows)} registros lidos ·
+    ${integerFormat.format(report.inScopeRows ?? report.eligibleRows)} registros no recorte de análise.
+    <span id="updated-status" role="status">Atualizado em ${timestamp}</span></p>
+    <details><summary>Ver o tratamento aplicado aos dados</summary>
+    <div class="quality-counts">${counts.map(([name, value]) =>
+      `<div><strong>${integerFormat.format(value ?? 0)}</strong><span>${name}</span></div>`).join("")}</div>
+    <p>Textos, códigos, semestres e contagens são validados antes dos indicadores. Duplicatas exatas com identidade
+    de turma confirmada são removidas. Registros conflitantes são preservados e sinalizados.
+    Matrículas acima da capacidade continuam na análise.</p>
+    ${report.conflictGroups ? '<p class="quality-warning">Há versões conflitantes de turmas. Os resultados incluem esses registros e devem ser lidos considerando esse conflito.</p>' : ""}
+    ${issues ? `<ul class="quality-issues">${issues}</ul>` : ""}
+    <p class="muted">O arquivo original é preservado. A preparação ocorre em memória em cada consulta.</p>
+    </details></section>`;
+}
+
+function statisticalOverview(stats) {
+  if (!stats) return "";
+  const o = stats.occupancy, c = stats.concentration, a = stats.association;
+  const index = value => value == null ? "Indefinido no recorte" : indexFormat.format(value);
+  const points = value => value == null ? "Sem registro" : decimalFormat.format(value * 100) + " p.p.";
+  const prominent = [
+    ["Mediana de ocupação", format(o.median, true), "Turma central da distribuição"],
+    ["Desvio-padrão", points(o.standardDeviation), "Dispersão entre turmas"],
+    ["Gini das matrículas", index(c.gini), "Concentração por disciplina · 0 a 1"],
+    ["Pearson", index(a.pearson), "Capacidade × ocupação · −1 a 1"],
+  ];
+  const entries = [
+    ["Turmas analisadas", integerFormat.format(o.n)],
+    ["Média aritmética da ocupação", format(o.mean, true)],
+    ["Primeiro quartil (Q1)", format(o.q1, true)], ["Terceiro quartil (Q3)", format(o.q3, true)],
+    ["Intervalo interquartil (IQR)", points(o.iqr)], ["Desvio absoluto mediano (MAD)", points(o.mad)],
+    ["Coeficiente de variação", format(o.coefficientVariation, true)],
+    ["Assimetria", index(o.skewness)], ["Excesso de curtose", index(o.excessKurtosis)],
+    ["Abaixo da cerca de Tukey", format(o.outliersLow)], ["Acima da cerca de Tukey", format(o.outliersHigh)],
+    ["Disciplinas com oferta", integerFormat.format(c.disciplines)],
+    ["HHI em frações", index(c.hhi)], ["Disciplinas efetivas (1/HHI)", index(c.effectiveDisciplines)],
+    ["Entropia normalizada", index(c.normalizedEntropy)], ["Parcela das 20% maiores disciplinas", format(c.top20Share, true)],
+    ["Spearman", index(a.spearman)], ["R² do ajuste linear", index(a.rSquared)],
+  ];
+  return `<section class="statistical-overview" aria-label="Resumo estatístico das turmas consolidadas">
+    <div class="statistical-heading"><h3>Estatísticas das turmas consolidadas</h3><span>${o.n} turmas</span></div>
+    <div class="statistical-cards">${prominent.map(([name, value, note]) =>
+      `<div><span>${name}</span><strong>${value}</strong><small>${note}</small></div>`).join("")}</div>
+    <details><summary>Explorar os indicadores estatísticos</summary>
+    <dl class="statistical-values">${entries.map(([name, value]) =>
+      `<div><dt>${name}</dt><dd>${value}</dd></div>`).join("")}</dl>
+    <p class="statistical-caution">Cada turma tem o mesmo peso nas estatísticas de ocupação. A ocupação geral dos
+    cartões anteriores pondera pela capacidade. Os coeficientes descrevem as associações do recorte.
+    Capacidade também está no denominador da ocupação.</p></details></section>`;
+}
+
 function panelHeading(id, title, count) {
   return `<div class="panel-heading"><h3 id="${id}-titulo">${escapeHtml(title)}</h3>
     <span>${count} gráficos</span></div>`;
 }
 
-function dashboard({paineis}) {
+function dashboard({paineis, quality, generatedAt}) {
   const mcId = "matematica-computacional";
   const mc = paineis.find(panel => panel.id === mcId);
   const cct = paineis.filter(panel => panel.id !== mcId);
@@ -135,10 +222,11 @@ function dashboard({paineis}) {
   const cctNav = links(cct.map(panel => [panel.id, panel.title]));
   const mcCount = mc.sections.reduce((sum, section) => sum + section.plots.length, 0);
   const cctCount = cct.reduce((sum, panel) => sum + panel.sections.reduce((n, s) => n + s.plots.length, 0), 0);
-  return `<section class="area mc-area" id="${mcId}">
+  return `${dataQuality(quality, generatedAt)}<section class="area mc-area" id="${mcId}">
     <div class="area-heading"><div><p class="eyebrow">01 / FOCO NO CURSO</p><h2>${escapeHtml(mc.title)}</h2></div><span class="count-badge">${mcCount} gráficos</span></div>
     <p class="area-description">${escapeHtml(mc.description)}</p>
     ${summaryCards(mc.summary)}
+    ${statisticalOverview(mc.statisticalSummary)}
     <nav class="section-nav" aria-label="Seções de Matemática Computacional">${mcNav}</nav>
     <p class="interaction-note">Passe o mouse para ver detalhes. Clique nas legendas para comparar séries.
     Com o teclado, use Tab e as setas nos gráficos.</p>
@@ -149,10 +237,12 @@ function dashboard({paineis}) {
     <div class="area-heading"><div><p class="eyebrow">02 / VISÃO DO CENTRO</p><h2>Resultados gerais do CCT</h2></div><span class="count-badge">${cctCount} gráficos</span></div>
     <p class="area-description">Oferta presencial do Centro de Ciências e Tecnologia. Os rankings por natureza curricular usam os códigos classificados nas matrizes de referência.</p>
     ${summaryCards(cct.find(panel => panel.id === "evolucao").summary)}
+    ${statisticalOverview(cct.find(panel => panel.statisticalSummary)?.statisticalSummary)}
     <nav class="section-nav" aria-label="Seções do CCT">${cctNav}</nav>
     <p class="interaction-note">Passe o mouse para ver detalhes. As tabelas abaixo dos gráficos apresentam os valores completos.</p>
     ${cct.map(panel => `<section class="panel" id="${escapeHtml(panel.id)}" aria-labelledby="${escapeHtml(panel.id)}-titulo">
       ${panelHeading(panel.id, panel.title, panel.sections.reduce((sum, section) => sum + section.plots.length, 0))}
+      ${panel.description ? `<p class="panel-description">${escapeHtml(panel.description)}</p>` : ""}
       ${panel.sections.map(section => section.title
         ? `<h4 class="section-heading">${escapeHtml(section.title)}</h4>${chartGrid(section.plots, "h5")}`
         : chartGrid(section.plots, "h4")).join("")}
@@ -166,10 +256,12 @@ function chartConfiguration(plot) {
   const horizontal = kind === "ranking" || kind === "horizontalBar";
   const radial = ["donut", "pie", "radar"].includes(kind);
   const circular = kind === "donut" || kind === "pie";
-  const points = kind === "scatter" || kind === "bubble";
+  const points = ["scatter", "bubble", "statisticalScatter"].includes(kind);
+  const statistical = kind === "statisticalScatter";
+  const numericX = spec.numericX === true;
   const percent = plot.rankingPercent ?? spec.valueFormat?.style === "percent";
   const stacked = ["stackedBar", "stackedPercent", "area"].includes(kind);
-  const line = ["line", "area"].includes(kind);
+  const line = ["line", "area", "distributionBand"].includes(kind);
   const type = kind === "donut" ? "doughnut" : kind === "pie" || kind === "radar" ? kind :
     points ? "bubble" : line ? "line" : "bar";
   const labels = kind === "ranking" ? plot.rows.map(row => row[0]) :
@@ -179,15 +271,16 @@ function chartConfiguration(plot) {
     label: "Turmas",
     data: rows.map(({values}, rowIndex) => ({
       x: values[spec.x], y: values[spec.y],
-      r: kind === "bubble" ? Math.sqrt(values[spec.size]) * 3 : 2.5 + Math.sqrt(values[spec.size]) * 1.6,
+      r: kind === "bubble" ? Math.sqrt(values[spec.size]) * 3 : 2.5 + Math.sqrt(values[spec.size] ?? 1) * 1.6,
       rowIndex,
     })),
-    backgroundColor: rows.map(({values}) => values[spec.y] > values[spec.x] ? colors[4] + "b3" : colors[0] + "80"),
-    borderColor: rows.map(({values}) => values[spec.y] > values[spec.x] ? colors[4] : colors[0]),
+    backgroundColor: rows.map(({values}) => !statistical && values[spec.y] > values[spec.x] ? colors[4] + "b3" : colors[0] + "80"),
+    borderColor: rows.map(({values}) => !statistical && values[spec.y] > values[spec.x] ? colors[4] : colors[0]),
     borderWidth: 1, hoverBorderWidth: 2,
   }] : series.map((key, i) => ({
     label: key,
-    data: kind === "ranking" ? plot.rankingValues : rows.map(({values}) => values[key]),
+    data: kind === "ranking" ? plot.rankingValues : rows.map(({values}) =>
+      numericX && values[key] != null ? {x: values[spec.x], y: values[key]} : values[key]),
     backgroundColor: circular ? labels.map(label => colors[(spec.categoryOrder ?? labels).indexOf(label) % colors.length]) :
       colors[i] + (line || kind === "radar" ? "35" : "d9"),
     borderColor: circular ? "#ffffff" : colors[i],
@@ -195,8 +288,14 @@ function chartConfiguration(plot) {
     borderRadius: !radial && !line ? 4 : 0,
     pointRadius: 3.5, pointHoverRadius: 6, pointHitRadius: 12,
     fill: kind === "area" ? (i === 0 ? "origin" : "-1") : kind === "radar",
-    tension: 0.15,
+    tension: numericX ? 0 : 0.15,
     spanGaps: false,
+    ...(spec.stepped ? {stepped: spec.stepped} : {}),
+    ...(numericX ? {pointRadius: rows.length > 40 ? 0 : 2.5} : {}),
+    ...(kind === "distributionBand" ? {
+      fill: i === 2 ? 0 : false, tension: 0, borderColor: i === 1 ? colors[0] : colors[0] + "70",
+      backgroundColor: colors[0] + "20", borderWidth: i === 1 ? 2.5 : 1, pointRadius: i === 1 ? 3 : 2,
+    } : {}),
     ...(kind === "mixed" ? {type: spec.lineSeries.includes(key) ? "line" : "bar",
       borderWidth: spec.lineSeries.includes(key) ? 2.5 : 0, order: spec.lineSeries.includes(key) ? 0 : 1} : {}),
     ...(line || kind === "mixed" ? {segment: {
@@ -208,6 +307,15 @@ function chartConfiguration(plot) {
     const maximum = Math.max(...datasets[0].data.flatMap(point => [point.x, point.y]), 1);
     datasets.push({type: "line", label: "100% de ocupação", data: [{x: 0, y: 0}, {x: maximum, y: maximum}],
       borderColor: "#8794a5", borderDash: [5, 5], borderWidth: 1, pointRadius: 0, pointHitRadius: 0, fill: false});
+  }
+  if (statistical && Number.isFinite(spec.trend?.slope) && Number.isFinite(spec.trend?.intercept)) {
+    const xs = rows.map(({values}) => values[spec.x]);
+    const ends = [Math.min(...xs), Math.max(...xs)];
+    datasets.push({
+      type: "line", label: "Ajuste linear descritivo",
+      data: ends.map(x => ({x, y: spec.trend.intercept + spec.trend.slope * x})),
+      borderColor: colors[2], borderDash: [6, 4], borderWidth: 2, pointRadius: 0, fill: false,
+    });
   }
   const options = {
     responsive: true, maintainAspectRatio: false, animation: false,
@@ -222,9 +330,14 @@ function chartConfiguration(plot) {
         filter: item => !points || item.datasetIndex === 0,
         callbacks: {
           title: items => items.length ? wrapLabel(points ? rows[items[0].dataIndex].values[spec.label] ?? "Turmas consolidadas" :
-            labels[items[0].dataIndex], 48) : "",
+            numericX ? `${spec.x}: ${format(rows[items[0].dataIndex].values[spec.x], spec.xValueFormat?.style === "percent")}` :
+              labels[items[0].dataIndex], 48) : "",
           label: item => {
             const row = rows[item.dataIndex];
+            if (statistical) return [
+              `${spec.x}: ${format(row.values[spec.x], spec.xValueFormat?.style === "percent")}`,
+              `${spec.y}: ${format(row.values[spec.y], percent)}`,
+            ];
             if (points) return [`${format(row.values[spec.x])} vagas · ${format(row.values[spec.y])} matrículas`,
               `${format(row.values[spec.size])} turmas · ${format(row.values[spec.y] / row.values[spec.x], true)} de ocupação`];
             if (kind === "ranking") return plot.rows[item.dataIndex][1];
@@ -236,7 +349,7 @@ function chartConfiguration(plot) {
               const total = series.reduce((sum, key) => sum + (row.values[key] ?? 0), 0);
               return `${item.dataset.label}: ${format(item.raw)} (${format(total ? item.raw / total : 0, true)})`;
             }
-            return `${item.dataset.label}: ${format(item.raw, percent)}`;
+            return `${item.dataset.label}: ${measure(numericX ? item.raw.y : item.raw, spec.valueFormat)}`;
           },
           afterBody: items => {
             if (!items.length) return [];
@@ -265,9 +378,17 @@ function chartConfiguration(plot) {
     options.indexAxis = horizontal ? "y" : "x";
     const valueScale = {
       beginAtZero: true, stacked, grid: {color: "#edf1f6"}, border: {display: false},
-      ticks: {maxTicksLimit: 6, callback: value => format(value, percent)},
+      ticks: {maxTicksLimit: 6, callback: value => measure(value, spec.valueFormat ?? (percent ? {style: "percent"} : {}))},
     };
     if (percent) valueScale.suggestedMax = 1;
+    if (spec.yDomain && !horizontal) {
+      valueScale.suggestedMin = spec.yDomain[0];
+      valueScale.suggestedMax = spec.yDomain[1];
+      if (spec.yDomain[0] < 0) {
+        valueScale.min = spec.yDomain[0];
+        valueScale.max = spec.yDomain[1];
+      }
+    }
     if (kind === "stackedPercent") valueScale.max = 1;
     const categoryScale = {stacked, grid: {display: false}, border: {display: false},
       ticks: {autoSkip: !horizontal, maxRotation: 0, font: {size: 11},
@@ -277,8 +398,12 @@ function chartConfiguration(plot) {
       options.scales.x = {type: "linear", beginAtZero: true, grid: {color: "#edf1f6"}, title: {display: true, text: spec.x}};
       options.scales.y.title = {display: true, text: spec.y};
     }
+    if (numericX) {
+      options.scales.x = {type: "linear", beginAtZero: true, grid: {color: "#edf1f6"},
+        title: {display: true, text: spec.x}, ticks: {callback: value => format(value, spec.xValueFormat?.style === "percent")}};
+    }
   }
-  return {type, data: {labels: points ? undefined : labels, datasets}, options};
+  return {type, data: {labels: points || numericX ? undefined : labels, datasets}, options};
 }
 
 function enableKeyboard(canvas, chart) {
@@ -295,7 +420,7 @@ function enableKeyboard(canvas, chart) {
     event.preventDefault();
     const elements = chart.data.datasets.flatMap((dataset, datasetIndex) =>
       chart.isDatasetVisible(datasetIndex) ? dataset.data.flatMap((value, index) =>
-        value == null || dataset.label === "100% de ocupação" ||
+        value == null || ["100% de ocupação", "Ajuste linear descritivo"].includes(dataset.label) ||
           (["pie", "doughnut"].includes(chart.config.type) && !chart.getDataVisibility(index))
           ? [] : [{datasetIndex, index}]) : []);
     if (!elements.length) return;
@@ -322,7 +447,7 @@ function mountCharts(plots) {
     enableKeyboard(canvas, chart);
   };
   const canvases = document.querySelectorAll("canvas[data-plot-id]");
-  if (!("IntersectionObserver" in window)) { canvases.forEach(create); return; }
+  if (!("IntersectionObserver" in window)) { canvases.forEach(create); return () => {}; }
   const observer = new IntersectionObserver(entries => {
     entries.filter(entry => entry.isIntersecting).forEach(entry => {
       observer.unobserve(entry.target);
@@ -338,11 +463,25 @@ function mountCharts(plots) {
       }
     }, {once: true});
   });
+  return () => observer.disconnect();
 }
 
 async function loadDashboard() {
+  if (dashboardLoading) return;
+  dashboardLoading = true;
   const main = document.getElementById("painel");
   const index = document.getElementById("indice");
+  const refresh = document.getElementById("refresh-data");
+  main.setAttribute("aria-busy", "true");
+  if (refresh) {
+    refresh.disabled = true;
+    refresh.textContent = "Processando…";
+  }
+  function clearCharts() {
+    stopMounting();
+    chartInstances.forEach(chart => chart.destroy());
+    chartInstances.clear();
+  }
   try {
     if (typeof Chart === "undefined") throw new Error("Não foi possível carregar o Chart.js local.");
     Chart.defaults.font.family = '"Segoe UI", system-ui, sans-serif';
@@ -350,19 +489,23 @@ async function loadDashboard() {
     const response = await fetch("/api/painel");
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data = await response.json();
+    clearCharts();
     main.innerHTML = dashboard(data);
     index.innerHTML = links([["matematica-computacional", "01 · Matemática Computacional"], ["cct", "02 · Resultados gerais do CCT"]]);
     index.hidden = false;
     const plots = new Map(data.paineis.flatMap(panel => panel.sections.flatMap(section =>
       section.plots.map(plot => [plot.id, plot]))));
-    mountCharts(plots);
+    stopMounting = mountCharts(plots);
     document.getElementById("chart-count").textContent = `${plots.size} visualizações`;
     document.getElementById(location.hash.slice(1))?.scrollIntoView();
   } catch (error) {
     console.error(error);
-    main.innerHTML = '<p class="empty-state" role="alert">Não foi possível carregar o painel. Atualize a página para tentar novamente.</p>';
+    clearCharts();
+    main.innerHTML = '<div class="empty-state" role="alert"><p>Não foi possível processar os dados do painel. Confira o JSON e tente novamente.</p><button class="refresh-button" id="refresh-data" type="button">Tentar novamente ↻</button></div>';
   } finally {
+    dashboardLoading = false;
     main.setAttribute("aria-busy", "false");
+    document.getElementById("refresh-data")?.addEventListener("click", loadDashboard);
   }
 }
 
