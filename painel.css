@@ -194,3 +194,44 @@ details table {margin-top: 12px}
   .chart-card {transition: border-color .15s,box-shadow .15s}
   .chart-card:hover {border-color: #bacce1; box-shadow: 0 6px 18px #183a6212}
 }
+.discipline-controls {display:grid; grid-template-columns:1fr 2fr; gap:16px; margin:24px 0 12px}
+.discipline-controls label {display:grid; gap:8px; min-width:0; font-size:.85rem; font-weight:600}
+.discipline-controls input,.discipline-controls select {width:100%; min-width:0; padding:12px; border:1px solid var(--line); border-radius:8px; background:white; color:inherit; font:inherit}
+.discipline-controls :is(input,select):focus-visible {outline:3px solid #3276dd; outline-offset:2px}
+.discipline-reading {line-height:1.7; padding:18px; background:#edf4fc; border-radius:10px}
+.period-controls {padding:26px; border:1px solid #c6d8ed; border-radius:14px; background:#edf4fc; margin-bottom:40px; scroll-margin-top:90px}
+.period-controls h2 {font-size:1.35rem; margin:9px 0 12px; scroll-margin-top:100px}
+.period-controls p,.comparison-overview > p {font-size:.8rem; color:var(--muted); line-height:1.7}
+.period-buttons {display:flex; flex-wrap:wrap; gap:10px; margin:22px 0 14px}
+.period-buttons button {font:inherit; font-size:.85rem; font-weight:650; padding:13px 20px; border:1px solid #b4c7df; border-radius:8px; cursor:pointer; background:white; color:#36516d}
+.period-buttons button[aria-pressed="true"] {background:#205fa9; color:white; border-color:#205fa9; box-shadow:0 3px 8px #205fa925}
+.period-controls .selected-scope {font-weight:600; color:#274a72}
+.scope-note {display:inline-block; font-size:.67rem; line-height:1.6; color:#315981; background:#eef5fc; padding:5px 8px; border-radius:5px; margin-top:10px}
+.source-verification {font-size:.73rem; padding:14px 16px; margin-top:15px; background:#f0f8f5; border-left:3px solid #149485; border-radius:5px; line-height:1.7}
+.source-verification p {color:var(--muted); margin-top:5px}
+.comparison-overview {margin:24px 0; padding:22px; border:1px solid #cbdced; border-radius:12px; background:#fff}
+.comparison-heading {display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:12px}
+.comparison-heading h3 {font-size:.95rem}
+.comparison-heading > span {font-size:.75rem; color:#466f9d; white-space:nowrap}
+.comparison-cards {display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; margin:20px 0}
+.comparison-cards > div {border-left:2px solid #d2dfed; padding-left:14px}
+.comparison-cards span,.comparison-cards small {display:block; font-size:.73rem; line-height:1.7; color:var(--muted)}
+.comparison-cards strong {display:block; font-size:1.6rem; margin:6px 0; font-variant-numeric:tabular-nums}
+.delta-up {color:#215da0}
+.delta-down {color:#9a5a24}
+.delta-same,.delta-missing {color:#64748b}
+.comparison-scroll {max-height:440px; margin:14px 0}
+.comparison-scroll caption {text-align:left; font-size:.72rem; color:#61738a; margin:10px 0}
+.comparison-scroll thead {position:sticky; top:0; background:#f3f7fc; z-index:1}
+.comparison-scroll tbody th {white-space:normal; min-width:190px}
+.comparison-note {font-size:.73rem; color:var(--muted); line-height:1.75; margin-top:14px}
+.period-comparison > summary {color:#285f9a; line-height:1.7}
+.baseline-content .chart-grid {display:block; margin-top:14px}
+.baseline-content .chart-card {box-shadow:none; padding:14px}
+@media(max-width:640px) {
+  .period-controls,.comparison-overview {padding:18px 14px}
+  .comparison-cards {grid-template-columns:repeat(2,minmax(0,1fr))}
+  .comparison-heading {align-items:start; flex-direction:column; gap:8px}
+  .period-buttons button {flex:1; font-size:.75rem; padding:12px}
+}
+@media(max-width:640px) {.discipline-controls {grid-template-columns:1fr}}

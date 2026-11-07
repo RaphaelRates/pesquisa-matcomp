@@ -1,14 +1,16 @@
 """Calcula os gráficos e gera o painel local a partir do JSON de turmas."""
 
 import argparse
+import hashlib
 from datetime import datetime, timezone
 from html import escape
 import json
 import math
 from pathlib import Path
 import webbrowser
-from services.calc_metrics import build_panels
 from services.preprocessing import preprocess_offers
+from services.period_views import build_period_views
+from services.period_comparison import attach_comparisons
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -349,26 +351,26 @@ def page(bundle):
             f'<section class="panel" id="{escape(panel["id"])}"><h3>{escape(panel["title"])}</h3>{"".join(sections)}'
             '<a class="back" href="#cct">Voltar ao início do CCT</a></section>'
         )
-    areas = [("matematica-computacional", mathematics["title"]), ("cct", "Resultados gerais do CCT")]
+    areas = [("cct", "Resultados gerais do CCT"), ("matematica-computacional", mathematics["title"])]
     title = escape(bundle["titulo"])
     return f"""<!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{title}</title><style>{STYLE}</style></head>
 <body><header><p class="eyebrow">UFCA · CENTRO DE CIÊNCIAS E TECNOLOGIA</p><h1>{title}</h1>
-<p>Histórico presencial consolidado de 2023.1 a 2026.1 e turmas presenciais abertas de 2026.2.</p>
+<p>{escape(bundle.get('scopeNote', 'Histórico presencial consolidado.'))}</p>
 <p>Passe o mouse sobre as barras e células ou use Tab para consultar os valores e detalhes.</p>
 <nav id="indice" aria-label="Áreas do painel">{link_list(areas)}</nav></header>
 <main>
 <section class="area" id="{areas[0][0]}"><h2>{areas[0][1]}</h2>
-<p class="description">{escape(mathematics["description"])}</p>
-<nav aria-label="Seções de Matemática Computacional">{mc_links}</nav>
-<a href="#cct">Ir aos resultados gerais do CCT</a>
-{mc_content}</section>
-<section class="area" id="{areas[1][0]}"><h2>{areas[1][1]}</h2>
 <p class="description">Visão do centro. Os rankings por natureza curricular usam os códigos classificados nas matrizes de referência.</p>
 <nav aria-label="Seções do CCT">{cct_links}</nav>
 <a href="#matematica-computacional">Ir aos resultados de Matemática Computacional</a>
 {"".join(cct_content)}</section>
+<section class="area" id="{areas[1][0]}"><h2>{areas[1][1]}</h2>
+<p class="description">{escape(mathematics["description"])}</p>
+<nav aria-label="Seções de Matemática Computacional">{mc_links}</nav>
+<a href="#cct">Ir aos resultados gerais do CCT</a>
+{mc_content}</section>
 </main>
 <div id="chart-tooltip" aria-hidden="true" hidden></div>
 <script>{TOOLTIPS}</script>
@@ -377,14 +379,59 @@ def page(bundle):
 
 
 def dashboard_data(data_path):
-    raw = json.loads(data_path.read_text(encoding="utf-8-sig"))
+    source_bytes = data_path.read_bytes()
+    raw = json.loads(source_bytes.decode("utf-8-sig"))
     offers, report = preprocess_offers(raw)
-    return {"titulo": TITLE, "paineis": build_panels(offers), "quality": report,
+    views = build_period_views(offers)
+    baseline = views.pop('baseline')
+    attach_comparisons(views['current'], baseline, views['baselinePeriod'])
+
+    def plots(view):
+        return [p for panel in view['paineis'] for section in panel['sections'] for p in section['plots']] + [
+            p for discipline in view['disciplines']['cct'] for p in discipline['plots']]
+
+    reference_plots = {p['id']: p for p in plots(baseline)}
+    current_plots = {p['id']: p for p in plots(views['current'])}
+    for plot in current_plots.values():
+        if views['baselinePeriod'] and plot['id'] in reference_plots:
+            plot['comparison']['baselinePlot'] = reference_plots[plot['id']]
+    # A aba histórica conserva seus totais acumulados. Suas tabelas de diferença
+    # continuam comparando dois semestres, nunca sete semestres contra um.
+    for plot in plots(views['historical']):
+        if plot['id'] in current_plots:
+            plot['comparison'] = current_plots[plot['id']]['comparison']
+    current_panels = {p['id']: p for p in views['current']['paineis']}
+    for panel in views['historical']['paineis']:
+        current = current_panels[panel['id']]
+        for key in ('summary', 'statisticalSummary'):
+            if key in panel and 'comparison' in current.get(key, {}):
+                panel[key]['comparison'] = current[key]['comparison']
+    current_disciplines = {d['code']: d for d in views['current']['disciplines']['cct']}
+    for discipline in views['historical']['disciplines']['cct']:
+        discipline['summary']['comparison'] = current_disciplines[discipline['code']]['summary']['comparison']
+    # Registros auxiliares completos dos rankings servem ao cálculo das diferenças.
+    # O navegador recebe apenas os resultados e os gráficos de referência.
+    for view in (views['current'], views['historical'], baseline):
+        for plot in plots(view):
+            plot.pop('comparisonRecords', None)
+    # Uma comparação por ID atende as duas abas e os códigos compartilhados com
+    # MC, sem repetir grandes tabelas e gráficos de referência na transferência.
+    comparisons = {key: plot.pop('comparison') for key, plot in current_plots.items()}
+    for plot in plots(views['historical']):
+        plot.pop('comparison', None)
+    source = dict(name=data_path.name, sha256=hashlib.sha256(source_bytes).hexdigest(),
+                  currentRows=sum(isinstance(r, dict) and r.get('periodo') == '2026.2' for r in raw),
+                  currentEligibleRows=sum(r['periodo'] == '2026.2' and r['modalidade'] == 'Presencial'
+                                          and r['situacao'] == 'ABERTA' and r['capacidade'] > 0 for r in offers))
+    return {"titulo": TITLE, "views": views, "plotComparisons": comparisons, "source": source, "quality": report,
             "generatedAt": datetime.now(timezone.utc).isoformat()}
 
 
 def render_dashboard(data_path):
-    return page(dashboard_data(data_path))
+    bundle = dashboard_data(data_path)
+    # A exportação legada apresenta o histórico; recortes e diferenças ficam na web.
+    return page({**bundle, 'paineis': bundle['views']['historical']['paineis'],
+                 'scopeNote': bundle['views']['historical']['scope']['note']})
 
 
 def main():

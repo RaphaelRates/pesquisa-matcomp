@@ -1,0 +1,1473 @@
+{
+  "versao": 1,
+  "instrucoes": "Edite nome, descricao e tipo. Use um tipo de tipos_permitidos (lista informativa; a compatibilidade é validada pelo servidor). As chaves cadeira-* são modelos aplicados a todas as disciplinas. Salve e clique em Recalcular dados no painel. Os cálculos e dados permanecem nos serviços Python.",
+  "graficos": {
+    "matcomp-vagas": {
+      "nome": "Vagas e matrículas por semestre",
+      "descricao": "Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "matcomp-comparacao": {
+      "nome": "Ocupação do curso e do CCT",
+      "descricao": "Ocupação é a soma das matrículas dividida pela soma das vagas. O total do CCT inclui o curso. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "matcomp-natureza": {
+      "nome": "Ocupação de obrigatórias e optativas",
+      "descricao": "As disciplinas são agrupadas conforme a natureza indicada na matriz de referência do curso. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "matcomp-faixas": {
+      "nome": "Turmas por faixa de ocupação",
+      "descricao": "Cada turma é contada na faixa correspondente às suas matrículas divididas pelas vagas. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "tipo": "stackedBar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "matcomp-indicador-turmas": {
+      "nome": "Turmas e disciplinas ofertadas",
+      "descricao": "Cada código de disciplina é contado uma vez por semestre. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "tipo": "mixed",
+      "tipos_permitidos": [
+        "mixed"
+      ]
+    },
+    "matcomp-indicador-saldo": {
+      "nome": "Vagas não preenchidas e matrículas acima da capacidade",
+      "descricao": "Os dois totais são calculados turma a turma e somados separadamente. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "matcomp-indicador-extremos": {
+      "nome": "Percentual de turmas com baixa ocupação ou lotadas",
+      "descricao": "Mostra a parcela de turmas abaixo de 25% e a parcela com ocupação de 100% ou mais. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "matcomp-historico-obrigatorias": {
+      "nome": "Ocupação das obrigatórias por disciplina",
+      "descricao": "Inclui os códigos com oferta na base. Um traço indica ausência de oferta no recorte. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "tipo": "heatmap",
+      "tipos_permitidos": [
+        "heatmap"
+      ]
+    },
+    "matcomp-historico-optativas": {
+      "nome": "Ocupação das optativas por disciplina",
+      "descricao": "Inclui os códigos com oferta na base. Um traço indica ausência de oferta no recorte. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "tipo": "heatmap",
+      "tipos_permitidos": [
+        "heatmap"
+      ]
+    },
+    "matcomp-matriculas-historico": {
+      "nome": "Disciplinas com mais matrículas",
+      "descricao": "As dez disciplinas com maior soma de matrículas nas turmas consolidadas.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "matcomp-baixa-recorrente": {
+      "nome": "Disciplinas com mais semestres abaixo de 25% de ocupação",
+      "descricao": "Mostra até dez disciplinas. A ocupação de cada código é calculada com as turmas consolidadas de cada semestre.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "matcomp-maior-ocupacao": {
+      "nome": "Disciplinas com maior ocupação acumulada",
+      "descricao": "Até dez disciplinas pela razão entre matrículas e vagas no histórico consolidado.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "matcomp-menor-ocupacao": {
+      "nome": "Disciplinas com menor ocupação acumulada",
+      "descricao": "Até dez disciplinas pela razão entre matrículas e vagas no histórico consolidado.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "matcomp-mais-vagas": {
+      "nome": "Disciplinas com mais vagas ofertadas",
+      "descricao": "Até dez disciplinas pelo total de vagas nas turmas consolidadas.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "matcomp-mais-turmas": {
+      "nome": "Disciplinas com mais turmas",
+      "descricao": "Até dez disciplinas pelo número de turmas consolidadas.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "matcomp-mais-semestres": {
+      "nome": "Disciplinas ofertadas em mais semestres",
+      "descricao": "Até dez disciplinas pela frequência da oferta no histórico consolidado.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "matcomp-sobras": {
+      "nome": "Disciplinas com mais vagas não preenchidas",
+      "descricao": "Até dez disciplinas pela soma das vagas não preenchidas em cada turma consolidada.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "matcomp-lotadas": {
+      "nome": "Disciplinas com mais turmas lotadas",
+      "descricao": "Conta as turmas consolidadas com matrículas iguais ou acima da capacidade.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "matcomp-acima-capacidade": {
+      "nome": "Disciplinas com mais matrículas acima da capacidade",
+      "descricao": "Soma o excesso de matrículas das turmas consolidadas acima da capacidade.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "matcomp-obrigatorias-matriculas": {
+      "nome": "Obrigatórias com mais matrículas",
+      "descricao": "Até dez disciplinas obrigatórias pelo total de matrículas nas turmas consolidadas.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "matcomp-optativas-matriculas": {
+      "nome": "Optativas com mais matrículas",
+      "descricao": "Até dez disciplinas optativas pelo total de matrículas nas turmas consolidadas.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "matcomp-abertas-ocupacao": {
+      "nome": "Ocupação das disciplinas abertas",
+      "descricao": "Todas as disciplinas com oferta aberta em 2026.2, em ordem decrescente de ocupação.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "matcomp-abertas-vagas": {
+      "nome": "Vagas ainda não preenchidas",
+      "descricao": "Todas as disciplinas com oferta aberta em 2026.2. Soma as vagas não preenchidas turma a turma.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "matcomp-abertas-matriculas": {
+      "nome": "Mais matrículas nas turmas abertas",
+      "descricao": "Até dez disciplinas pelo total de matrículas nas turmas abertas em 2026.2.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "matcomp-abertas-menor-ocupacao": {
+      "nome": "Menor ocupação nas turmas abertas",
+      "descricao": "Até dez disciplinas pela menor razão entre matrículas e vagas em 2026.2.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "matcomp-linha-ocupacao": {
+      "nome": "Ocupação mediana e ocupação geral",
+      "descricao": "A mediana dá o mesmo peso a cada turma. A ocupação geral divide todas as matrículas por todas as vagas. *2026.2 contém turmas abertas e aparece com linha tracejada.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "matcomp-linha-tamanho": {
+      "nome": "Vagas e matrículas médias por turma",
+      "descricao": "Em cada semestre, divide vagas e matrículas pelo número de turmas presenciais. *2026.2 contém turmas abertas e aparece com linha tracejada.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "matcomp-rosca-historico": {
+      "nome": "Faixas de ocupação nas turmas consolidadas",
+      "descricao": "Cada fatia mostra a parcela das turmas consolidadas na respectiva faixa de ocupação.",
+      "tipo": "donut",
+      "tipos_permitidos": [
+        "donut",
+        "pie"
+      ]
+    },
+    "matcomp-rosca-abertas": {
+      "nome": "Faixas de ocupação nas turmas abertas de 2026.2",
+      "descricao": "Cada fatia mostra a parcela das turmas abertas na respectiva faixa de ocupação.",
+      "tipo": "donut",
+      "tipos_permitidos": [
+        "donut",
+        "pie"
+      ]
+    },
+    "matcomp-rosca-turnos": {
+      "nome": "Distribuição das turmas consolidadas por turno",
+      "descricao": "Turmas com aulas em mais de um turno entram em Misto.",
+      "tipo": "donut",
+      "tipos_permitidos": [
+        "donut",
+        "pie"
+      ]
+    },
+    "matcomp-dispersao": {
+      "nome": "Vagas e matrículas por turma consolidada",
+      "descricao": "O tamanho de cada ponto indica quantas turmas têm a mesma combinação de vagas e matrículas. Acima da diagonal, as matrículas superam as vagas.",
+      "tipo": "scatter",
+      "tipos_permitidos": [
+        "scatter"
+      ]
+    },
+    "matcomp-pizza-capacidades": {
+      "nome": "Composição da oferta por capacidade",
+      "descricao": "Distribuição das turmas consolidadas entre as cinco capacidades mais frequentes. As demais capacidades são agrupadas em Outras.",
+      "tipo": "pie",
+      "tipos_permitidos": [
+        "donut",
+        "pie"
+      ]
+    },
+    "matcomp-radar-faixas": {
+      "nome": "Perfil de ocupação por faixa",
+      "descricao": "Compara a proporção de turmas em cada faixa no histórico consolidado e nas abertas de 2026.2. Cada eixo mostra uma parcela do total de turmas do respectivo recorte.",
+      "tipo": "radar",
+      "tipos_permitidos": [
+        "radar"
+      ]
+    },
+    "matcomp-faixas-percentual": {
+      "nome": "Composição da ocupação ao longo dos semestres",
+      "descricao": "As colunas representam 100% das turmas de cada semestre e facilitam a comparação das proporções. *2026.2 contém turmas abertas.",
+      "tipo": "stackedPercent",
+      "tipos_permitidos": [
+        "stackedPercent"
+      ]
+    },
+    "matcomp-bolhas-disciplinas": {
+      "nome": "Dimensão da oferta por disciplina",
+      "descricao": "Cada bolha representa uma disciplina no histórico consolidado. Os eixos somam vagas e matrículas. A área da bolha é proporcional ao número de turmas ofertadas.",
+      "tipo": "bubble",
+      "tipos_permitidos": [
+        "bubble"
+      ]
+    },
+    "matcomp-area-natureza": {
+      "nome": "Matrículas por natureza curricular",
+      "descricao": "As áreas empilhadas somam as matrículas de cada semestre, classificadas pelos códigos da matriz de referência. Códigos compartilhados ou sem classificação aparecem em uma categoria própria. *2026.2 contém turmas abertas.",
+      "tipo": "area",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "matcomp-estat-histograma": {
+      "nome": "Distribuição detalhada da ocupação",
+      "descricao": "Compara as proporções de turmas consolidadas e abertas em 2026.2 em seis intervalos de ocupação.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "matcomp-estat-quartis": {
+      "nome": "Faixa central de ocupação por semestre",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "distributionBand",
+      "tipos_permitidos": [
+        "distributionBand"
+      ]
+    },
+    "matcomp-estat-dispersao": {
+      "nome": "Dispersão relativa da ocupação",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "matcomp-estat-momentos": {
+      "nome": "Assimetria e caudas da ocupação",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "matcomp-estat-tukey": {
+      "nome": "Turmas sinalizadas pela regra de Tukey",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "stackedBar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "matcomp-estat-acumulada": {
+      "nome": "Distribuição acumulada da ocupação",
+      "descricao": "Compara a proporção de turmas com ocupação menor ou igual a cada valor do eixo horizontal.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "matcomp-estat-lorenz": {
+      "nome": "Concentração das matrículas entre disciplinas",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "matcomp-estat-concentracao": {
+      "nome": "Índices de concentração por semestre",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "matcomp-estat-diversidade": {
+      "nome": "Disciplinas ofertadas e diversidade efetiva",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "mixed",
+      "tipos_permitidos": [
+        "mixed"
+      ]
+    },
+    "matcomp-estat-participacao": {
+      "nome": "Participação das dez maiores disciplinas nas matrículas",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "matcomp-estat-correlacoes": {
+      "nome": "Relação entre capacidade e ocupação por semestre",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "matcomp-estat-regressao": {
+      "nome": "Capacidade e ocupação com ajuste descritivo",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "statisticalScatter",
+      "tipos_permitidos": [
+        "statisticalScatter"
+      ]
+    },
+    "matcomp-estat-markov": {
+      "nome": "Ocupação acima de um limiar e limite de Markov",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "matcomp-estat-chebyshev": {
+      "nome": "Concentração em torno da média e limite de Chebyshev",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "ufca-capacidade-matriculas": {
+      "nome": "Vagas e matrículas por semestre",
+      "descricao": "Cada par de barras compara a soma das vagas informadas com a soma das matrículas registradas nas turmas presenciais de um semestre. As barras mostram totais absolutos. Até 2026.1 entram turmas consolidadas. O asterisco em 2026.2 marca as turmas abertas.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "ufca-faixas": {
+      "nome": "Distribuição das turmas por faixa de ocupação",
+      "descricao": "Cada segmento conta quantas turmas ficaram em uma faixa de ocupação. A faixa de cada turma é definida pelas suas matrículas divididas pela sua capacidade. A altura total da barra é o número de turmas presenciais do semestre. O segmento de 100% ou mais inclui turmas lotadas e acima da capacidade. O asterisco identifica as turmas abertas de 2026.2.",
+      "tipo": "stackedBar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "ufca-indicador-turmas": {
+      "nome": "Turmas e disciplinas ofertadas",
+      "descricao": "Cada código de disciplina é contado uma vez por semestre. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "tipo": "mixed",
+      "tipos_permitidos": [
+        "mixed"
+      ]
+    },
+    "ufca-indicador-saldo": {
+      "nome": "Vagas não preenchidas e matrículas acima da capacidade",
+      "descricao": "Os dois totais são calculados turma a turma e somados separadamente. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "ufca-indicador-ocupacao": {
+      "nome": "Ocupação geral por semestre",
+      "descricao": "Divide o total de matrículas pelo total de vagas. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "ufca-indicador-extremos": {
+      "nome": "Percentual de turmas com baixa ocupação ou lotadas",
+      "descricao": "Mostra a parcela de turmas abaixo de 25% e a parcela com ocupação de 100% ou mais. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "ufca-prefixos": {
+      "nome": "Ocupação por prefixo de código",
+      "descricao": "Cada célula cruza um prefixo de código, como EM ou ECI, com um semestre. A cor e o percentual mostram a soma das matrículas dividida pela soma das vagas nas turmas presenciais consolidadas daquele prefixo e semestre. A unidade de agrupamento é o prefixo da disciplina.",
+      "tipo": "heatmap",
+      "tipos_permitidos": [
+        "heatmap"
+      ]
+    },
+    "ufca-codigos": {
+      "nome": "Ocupação de oito disciplinas selecionadas",
+      "descricao": "Cada linha acompanha um dos oito códigos selecionados. Em cada semestre, a célula soma matrículas e capacidade de todas as turmas incluídas daquele código e mostra a razão em porcentagem. Uma célula vazia indica ausência de turma no recorte. O asterisco marca as turmas abertas de 2026.2.",
+      "tipo": "heatmap",
+      "tipos_permitidos": [
+        "heatmap"
+      ]
+    },
+    "ufca-grade-horaria": {
+      "nome": "Concentração da oferta ao longo da semana",
+      "descricao": "Cada célula conta as turmas presenciais consolidadas com aula naquele dia da semana e naquela faixa de uma hora. Uma turma que ocupa duas horas ou tem aula em dois dias aparece nas respectivas células. Por isso, a soma das células conta ocorrências de horário.",
+      "tipo": "heatmap",
+      "tipos_permitidos": [
+        "heatmap"
+      ]
+    },
+    "ufca-turnos": {
+      "nome": "Ocupação por turno",
+      "descricao": "Cada barra divide o total de matrículas pelo total de vagas das turmas presenciais consolidadas classificadas naquele turno. Aulas antes das 12h entram na manhã, das 12h às 18h na tarde e a partir das 18h na noite. Turmas com aulas em mais de um turno entram em Misto. O rótulo informa o número de turmas.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "ufca-tamanho": {
+      "nome": "Ocupação segundo o tamanho da turma",
+      "descricao": "Até cinco capacidades mais frequentes, que somam 1.064 das 1.208 turmas presenciais consolidadas. A ocupação divide as matrículas pelo total de vagas em cada grupo.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "ufca-opt-curso": {
+      "nome": "Ocupação das disciplinas listadas como optativas",
+      "descricao": "Para cada curso, o gráfico seleciona os códigos listados como optativos na matriz pública de referência. Compara matrículas divididas por vagas nas turmas presenciais consolidadas até 2026.1 e nas abertas de 2026.2. Engenharia de Software ficou sem registros correspondentes nos arquivos.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "ufca-opt-periodo": {
+      "nome": "Ocupação por semestre e natureza curricular",
+      "descricao": "Em cada semestre, as duas barras mostram a ocupação de optativas e obrigatórias presenciais consolidadas, calculada separadamente pela soma de matrículas dividida pela soma de vagas. O recorte original exclui códigos sem classificação ou com mudança de natureza conhecida e usa as matrizes de referência dessa análise.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "ufca-linha-ocupacao": {
+      "nome": "Ocupação mediana e ocupação geral",
+      "descricao": "A mediana dá o mesmo peso a cada turma. A ocupação geral divide todas as matrículas por todas as vagas. *2026.2 contém turmas abertas e aparece com linha tracejada.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "ufca-linha-tamanho": {
+      "nome": "Vagas e matrículas médias por turma",
+      "descricao": "Em cada semestre, divide vagas e matrículas pelo número de turmas presenciais. *2026.2 contém turmas abertas e aparece com linha tracejada.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "ufca-rosca-historico": {
+      "nome": "Faixas de ocupação nas turmas consolidadas",
+      "descricao": "Cada fatia mostra a parcela das turmas consolidadas na respectiva faixa de ocupação.",
+      "tipo": "donut",
+      "tipos_permitidos": [
+        "donut",
+        "pie"
+      ]
+    },
+    "ufca-rosca-abertas": {
+      "nome": "Faixas de ocupação nas turmas abertas de 2026.2",
+      "descricao": "Cada fatia mostra a parcela das turmas abertas na respectiva faixa de ocupação.",
+      "tipo": "donut",
+      "tipos_permitidos": [
+        "donut",
+        "pie"
+      ]
+    },
+    "ufca-rosca-turnos": {
+      "nome": "Distribuição das turmas consolidadas por turno",
+      "descricao": "Turmas com aulas em mais de um turno entram em Misto.",
+      "tipo": "donut",
+      "tipos_permitidos": [
+        "donut",
+        "pie"
+      ]
+    },
+    "ufca-dispersao": {
+      "nome": "Vagas e matrículas por turma consolidada",
+      "descricao": "O tamanho de cada ponto indica quantas turmas têm a mesma combinação de vagas e matrículas. Acima da diagonal, as matrículas superam as vagas.",
+      "tipo": "scatter",
+      "tipos_permitidos": [
+        "scatter"
+      ]
+    },
+    "ufca-pizza-capacidades": {
+      "nome": "Composição da oferta por capacidade",
+      "descricao": "Distribuição das turmas consolidadas entre as cinco capacidades mais frequentes. As demais capacidades são agrupadas em Outras.",
+      "tipo": "pie",
+      "tipos_permitidos": [
+        "donut",
+        "pie"
+      ]
+    },
+    "ufca-radar-faixas": {
+      "nome": "Perfil de ocupação por faixa",
+      "descricao": "Compara a proporção de turmas em cada faixa no histórico consolidado e nas abertas de 2026.2. Cada eixo mostra uma parcela do total de turmas do respectivo recorte.",
+      "tipo": "radar",
+      "tipos_permitidos": [
+        "radar"
+      ]
+    },
+    "ufca-faixas-percentual": {
+      "nome": "Composição da ocupação ao longo dos semestres",
+      "descricao": "As colunas representam 100% das turmas de cada semestre e facilitam a comparação das proporções. *2026.2 contém turmas abertas.",
+      "tipo": "stackedPercent",
+      "tipos_permitidos": [
+        "stackedPercent"
+      ]
+    },
+    "ufca-bolhas-disciplinas": {
+      "nome": "Dimensão da oferta por disciplina",
+      "descricao": "Cada bolha representa uma disciplina no histórico consolidado. Os eixos somam vagas e matrículas. A área da bolha é proporcional ao número de turmas ofertadas.",
+      "tipo": "bubble",
+      "tipos_permitidos": [
+        "bubble"
+      ]
+    },
+    "ufca-area-natureza": {
+      "nome": "Matrículas por natureza curricular",
+      "descricao": "As áreas empilhadas somam as matrículas de cada semestre, classificadas pelos códigos da matriz de referência. Códigos compartilhados ou sem classificação aparecem em uma categoria própria. *2026.2 contém turmas abertas.",
+      "tipo": "area",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "ufca-ranking-obrigatorias-1-1": {
+      "nome": "Mais matrículas",
+      "descricao": "Soma as matrículas registradas em todas as turmas de cada código. A ordem vai do maior para o menor total.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-obrigatorias-1-2": {
+      "nome": "Mais vagas ofertadas",
+      "descricao": "Soma a capacidade cadastrada de todas as turmas de cada código, incluindo as vagas preenchidas e as que sobraram.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-obrigatorias-1-3": {
+      "nome": "Maior ocupação acumulada",
+      "descricao": "Ordena os códigos pela maior razão entre matrículas e vagas acumuladas. O rótulo mostra a porcentagem e os dois totais usados.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-obrigatorias-1-4": {
+      "nome": "Menor ocupação acumulada",
+      "descricao": "Ordena os códigos pela menor razão entre matrículas e vagas acumuladas. O rótulo mostra a porcentagem e os dois totais usados.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-obrigatorias-1-5": {
+      "nome": "Mais matrículas acima da capacidade",
+      "descricao": "Soma, para cada código, quantas matrículas excederam a capacidade em cada turma superlotada. Sobras em outras turmas não reduzem esse total.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-obrigatorias-1-6": {
+      "nome": "Mais vagas não preenchidas",
+      "descricao": "Soma, para cada código, as vagas que sobraram em cada turma. Matrículas excedentes em outras turmas não reduzem esse total.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-obrigatorias-1-7": {
+      "nome": "Mais semestres no limite ou acima",
+      "descricao": "Soma matrículas e vagas por código em cada semestre. Depois conta em quantos semestres a ocupação desse código chegou a 100% ou mais.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-obrigatorias-1-8": {
+      "nome": "Mais semestres abaixo de 25%",
+      "descricao": "Soma matrículas e vagas por código em cada semestre. Depois conta em quantos semestres a ocupação desse código ficou abaixo de 25%.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-obrigatorias-1-9": {
+      "nome": "Mais semestres com oferta",
+      "descricao": "Conta os semestres distintos em que cada código teve turma no recorte. Duas ou mais turmas no mesmo semestre contam uma vez.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-obrigatorias-1-10": {
+      "nome": "Mais turmas ofertadas",
+      "descricao": "Conta cada turma ofertada de um código. Duas ou mais turmas do mesmo código no mesmo semestre entram separadamente.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-obrigatorias-2-1": {
+      "nome": "Maior ocupação",
+      "descricao": "Ordena os semestres pela razão entre o total de matrículas e o total de vagas nas turmas do grupo.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-obrigatorias-2-2": {
+      "nome": "Mais matrículas",
+      "descricao": "Ordena os semestres pela soma das matrículas registradas nas turmas do grupo.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-obrigatorias-2-3": {
+      "nome": "Mais turmas no limite ou acima",
+      "descricao": "Conta, em cada semestre, as turmas com matrículas iguais ou superiores à capacidade. A comparação é feita turma a turma.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-obrigatorias-2-4": {
+      "nome": "Mais turmas abaixo de 25%",
+      "descricao": "Conta, em cada semestre, as turmas com menos de uma matrícula para cada quatro vagas. A comparação é feita turma a turma.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-obrigatorias-3-1": {
+      "nome": "Mais turmas por dia e faixa horária",
+      "descricao": "Ordena as combinações de dia da semana e intervalo de uma hora pelo número de turmas com aula naquele horário. Uma turma pode aparecer em mais de uma faixa.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-obrigatorias-3-2": {
+      "nome": "Ocupação por turno",
+      "descricao": "Divide matrículas por vagas dentro de cada turno. Turmas com aulas em mais de um turno entram em Misto. O rótulo mostra o número de turmas.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-obrigatorias-3-3": {
+      "nome": "Ocupação por prefixo do código",
+      "descricao": "Agrupa as turmas pelas letras iniciais do código da disciplina. Cada percentual usa as matrículas e vagas de todas as turmas daquele prefixo no recorte.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-obrigatorias-3-4": {
+      "nome": "Ocupação por matriz de curso",
+      "descricao": "Agrupa as turmas pelos códigos que constam na matriz de cada curso e divide matrículas por vagas. Códigos compartilhados podem aparecer em mais de um curso.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-obrigatorias-3-5": {
+      "nome": "Ocupação nas cinco capacidades de referência",
+      "descricao": "Compara turmas com capacidade cadastrada de 20, 25, 30, 40 ou 50 vagas. Cada percentual divide as matrículas pelo total de vagas das turmas daquele tamanho.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-obrigatorias-4-1": {
+      "nome": "Mais matrículas",
+      "descricao": "Soma as matrículas das turmas abertas de 2026.2 por código e mostra os maiores totais.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-obrigatorias-4-2": {
+      "nome": "Maior ocupação",
+      "descricao": "Mostra os maiores percentuais de ocupação por código entre as turmas abertas de 2026.2. O rótulo informa a porcentagem e os totais de matrículas e vagas.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-obrigatorias-4-3": {
+      "nome": "Mais vagas não preenchidas",
+      "descricao": "Soma as vagas que sobraram em cada turma aberta de 2026.2, agrupadas por código. Turmas acima da capacidade contribuem com zero para esse total.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-obrigatorias-4-4": {
+      "nome": "Menor ocupação",
+      "descricao": "Mostra os menores percentuais de ocupação por código entre as turmas abertas de 2026.2. O rótulo informa a porcentagem e os totais de matrículas e vagas.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-optativas-1-1": {
+      "nome": "Mais matrículas",
+      "descricao": "Soma as matrículas registradas em todas as turmas de cada código. A ordem vai do maior para o menor total.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-optativas-1-2": {
+      "nome": "Mais vagas ofertadas",
+      "descricao": "Soma a capacidade cadastrada de todas as turmas de cada código, incluindo as vagas preenchidas e as que sobraram.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-optativas-1-3": {
+      "nome": "Maior ocupação acumulada",
+      "descricao": "Ordena os códigos pela maior razão entre matrículas e vagas acumuladas. O rótulo mostra a porcentagem e os dois totais usados.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-optativas-1-4": {
+      "nome": "Menor ocupação acumulada",
+      "descricao": "Ordena os códigos pela menor razão entre matrículas e vagas acumuladas. O rótulo mostra a porcentagem e os dois totais usados.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-optativas-1-5": {
+      "nome": "Mais matrículas acima da capacidade",
+      "descricao": "Soma, para cada código, quantas matrículas excederam a capacidade em cada turma superlotada. Sobras em outras turmas não reduzem esse total.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-optativas-1-6": {
+      "nome": "Mais vagas não preenchidas",
+      "descricao": "Soma, para cada código, as vagas que sobraram em cada turma. Matrículas excedentes em outras turmas não reduzem esse total.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-optativas-1-7": {
+      "nome": "Mais semestres no limite ou acima",
+      "descricao": "Soma matrículas e vagas por código em cada semestre. Depois conta em quantos semestres a ocupação desse código chegou a 100% ou mais.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-optativas-1-8": {
+      "nome": "Mais semestres abaixo de 25%",
+      "descricao": "Soma matrículas e vagas por código em cada semestre. Depois conta em quantos semestres a ocupação desse código ficou abaixo de 25%.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-optativas-1-9": {
+      "nome": "Mais semestres com oferta",
+      "descricao": "Conta os semestres distintos em que cada código teve turma no recorte. Duas ou mais turmas no mesmo semestre contam uma vez.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-optativas-1-10": {
+      "nome": "Mais turmas ofertadas",
+      "descricao": "Conta cada turma ofertada de um código. Duas ou mais turmas do mesmo código no mesmo semestre entram separadamente.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-optativas-2-1": {
+      "nome": "Maior ocupação",
+      "descricao": "Ordena os semestres pela razão entre o total de matrículas e o total de vagas nas turmas do grupo.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-optativas-2-2": {
+      "nome": "Mais matrículas",
+      "descricao": "Ordena os semestres pela soma das matrículas registradas nas turmas do grupo.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-optativas-2-3": {
+      "nome": "Mais turmas no limite ou acima",
+      "descricao": "Conta, em cada semestre, as turmas com matrículas iguais ou superiores à capacidade. A comparação é feita turma a turma.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-optativas-2-4": {
+      "nome": "Mais turmas abaixo de 25%",
+      "descricao": "Conta, em cada semestre, as turmas com menos de uma matrícula para cada quatro vagas. A comparação é feita turma a turma.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-optativas-3-1": {
+      "nome": "Mais turmas por dia e faixa horária",
+      "descricao": "Ordena as combinações de dia da semana e intervalo de uma hora pelo número de turmas com aula naquele horário. Uma turma pode aparecer em mais de uma faixa.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-optativas-3-2": {
+      "nome": "Ocupação por turno",
+      "descricao": "Divide matrículas por vagas dentro de cada turno. Turmas com aulas em mais de um turno entram em Misto. O rótulo mostra o número de turmas.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-optativas-3-3": {
+      "nome": "Ocupação por prefixo do código",
+      "descricao": "Agrupa as turmas pelas letras iniciais do código da disciplina. Cada percentual usa as matrículas e vagas de todas as turmas daquele prefixo no recorte.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-optativas-3-4": {
+      "nome": "Ocupação por matriz de curso",
+      "descricao": "Agrupa as turmas pelos códigos que constam na matriz de cada curso e divide matrículas por vagas. Códigos compartilhados podem aparecer em mais de um curso.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-optativas-3-5": {
+      "nome": "Ocupação nas cinco capacidades de referência",
+      "descricao": "Compara turmas com capacidade cadastrada de 20, 25, 30, 40 ou 50 vagas. Cada percentual divide as matrículas pelo total de vagas das turmas daquele tamanho.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-optativas-4-1": {
+      "nome": "Mais matrículas",
+      "descricao": "Soma as matrículas das turmas abertas de 2026.2 por código e mostra os maiores totais.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-optativas-4-2": {
+      "nome": "Maior ocupação",
+      "descricao": "Mostra os maiores percentuais de ocupação por código entre as turmas abertas de 2026.2. O rótulo informa a porcentagem e os totais de matrículas e vagas.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-optativas-4-3": {
+      "nome": "Mais vagas não preenchidas",
+      "descricao": "Soma as vagas que sobraram em cada turma aberta de 2026.2, agrupadas por código. Turmas acima da capacidade contribuem com zero para esse total.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-optativas-4-4": {
+      "nome": "Menor ocupação",
+      "descricao": "Mostra os menores percentuais de ocupação por código entre as turmas abertas de 2026.2. O rótulo informa a porcentagem e os totais de matrículas e vagas.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-geral-1-1": {
+      "nome": "Mais matrículas",
+      "descricao": "Soma as matrículas registradas em todas as turmas de cada código. A ordem vai do maior para o menor total.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-geral-1-2": {
+      "nome": "Mais vagas ofertadas",
+      "descricao": "Soma a capacidade cadastrada de todas as turmas de cada código, incluindo as vagas preenchidas e as que sobraram.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-geral-1-3": {
+      "nome": "Maior ocupação acumulada",
+      "descricao": "Ordena os códigos pela maior razão entre matrículas e vagas acumuladas. O rótulo mostra a porcentagem e os dois totais usados.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-geral-1-4": {
+      "nome": "Menor ocupação acumulada",
+      "descricao": "Ordena os códigos pela menor razão entre matrículas e vagas acumuladas. O rótulo mostra a porcentagem e os dois totais usados.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-geral-1-5": {
+      "nome": "Mais matrículas acima da capacidade",
+      "descricao": "Soma, para cada código, quantas matrículas excederam a capacidade em cada turma superlotada. Sobras em outras turmas não reduzem esse total.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-geral-1-6": {
+      "nome": "Mais vagas não preenchidas",
+      "descricao": "Soma, para cada código, as vagas que sobraram em cada turma. Matrículas excedentes em outras turmas não reduzem esse total.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-geral-1-7": {
+      "nome": "Mais semestres no limite ou acima",
+      "descricao": "Soma matrículas e vagas por código em cada semestre. Depois conta em quantos semestres a ocupação desse código chegou a 100% ou mais.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-geral-1-8": {
+      "nome": "Mais semestres abaixo de 25%",
+      "descricao": "Soma matrículas e vagas por código em cada semestre. Depois conta em quantos semestres a ocupação desse código ficou abaixo de 25%.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-geral-1-9": {
+      "nome": "Mais semestres com oferta",
+      "descricao": "Conta os semestres distintos em que cada código teve turma no recorte. Duas ou mais turmas no mesmo semestre contam uma vez.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-geral-1-10": {
+      "nome": "Mais turmas ofertadas",
+      "descricao": "Conta cada turma ofertada de um código. Duas ou mais turmas do mesmo código no mesmo semestre entram separadamente.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-geral-2-1": {
+      "nome": "Maior ocupação",
+      "descricao": "Ordena os semestres pela razão entre o total de matrículas e o total de vagas nas turmas do grupo.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-geral-2-2": {
+      "nome": "Mais matrículas",
+      "descricao": "Ordena os semestres pela soma das matrículas registradas nas turmas do grupo.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-geral-2-3": {
+      "nome": "Mais turmas no limite ou acima",
+      "descricao": "Conta, em cada semestre, as turmas com matrículas iguais ou superiores à capacidade. A comparação é feita turma a turma.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-geral-2-4": {
+      "nome": "Mais turmas abaixo de 25%",
+      "descricao": "Conta, em cada semestre, as turmas com menos de uma matrícula para cada quatro vagas. A comparação é feita turma a turma.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-geral-3-1": {
+      "nome": "Mais turmas por dia e faixa horária",
+      "descricao": "Ordena as combinações de dia da semana e intervalo de uma hora pelo número de turmas com aula naquele horário. Uma turma pode aparecer em mais de uma faixa.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-geral-3-2": {
+      "nome": "Ocupação por turno",
+      "descricao": "Divide matrículas por vagas dentro de cada turno. Turmas com aulas em mais de um turno entram em Misto. O rótulo mostra o número de turmas.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-geral-3-3": {
+      "nome": "Ocupação por prefixo do código",
+      "descricao": "Agrupa as turmas pelas letras iniciais do código da disciplina. Cada percentual usa as matrículas e vagas de todas as turmas daquele prefixo no recorte.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-geral-3-4": {
+      "nome": "Ocupação por matriz de curso",
+      "descricao": "Agrupa as turmas pelos códigos que constam na matriz de cada curso e divide matrículas por vagas. Códigos compartilhados podem aparecer em mais de um curso.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-geral-3-5": {
+      "nome": "Ocupação nas cinco capacidades de referência",
+      "descricao": "Compara turmas com capacidade cadastrada de 20, 25, 30, 40 ou 50 vagas. Cada percentual divide as matrículas pelo total de vagas das turmas daquele tamanho.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-geral-4-1": {
+      "nome": "Mais matrículas",
+      "descricao": "Soma as matrículas das turmas abertas de 2026.2 por código e mostra os maiores totais.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-geral-4-2": {
+      "nome": "Maior ocupação",
+      "descricao": "Mostra os maiores percentuais de ocupação por código entre as turmas abertas de 2026.2. O rótulo informa a porcentagem e os totais de matrículas e vagas.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-geral-4-3": {
+      "nome": "Mais vagas não preenchidas",
+      "descricao": "Soma as vagas que sobraram em cada turma aberta de 2026.2, agrupadas por código. Turmas acima da capacidade contribuem com zero para esse total.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-ranking-geral-4-4": {
+      "nome": "Menor ocupação",
+      "descricao": "Mostra os menores percentuais de ocupação por código entre as turmas abertas de 2026.2. O rótulo informa a porcentagem e os totais de matrículas e vagas.",
+      "tipo": "ranking",
+      "tipos_permitidos": [
+        "ranking"
+      ]
+    },
+    "ufca-estat-histograma": {
+      "nome": "Distribuição detalhada da ocupação",
+      "descricao": "Compara as proporções de turmas consolidadas e abertas em 2026.2 em seis intervalos de ocupação.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "ufca-estat-quartis": {
+      "nome": "Faixa central de ocupação por semestre",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "distributionBand",
+      "tipos_permitidos": [
+        "distributionBand"
+      ]
+    },
+    "ufca-estat-dispersao": {
+      "nome": "Dispersão relativa da ocupação",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "ufca-estat-momentos": {
+      "nome": "Assimetria e caudas da ocupação",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "ufca-estat-tukey": {
+      "nome": "Turmas sinalizadas pela regra de Tukey",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "stackedBar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "ufca-estat-acumulada": {
+      "nome": "Distribuição acumulada da ocupação",
+      "descricao": "Compara a proporção de turmas com ocupação menor ou igual a cada valor do eixo horizontal.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "ufca-estat-lorenz": {
+      "nome": "Concentração das matrículas entre disciplinas",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "ufca-estat-concentracao": {
+      "nome": "Índices de concentração por semestre",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "ufca-estat-diversidade": {
+      "nome": "Disciplinas ofertadas e diversidade efetiva",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "mixed",
+      "tipos_permitidos": [
+        "mixed"
+      ]
+    },
+    "ufca-estat-participacao": {
+      "nome": "Participação das dez maiores disciplinas nas matrículas",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "ufca-estat-correlacoes": {
+      "nome": "Relação entre capacidade e ocupação por semestre",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "ufca-estat-regressao": {
+      "nome": "Capacidade e ocupação com ajuste descritivo",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "statisticalScatter",
+      "tipos_permitidos": [
+        "statisticalScatter"
+      ]
+    },
+    "ufca-estat-markov": {
+      "nome": "Ocupação acima de um limiar e limite de Markov",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "ufca-estat-chebyshev": {
+      "nome": "Concentração em torno da média e limite de Chebyshev",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "cadeira-oferta": {
+      "nome": "Vagas e matrículas por semestre",
+      "descricao": "Totais da disciplina por semestre. *2026.2 representa turmas abertas; os demais semestres usam consolidadas. Sem oferta aparece como lacuna.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "cadeira-ocupacao": {
+      "nome": "Ocupação geral e mediana por semestre",
+      "descricao": "Compara a razão entre totais com a mediana das ocupações das turmas. *2026.2 representa turmas abertas; os demais semestres usam consolidadas. Sem oferta aparece como lacuna.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "cadeira-saldo": {
+      "nome": "Vagas não preenchidas e matrículas excedentes",
+      "descricao": "Calcula os saldos separadamente em cada turma antes de somar. *2026.2 representa turmas abertas; os demais semestres usam consolidadas. Sem oferta aparece como lacuna.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "cadeira-turmas": {
+      "nome": "Quantidade de turmas por semestre",
+      "descricao": "Acompanha a frequência da oferta da disciplina. *2026.2 representa turmas abertas; os demais semestres usam consolidadas. Sem oferta aparece como lacuna.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "cadeira-por-turma": {
+      "nome": "Ocupação de cada turma",
+      "descricao": "Cada barra identifica uma turma no semestre. * indica oferta aberta em 2026.2.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "cadeira-faixas": {
+      "nome": "Faixas de ocupação das consolidadas",
+      "descricao": "Conta turmas em faixas de ocupação; cada turma tem o mesmo peso.",
+      "tipo": "donut",
+      "tipos_permitidos": [
+        "donut",
+        "pie"
+      ]
+    },
+    "cadeira-faixas-abertas": {
+      "nome": "Faixas de ocupação da oferta aberta",
+      "descricao": "Conta turmas em faixas de ocupação; cada turma tem o mesmo peso.",
+      "tipo": "donut",
+      "tipos_permitidos": [
+        "donut",
+        "pie"
+      ]
+    },
+    "cadeira-turnos": {
+      "nome": "Ocupação por turno",
+      "descricao": "Razão entre matrículas e vagas por turno, apenas das turmas consolidadas.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "cadeira-horarios": {
+      "nome": "Oferta por dia e horário",
+      "descricao": "Conta turmas consolidadas com aula em cada faixa. Uma turma pode ocupar várias células.",
+      "tipo": "heatmap",
+      "tipos_permitidos": [
+        "heatmap"
+      ]
+    }
+  }
+}

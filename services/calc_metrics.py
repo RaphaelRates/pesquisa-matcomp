@@ -570,6 +570,10 @@ def plot_data(cohort, computed):
                 rows.append([text,value,round(float(row[key]/ceiling)*100,4)])
             chart_list.append(dict(title=label, rows=rows,
                                    rankingValues=[float(r[key]) for r in selected], rankingPercent=key == "rate",
+                                   comparisonDimension=dimension, comparisonMetric=key,
+                                   comparisonRecords=[dict(label=r['label'], value=float(r[key]))
+                                                      for r in cohort[di][dimension]
+                                                      if dimension != 'Capacidade' or int(r['label'].split()[0]) in sizes],
                                    tooltips=[occupancy_details(r, include_rate=key != "rate") for r in selected]))
         output.append(dict(title=title,plots=chart_list))
     return output
@@ -639,6 +643,7 @@ def mathematics_panel(hist, latest, periods):
             summarize(labels[code], rows)
             for code, rows in group(source, lambda r: r["codigo"]).items()
         ]
+        comparison_records = [dict(label=r['label'], value=float(r[metric])) for r in values]
         if positive:
             values = [r for r in values if r[metric] > 0]
         selected = ordered(values, metric, ascending)[:limit]
@@ -650,7 +655,10 @@ def mathematics_panel(hist, latest, periods):
                      [[f'{ranks[r["label"]]}. {r["label"]}', float(r[metric]) if metric == "rate" else r[metric]]
                       for r in selected],
                      tooltips=[f'{occupancy_details(r, include_rate=metric != "rate")}\n'
-                               f'Semestres com oferta: {r["periods"]}' for r in selected])
+                               f'Semestres com oferta: {r["periods"]}' for r in selected]) | {
+                                   'comparisonDimension': 'Disciplina', 'comparisonMetric': metric,
+                                   'comparisonRecords': comparison_records,
+                               }
 
     history = [
         history_heat("historico-obrigatorias", "Ocupação das obrigatórias por disciplina", required),
@@ -733,6 +741,16 @@ def build_panels(offers):
     periods = sorted({row["periodo"] for row in hist + latest})
     if not periods:
         raise ValueError("Não há turmas presenciais no recorte.")
+    return build_cohort_panels(hist, latest, periods)
+
+
+def build_cohort_panels(primary_rows, comparison_rows, periods):
+    """Calcula as famílias para amostras já selecionadas, sem mudar sua situação.
+
+    A apresentação de cada recorte é responsabilidade de period_views. Os nomes
+    locais hist/latest identificam as séries originais das funções de cálculo.
+    """
+    hist, latest = primary_rows, comparison_rows
     panels = [mathematics_panel(hist, latest, periods), *overview_panels(hist, latest, periods)]
     computed = []
     for slug, title, allowed in cohorts:

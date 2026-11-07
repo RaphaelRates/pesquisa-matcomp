@@ -9,6 +9,14 @@ const indexFormat = new Intl.NumberFormat("pt-BR", {maximumFractionDigits: 4});
 const chartInstances = new Map();
 let stopMounting = () => {};
 let dashboardLoading = false;
+let stopDisciplineExplorers = () => {};
+let dashboardBundle = null;
+let selectedView = 'current';
+let dataStatus = '';
+let refreshStatus = '';
+const activePlots = new Map();
+const previewObservers = new Map();
+const disciplineState = {cct: {query: '', code: ''}, mc: {query: '', code: ''}};
 const kinds = {
   bar: "Barras", horizontalBar: "Barras horizontais", ranking: "Ranking",
   stackedBar: "Barras empilhadas", stackedPercent: "Composição · 100%",
@@ -108,7 +116,7 @@ function methodNote(plot) {
     ${plot.interpretation ? `<p>${escapeHtml(plot.interpretation)}</p>` : ""}</details>`;
 }
 
-function chartGrid(plots, heading) {
+function chartGrid(plots, heading, showComparison = true) {
   return `<div class="chart-grid">${plots.map(plot => {
     const kind = plot.formato ?? plot.spec.type;
     const hasValues = plot.rows.length && (kind !== "heatmap" || plot.rows.some(row => row.at(-1) != null));
@@ -123,9 +131,11 @@ function chartGrid(plots, heading) {
     return `<article class="chart-card ${kind === "heatmap" ? "wide-card" : ""}" id="${escapeHtml(plot.id)}">
       <div class="card-kicker"><span class="chart-type">${kinds[kind]}</span><a href="#${escapeHtml(plot.id)}" aria-label="Link para este gráfico">↗</a></div>
       <${heading}>${escapeHtml(plot.title)}</${heading}>
+      ${plot.scopeNote ? `<p class="scope-note">${escapeHtml(plot.scopeNote)}</p>` : ''}
       <p class="description">${escapeHtml(plot.description)}</p>
       ${hasValues ? graphic + methodNote(plot) + table(plot) :
-        '<p class="empty-state">Sem turmas neste recorte.</p>' + methodNote(plot)}</article>`;
+        '<p class="empty-state">Sem turmas neste recorte.</p>' + methodNote(plot)}
+      ${showComparison ? comparisonPanel(plot.comparison, plot.id) : ''}</article>`;
   }).join("")}</div>`;
 }
 
@@ -133,16 +143,15 @@ function links(entries) {
   return `<ul>${entries.map(([id, name]) => `<li><a href="#${escapeHtml(id)}">${escapeHtml(name)}</a></li>`).join("")}</ul>`;
 }
 
-function summaryCards(summary) {
-  const m = summary.historico;
-  const entries = [["Turmas consolidadas", m.n], ["Vagas ofertadas", m.c], ["Matrículas registradas", m.m], ["Ocupação geral", format(m.rate, true)]];
+function summaryCards(summary, scope) {
+  const m = summary.selected ?? summary.historico;
+  const entries = [[scope?.id === 'current' ? "Turmas abertas em 2026.2" : "Turmas consolidadas", m.n], ["Vagas ofertadas", m.c], ["Matrículas registradas", m.m], ["Ocupação geral", format(m.rate, true)]];
   return `<div class="metrics">${entries.map(([name, value]) =>
     `<div class="metric"><span>${name}</span><strong>${typeof value === "number" ? integerFormat.format(value) : value}</strong></div>`).join("")}</div>
-    <p class="data-note">2023.1 a 2026.1 · Matrículas contam registros nas turmas.
-    <span>2026.2 tem ${integerFormat.format(summary.abertas.n)} turmas abertas, exibidas separadamente.</span></p>`;
+    <p class="data-note">${escapeHtml(scope?.note ?? 'Turmas presenciais do recorte selecionado.')} Matrículas contam registros nas turmas.</p>`;
 }
 
-function dataQuality(report, generatedAt) {
+function dataQuality(report, generatedAt, source) {
   if (!report) return "";
   const counts = [
     ["Registros lidos", report.inputRows], ["Registros válidos", report.validRows],
@@ -159,7 +168,10 @@ function dataQuality(report, generatedAt) {
     <button type="button" class="refresh-button" id="refresh-data">Recalcular dados ↻</button></div>
     <p class="quality-lead">${integerFormat.format(report.inputRows)} registros lidos ·
     ${integerFormat.format(report.inScopeRows ?? report.eligibleRows)} registros no recorte de análise.
-    <span id="updated-status" role="status">Atualizado em ${timestamp}</span></p>
+    <span id="updated-status" role="status">Recalculado em ${timestamp}</span></p>
+    ${source ? `<div class="source-verification"><strong>${escapeHtml(dataStatus)}</strong>
+      <p>${escapeHtml(refreshStatus)} Arquivo: ${escapeHtml(source.name)} · identificação da base: <code>${escapeHtml(source.sha256.slice(0, 12))}</code>.</p>
+      <p>2026.2: ${format(source.currentRows)} registros na base; ${format(source.currentEligibleRows)} turmas presenciais abertas com capacidade positiva no painel.</p></div>` : ''}
     <details><summary>Ver o tratamento aplicado aos dados</summary>
     <div class="quality-counts">${counts.map(([name, value]) =>
       `<div><strong>${integerFormat.format(value ?? 0)}</strong><span>${name}</span></div>`).join("")}</div>
@@ -196,8 +208,8 @@ function statisticalOverview(stats) {
     ["Entropia normalizada", index(c.normalizedEntropy)], ["Parcela das 20% maiores disciplinas", format(c.top20Share, true)],
     ["Spearman", index(a.spearman)], ["R² do ajuste linear", index(a.rSquared)],
   ];
-  return `<section class="statistical-overview" aria-label="Resumo estatístico das turmas consolidadas">
-    <div class="statistical-heading"><h3>Estatísticas das turmas consolidadas</h3><span>${o.n} turmas</span></div>
+  return `<section class="statistical-overview" aria-label="Resumo estatístico do recorte selecionado">
+    <div class="statistical-heading"><h3>Estatísticas do recorte selecionado</h3><span>${o.n} turmas</span></div>
     <div class="statistical-cards">${prominent.map(([name, value, note]) =>
       `<div><span>${name}</span><strong>${value}</strong><small>${note}</small></div>`).join("")}</div>
     <details><summary>Explorar os indicadores estatísticos</summary>
@@ -205,7 +217,8 @@ function statisticalOverview(stats) {
       `<div><dt>${name}</dt><dd>${value}</dd></div>`).join("")}</dl>
     <p class="statistical-caution">Cada turma tem o mesmo peso nas estatísticas de ocupação. A ocupação geral dos
     cartões anteriores pondera pela capacidade. Os coeficientes descrevem as associações do recorte.
-    Capacidade também está no denominador da ocupação.</p></details></section>`;
+    Capacidade também está no denominador da ocupação.</p></details>
+    ${comparisonPanel(stats.comparison, '')}</section>`;
 }
 
 function panelHeading(id, title, count) {
@@ -213,30 +226,162 @@ function panelHeading(id, title, count) {
     <span>${count} gráficos</span></div>`;
 }
 
-function dashboard({paineis, quality, generatedAt}) {
+function comparisonValue(value, unit) {
+  return value == null ? 'Sem registro' : unit === 'percent' ? format(value, true) : preciseFormat.format(value);
+}
+
+function signed(value, multiplier = 1) {
+  if (value == null) return '—';
+  const number = Math.abs(value) < 1e-12 ? 0 : value * multiplier;
+  return `${number > 0 ? '+' : ''}${preciseFormat.format(number)}`;
+}
+
+function changeDescription(row) {
+  if (row.delta == null) return 'Sem comparação';
+  return row.delta > 1e-12 ? 'Aumento' : row.delta < -1e-12 ? 'Redução' : 'Sem alteração';
+}
+
+function deltaValue(row) {
+  return row.delta == null ? '—' : `${signed(row.delta, row.unit === 'percent' ? 100 : 1)}${row.unit === 'percent' ? ' p.p.' : ''}`;
+}
+
+function comparisonTable(comparison) {
+  const rows = comparison.rows ?? [];
+  if (!rows.length) return '';
+  return `<div class="scroll comparison-scroll"><table><caption>${escapeHtml(comparison.currentPeriod)} em relação a ${escapeHtml(comparison.baselinePeriod ?? 'semestre de referência indisponível')}</caption>
+    <thead><tr><th scope="col">Categoria / métrica</th><th scope="col">${escapeHtml(comparison.baselinePeriod ?? 'Referência')}</th><th scope="col">2026.2 · aberta</th><th scope="col">Diferença</th><th scope="col">Variação relativa</th></tr></thead>
+    <tbody>${rows.map(row => `<tr><th scope="row">${escapeHtml([row.category, row.metric].filter(Boolean).join(' · '))}</th>
+      <td>${comparisonValue(row.before, row.unit)}</td><td>${comparisonValue(row.after, row.unit)}</td>
+      <td class="delta-${row.delta == null ? 'missing' : row.delta > 1e-12 ? 'up' : row.delta < -1e-12 ? 'down' : 'same'}">${changeDescription(row)} ${deltaValue(row)}</td>
+      <td>${row.relativeChange == null ? (row.unit === 'decimal' ? 'Não se aplica a índices' : row.before === 0 ? 'Base zero · indefinida' : 'Sem comparação') : `${signed(row.relativeChange, 100)}%`}</td></tr>`).join('')}</tbody></table></div>`;
+}
+
+function comparisonPanel(comparison, plotId) {
+  if (!comparison) return '';
+  const rows = (comparison.rows ?? []).filter(row => row.delta != null);
+  const up = rows.filter(row => row.delta > 1e-12).length;
+  const down = rows.filter(row => row.delta < -1e-12).length;
+  const same = rows.length - up - down;
+  return `<details class="period-comparison"><summary>Comparar com ${escapeHtml(comparison.baselinePeriod ?? 'semestre anterior')} · ${rows.length ? `${up} aumentos, ${down} reduções, ${same} estáveis` : 'sem medidas pareadas'}</summary>
+    <p class="comparison-note">${escapeHtml(comparison.note ?? '')}</p>
+    ${comparisonTable(comparison)}
+    ${comparison.baselinePlot ? `<details class="baseline-preview" data-baseline-for="${escapeHtml(plotId)}"><summary>Ver gráfico de referência · ${escapeHtml(comparison.baselinePeriod)}</summary><div class="baseline-content"></div></details>` : ''}</details>`;
+}
+
+function comparisonOverview(comparison, heading = 'Comparação entre semestres') {
+  if (!comparison) return '';
+  const rows = (comparison.rows ?? []).slice(0, 4);
+  return `<section class="comparison-overview" aria-label="${escapeHtml(heading)}"><div class="comparison-heading"><h3>${escapeHtml(heading)}</h3>
+    <span>${escapeHtml(comparison.baselinePeriod ?? 'Sem referência')} → 2026.2</span></div>
+    <p>Compara dois semestres: referência consolidada e oferta aberta. Os totais de todo o histórico ficam na aba Histórico.</p>
+    <div class="comparison-cards">${rows.map(row => `<div><span>${escapeHtml(row.metric)}</span>
+      <small>${comparisonValue(row.before, row.unit)} → ${comparisonValue(row.after, row.unit)}</small>
+      <strong class="delta-${row.delta == null ? 'missing' : row.delta > 1e-12 ? 'up' : row.delta < -1e-12 ? 'down' : 'same'}">${deltaValue(row)}</strong>
+      <small>${changeDescription(row)}${row.relativeChange == null ? '' : ` · ${signed(row.relativeChange, 100)}%`}</small></div>`).join('')}</div>
+    <details><summary>Ver todas as métricas comparadas</summary>${comparisonTable(comparison)}</details>
+    <p class="comparison-note">2026.2 ainda pode mudar. A diferença entre semestres também pode refletir o calendário da oferta de disciplinas. Aumento e redução não indicam, por si só, melhora ou piora.</p></section>`;
+}
+
+function periodControls(scope) {
+  return `<section class="period-controls" aria-labelledby="recorte-titulo"><div><p class="eyebrow">RECORTES SEPARADOS</p>
+    <h2 id="recorte-titulo">Histórico e oferta de 2026.2</h2><p>Esta escolha atualiza todos os gráficos, rankings, estatísticas e análises por cadeira.</p></div>
+    <div class="period-buttons" role="group" aria-label="Recorte dos gráficos">
+      <button type="button" data-view="historical" aria-pressed="${selectedView === 'historical'}">Histórico consolidado</button>
+      <button type="button" data-view="current" aria-pressed="${selectedView === 'current'}">2026.2 · oferta aberta</button></div>
+    <p class="selected-scope" role="status">${escapeHtml(scope?.note ?? '')}</p></section>`;
+}
+
+document.addEventListener('toggle', event => {
+  const details = event.target;
+  if (!details.open || !details.dataset?.baselineFor || details.dataset.mounted) return;
+  const plot = activePlots.get(details.dataset.baselineFor);
+  if (!plot?.comparison?.baselinePlot) return;
+  const before = {...plot.comparison.baselinePlot, id: `${plot.id}-reference`};
+  const target = details.querySelector('.baseline-content');
+  target.innerHTML = chartGrid([before], 'h5', false);
+  previewObservers.set(plot.id, mountCharts(new Map([[before.id, before]]), target));
+  details.dataset.mounted = 'true';
+}, true);
+
+function disciplineExplorer(area) {
+  return `<section class="panel discipline-explorer" id="cadeiras-${area}" aria-labelledby="cadeiras-${area}-titulo">
+    <h3 id="cadeiras-${area}-titulo">Análise individual das cadeiras</h3>
+    <p class="area-description">Selecione uma disciplina para explorar sua oferta e ocupação. O código identifica a cadeira; matrículas podem incluir estudantes de outros cursos.</p>
+    <div class="discipline-controls"><label>Buscar por nome ou código<input type="search" id="busca-${area}" placeholder="Digite o nome ou código"></label>
+    <label>Cadeira<select id="seletor-${area}"></select></label></div>
+    <p class="data-note"><a href="/api/graficos" download="graficos.json">Baixar catálogo dos gráficos (JSON)</a></p>
+    <div id="analise-${area}" aria-live="polite"></div></section>`;
+}
+
+function mountDisciplineExplorers(disciplines, scope) {
+  const cleanups = [];
+  for (const area of ["cct", "mc"]) {
+    const items = disciplines?.[area] ?? [];
+    const select = document.getElementById(`seletor-${area}`);
+    const search = document.getElementById(`busca-${area}`);
+    const target = document.getElementById(`analise-${area}`);
+    const state = disciplineState[area];
+    search.value = state.query;
+    let stop = () => {};
+    let activeIds = [];
+    function clear() {
+      stop();
+      activeIds.forEach(id => {
+        for (const key of [id, `${id}-reference`]) { chartInstances.get(key)?.destroy(); chartInstances.delete(key); }
+        previewObservers.get(id)?.(); previewObservers.delete(id); activePlots.delete(id);
+      });
+      activeIds = [];
+    }
+    function render() {
+      clear();
+      const d = items.find(item => item.code === select.value);
+      if (!d) { target.innerHTML = '<p class="empty-state">Nenhuma disciplina encontrada.</p>'; return; }
+      state.code = d.code;
+      const m = d.summary.selected ?? d.summary.historico;
+      const analysis = m.n ? `${format(m.n)} turmas neste recorte. ${format(m.free)} vagas não preenchidas e ${format(m.extra)} matrículas acima da capacidade, calculadas turma a turma. ${format(m.low)} turmas tiveram ocupação abaixo de 25%; ${format(m.full)} chegaram a 100% ou mais.` : 'Esta disciplina não tem oferta no recorte selecionado. Consulte a comparação para verificar a presença no semestre de referência.';
+      // IDs próprios por área permitem consultar o mesmo código nos dois recortes.
+      const plots = d.plots.map(p => ({...p, id: `${area}-${p.id}`}));
+      target.innerHTML = `<h4 class="section-heading">${escapeHtml(d.code)} · ${escapeHtml(d.name)}</h4>
+        ${summaryCards(d.summary, scope)}${comparisonOverview(d.summary.comparison, 'Comparação desta cadeira')}<p class="discipline-reading">${escapeHtml(analysis)}</p>
+        <p class="data-note">Os registros descrevem oferta e matrículas; não informam aprovação, evasão ou procura reprimida. Ausência de oferta aparece como lacuna.</p>
+        ${chartGrid(plots, 'h5')}`;
+      activeIds = plots.map(p => p.id);
+      plots.forEach(p => activePlots.set(p.id, p));
+      stop = mountCharts(new Map(plots.map(p => [p.id, p])), target);
+    }
+    function filter() {
+      const normalize = text => text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR');
+      const query = normalize(search.value.trim());
+      state.query = search.value;
+      const previous = select.value || state.code;
+      const filtered = items.filter(d => normalize(`${d.code} ${d.name}`).includes(query));
+      select.innerHTML = filtered.map(d => `<option value="${escapeHtml(d.code)}">${escapeHtml(d.code)} · ${escapeHtml(d.name)}</option>`).join('');
+      select.disabled = !filtered.length;
+      if (filtered.some(d => d.code === previous)) select.value = previous;
+      render();
+    }
+    select.addEventListener('change', render);
+    search.addEventListener('input', filter);
+    filter();
+    cleanups.push(clear);
+  }
+  stopDisciplineExplorers = () => cleanups.forEach(clear => clear());
+}
+
+function dashboard({paineis, quality, generatedAt, source, scope}) {
   const mcId = "matematica-computacional";
   const mc = paineis.find(panel => panel.id === mcId);
   const cct = paineis.filter(panel => panel.id !== mcId);
   const mcSections = mc.sections.map((section, i) => ({...section, id: `matcomp-secao-${i + 1}`}));
-  const mcNav = links(mcSections.map(section => [section.id, section.title]));
-  const cctNav = links(cct.map(panel => [panel.id, panel.title]));
+  const mcNav = links([...mcSections.map(section => [section.id, section.title]), ['cadeiras-mc', 'Análise por cadeira']]);
+  const cctNav = links([...cct.map(panel => [panel.id, panel.title]), ['cadeiras-cct', 'Análise por cadeira']]);
   const mcCount = mc.sections.reduce((sum, section) => sum + section.plots.length, 0);
   const cctCount = cct.reduce((sum, panel) => sum + panel.sections.reduce((n, s) => n + s.plots.length, 0), 0);
-  return `${dataQuality(quality, generatedAt)}<section class="area mc-area" id="${mcId}">
-    <div class="area-heading"><div><p class="eyebrow">01 / FOCO NO CURSO</p><h2>${escapeHtml(mc.title)}</h2></div><span class="count-badge">${mcCount} gráficos</span></div>
-    <p class="area-description">${escapeHtml(mc.description)}</p>
-    ${summaryCards(mc.summary)}
-    ${statisticalOverview(mc.statisticalSummary)}
-    <nav class="section-nav" aria-label="Seções de Matemática Computacional">${mcNav}</nav>
-    <p class="interaction-note">Passe o mouse para ver detalhes. Clique nas legendas para comparar séries.
-    Com o teclado, use Tab e as setas nos gráficos.</p>
-    ${mcSections.map(section => `<section class="panel" id="${section.id}" aria-labelledby="${section.id}-titulo">
-      ${panelHeading(section.id, section.title, section.plots.length)}${chartGrid(section.plots, "h4")}
-      <a class="back" href="#${mcId}">↑ Início de Matemática Computacional</a></section>`).join("")}
-    </section><section class="area cct-area" id="cct">
-    <div class="area-heading"><div><p class="eyebrow">02 / VISÃO DO CENTRO</p><h2>Resultados gerais do CCT</h2></div><span class="count-badge">${cctCount} gráficos</span></div>
+  return `${dataQuality(quality, generatedAt, source)}${periodControls(scope)}<section class="area cct-area" id="cct">
+    <div class="area-heading"><div><p class="eyebrow">01 / VISÃO DO CENTRO</p><h2>Resultados gerais do CCT</h2></div><span class="count-badge">${cctCount} gráficos</span></div>
     <p class="area-description">Oferta presencial do Centro de Ciências e Tecnologia. Os rankings por natureza curricular usam os códigos classificados nas matrizes de referência.</p>
-    ${summaryCards(cct.find(panel => panel.id === "evolucao").summary)}
+    ${summaryCards(cct.find(panel => panel.id === "evolucao").summary, scope)}
+    ${comparisonOverview(cct.find(panel => panel.id === "evolucao").summary.comparison)}
     ${statisticalOverview(cct.find(panel => panel.statisticalSummary)?.statisticalSummary)}
     <nav class="section-nav" aria-label="Seções do CCT">${cctNav}</nav>
     <p class="interaction-note">Passe o mouse para ver detalhes. As tabelas abaixo dos gráficos apresentam os valores completos.</p>
@@ -246,7 +391,20 @@ function dashboard({paineis, quality, generatedAt}) {
       ${panel.sections.map(section => section.title
         ? `<h4 class="section-heading">${escapeHtml(section.title)}</h4>${chartGrid(section.plots, "h5")}`
         : chartGrid(section.plots, "h4")).join("")}
-      <a class="back" href="#cct">↑ Início dos resultados do CCT</a></section>`).join("")}</section>`;
+      <a class="back" href="#cct">↑ Início dos resultados do CCT</a></section>`).join("")}${disciplineExplorer("cct")}</section><section class="area mc-area" id="${mcId}">
+    <div class="area-heading"><div><p class="eyebrow">02 / FOCO NO CURSO</p><h2>${escapeHtml(mc.title)}</h2></div><span class="count-badge">${mcCount} gráficos</span></div>
+    <p class="area-description">${escapeHtml(mc.description)}</p>
+    ${summaryCards(mc.summary, scope)}
+    ${comparisonOverview(mc.summary.comparison)}
+    ${statisticalOverview(mc.statisticalSummary)}
+    <nav class="section-nav" aria-label="Seções de Matemática Computacional">${mcNav}</nav>
+    <p class="interaction-note">Passe o mouse para ver detalhes. Clique nas legendas para comparar séries.
+    Com o teclado, use Tab e as setas nos gráficos.</p>
+    ${mcSections.map(section => `<section class="panel" id="${section.id}" aria-labelledby="${section.id}-titulo">
+      ${panelHeading(section.id, section.title, section.plots.length)}${chartGrid(section.plots, "h4")}
+      <a class="back" href="#${mcId}">↑ Início de Matemática Computacional</a></section>`).join("")}
+    ${disciplineExplorer("mc")}
+    </section>`;
 }
 
 function chartConfiguration(plot) {
@@ -438,7 +596,7 @@ function enableKeyboard(canvas, chart) {
   canvas.addEventListener("blur", clear);
 }
 
-function mountCharts(plots) {
+function mountCharts(plots, root = document) {
   const create = canvas => {
     if (chartInstances.has(canvas.dataset.plotId)) return;
     const plot = plots.get(canvas.dataset.plotId);
@@ -446,7 +604,7 @@ function mountCharts(plots) {
     chartInstances.set(plot.id, chart);
     enableKeyboard(canvas, chart);
   };
-  const canvases = document.querySelectorAll("canvas[data-plot-id]");
+  const canvases = root.querySelectorAll("canvas[data-plot-id]");
   if (!("IntersectionObserver" in window)) { canvases.forEach(create); return () => {}; }
   const observer = new IntersectionObserver(entries => {
     entries.filter(entry => entry.isIntersecting).forEach(entry => {
@@ -466,46 +624,80 @@ function mountCharts(plots) {
   return () => observer.disconnect();
 }
 
+function clearDashboardCharts() {
+  stopDisciplineExplorers();
+  stopMounting();
+  previewObservers.forEach(stop => stop());
+  previewObservers.clear();
+  chartInstances.forEach(chart => chart.destroy());
+  chartInstances.clear();
+  activePlots.clear();
+}
+
+function renderDashboard(focusControl = false) {
+  if (!dashboardBundle) return;
+  clearDashboardCharts();
+  const view = dashboardBundle.views[selectedView];
+  const main = document.getElementById('painel');
+  main.innerHTML = dashboard({...dashboardBundle, ...view});
+  const index = document.getElementById('indice');
+  index.innerHTML = links([['cct', '01 · Resultados gerais do CCT'], ['matematica-computacional', '02 · Matemática Computacional']]);
+  index.hidden = false;
+  const plots = new Map(view.paineis.flatMap(panel => panel.sections.flatMap(section =>
+    section.plots.map(plot => [plot.id, plot]))));
+  plots.forEach((plot, id) => activePlots.set(id, plot));
+  stopMounting = mountCharts(plots);
+  mountDisciplineExplorers(view.disciplines, view.scope);
+  document.getElementById('chart-count').textContent = `${plots.size} gráficos · ${view.scope.label}`;
+  document.getElementById('refresh-data')?.addEventListener('click', loadDashboard);
+  main.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', () => {
+    if (selectedView === button.dataset.view) return;
+    selectedView = button.dataset.view;
+    renderDashboard(true);
+  }));
+  if (focusControl) {
+    main.querySelector(`[data-view="${selectedView}"]`)?.focus({preventScroll: true});
+    document.getElementById('recorte-titulo')?.scrollIntoView({block: 'start'});
+  }
+}
+
 async function loadDashboard() {
   if (dashboardLoading) return;
   dashboardLoading = true;
-  const main = document.getElementById("painel");
-  const index = document.getElementById("indice");
-  const refresh = document.getElementById("refresh-data");
-  main.setAttribute("aria-busy", "true");
-  if (refresh) {
-    refresh.disabled = true;
-    refresh.textContent = "Processando…";
-  }
-  function clearCharts() {
-    stopMounting();
-    chartInstances.forEach(chart => chart.destroy());
-    chartInstances.clear();
-  }
+  const main = document.getElementById('painel');
+  const refresh = document.getElementById('refresh-data');
+  main.setAttribute('aria-busy', 'true');
+  if (refresh) { refresh.disabled = true; refresh.textContent = 'Processando…'; }
   try {
-    if (typeof Chart === "undefined") throw new Error("Não foi possível carregar o Chart.js local.");
+    if (typeof Chart === 'undefined') throw new Error('Não foi possível carregar o Chart.js local.');
     Chart.defaults.font.family = '"Segoe UI", system-ui, sans-serif';
-    Chart.defaults.color = "#64748b";
-    const response = await fetch("/api/painel");
+    Chart.defaults.color = '#64748b';
+    const response = await fetch('/api/painel', {cache: 'no-store'});
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data = await response.json();
-    clearCharts();
-    main.innerHTML = dashboard(data);
-    index.innerHTML = links([["matematica-computacional", "01 · Matemática Computacional"], ["cct", "02 · Resultados gerais do CCT"]]);
-    index.hidden = false;
-    const plots = new Map(data.paineis.flatMap(panel => panel.sections.flatMap(section =>
-      section.plots.map(plot => [plot.id, plot]))));
-    stopMounting = mountCharts(plots);
-    document.getElementById("chart-count").textContent = `${plots.size} visualizações`;
+    if (!data.views) throw new Error('Reinicie o servidor Python para carregar os recortes separados.');
+    for (const key of ['historical', 'current']) {
+      const view = data.views[key];
+      const plots = [...view.paineis.flatMap(panel => panel.sections.flatMap(section => section.plots)),
+        ...Object.values(view.disciplines).flatMap(items => items.flatMap(d => d.plots))];
+      plots.forEach(plot => { plot.comparison = data.plotComparisons[plot.id]; });
+    }
+    const previous = dashboardBundle?.source?.sha256;
+    dataStatus = previous ? (previous === data.source.sha256 ? 'Base sem alterações desde a última consulta nesta página.' : 'A base mudou desde a última consulta nesta página.') : 'Base conferida nesta consulta.';
+    refreshStatus = 'Recalcular os gráficos não altera o arquivo da base.';
+    dashboardBundle = data;
+    renderDashboard();
     document.getElementById(location.hash.slice(1))?.scrollIntoView();
   } catch (error) {
     console.error(error);
-    clearCharts();
-    main.innerHTML = '<div class="empty-state" role="alert"><p>Não foi possível processar os dados do painel. Confira o JSON e tente novamente.</p><button class="refresh-button" id="refresh-data" type="button">Tentar novamente ↻</button></div>';
+    clearDashboardCharts();
+    main.innerHTML = `<div class="empty-state" role="alert"><p>Não foi possível processar o painel. ${escapeHtml(error.message)}</p><button class="refresh-button" id="refresh-data" type="button">Tentar novamente ↻</button></div>`;
+    document.getElementById('refresh-data')?.addEventListener('click', loadDashboard);
   } finally {
     dashboardLoading = false;
-    main.setAttribute("aria-busy", "false");
-    document.getElementById("refresh-data")?.addEventListener("click", loadDashboard);
+    main.setAttribute('aria-busy', 'false');
+    const currentRefresh = document.getElementById('refresh-data');
+    if (currentRefresh) { currentRefresh.disabled = false; currentRefresh.textContent = 'Recalcular dados ↻'; }
   }
 }
 

@@ -1,6 +1,7 @@
 """Serve o painel da UFCA a partir do JSON de turmas."""
 
 import argparse
+import gzip
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
@@ -11,6 +12,7 @@ from services.graph import DEFAULT_DATA, TITLE, TOOLTIPS, dashboard_data
 
 SCRIPT_PATH = Path(__file__).resolve().with_name("painel.js")
 ASSETS = {
+    "/api/graficos": (SCRIPT_PATH.parent / "data" / "graficos.json", "application/json"),
     "/painel.js": (SCRIPT_PATH, "text/javascript"),
     "/painel.css": (SCRIPT_PATH.with_suffix(".css"), "text/css"),
     "/vendor/chart.umd.min.js": (SCRIPT_PATH.parent / "vendor" / "chart.umd.min.js", "text/javascript"),
@@ -90,9 +92,15 @@ class DashboardHandler(BaseHTTPRequestHandler):
 
     def respond(self, status, content, media_type):
         body = content.encode("utf-8")
+        compressed = media_type == 'application/json' and 'gzip' in self.headers.get('Accept-Encoding', '')
+        if compressed:
+            body = gzip.compress(body, compresslevel=5)
         self.send_response(status)
         self.send_header("Content-Type", f"{media_type}; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
+        if compressed:
+            self.send_header('Content-Encoding', 'gzip')
+        self.send_header('Vary', 'Accept-Encoding')
         self.send_header("Cache-Control", "no-store")
         self.end_headers()
         if self.command != "HEAD":
