@@ -12,6 +12,7 @@ let dashboardLoading = false;
 let stopDisciplineExplorers = () => {};
 let dashboardBundle = null;
 let selectedView = 'accumulated';
+let selectedGroup = 'cct';
 let dataStatus = '';
 let refreshStatus = '';
 const activePlots = new Map();
@@ -153,28 +154,7 @@ function summaryCards(summary, scope) {
     Matrículas contam registros nas turmas, não estudantes únicos.</p>`;
 }
 
-function auditOverview(audit) {
-  if (!audit) return '';
-  return `<section class="calculation-verification ${audit.passed ? '' : 'audit-failed'}" aria-labelledby="conferencia-titulo">
-    <h3 id="conferencia-titulo">${audit.passed ? 'Cálculos recalculados e conferidos' : 'Divergências encontradas na conferência'}</h3>
-    <p>${format(audit.checkedCharts)} de ${format(audit.expectedCharts)} resultados de gráficos conferidos por uma segunda implementação das contas, incluindo acumulado, histórico, 2026.2 e semestre de referência.
-    Os códigos sem oferta também são verificados.</p>
-    <p>${format(audit.checksRun)} verificações · ${format(audit.failures.length)} divergências. Ocupação geral = soma das matrículas ÷ soma das vagas.</p>
-    <details><summary>Conferir as somas por semestre</summary>
-    ${['cct', 'mc'].map(area => `<h4>${area === 'cct' ? 'CCT' : 'Matemática Computacional'}</h4><div class="scroll"><table>
-      <thead><tr><th>Semestre</th><th>Situação</th><th>Turmas</th><th>Vagas</th><th>Matrículas</th><th>Ocupação</th></tr></thead>
-      <tbody>${audit.bySemester.map(row => `<tr><th scope="row">${escapeHtml(row.period)}</th><td>${row.status === 'ABERTA' ? 'Aberta · separada' : 'Consolidada'}</td>
-        <td>${format(row[area].n)}</td><td>${format(row[area].c)}</td><td>${format(row[area].m)}</td><td>${format(row[area].rate, true)}</td></tr>`).join('')}
-      <tr class="audit-total"><th scope="row">Total do histórico</th><td>Consolidadas</td><td>${format(audit.totals.historical[area].n)}</td>
-        <td>${format(audit.totals.historical[area].c)}</td><td>${format(audit.totals.historical[area].m)}</td><td>${format(audit.totals.historical[area].rate, true)}</td></tr>
-      <tr class="audit-total"><th scope="row">Acumulado · 2023.1 a 2026.2</th><td>Consolidadas + abertas</td><td>${format(audit.totals.accumulated[area].n)}</td>
-        <td>${format(audit.totals.accumulated[area].c)}</td><td>${format(audit.totals.accumulated[area].m)}</td><td>${format(audit.totals.accumulated[area].rate, true)}</td></tr></tbody></table></div>`).join('')}
-      <p>O acumulado inclui 2026.2, ainda aberto. O histórico consolidado fica separado. A ocupação do total é a razão entre as somas, e não a média dos percentuais dos semestres.</p>
-    </details><a href="/api/conferencia" download="conferencia-calculos.json">Baixar relatório completo da conferência (JSON)</a>
-    ${audit.failures.length ? `<p class="quality-warning">${audit.failures.slice(0, 3).map(f => escapeHtml(f.id)).join(' · ')}</p>` : ''}</section>`;
-}
-
-function dataQuality(report, generatedAt, source, audit) {
+function dataQuality(report, generatedAt, source) {
   if (!report) return "";
   const counts = [
     ["Registros lidos", report.inputRows], ["Registros válidos", report.validRows],
@@ -188,12 +168,12 @@ function dataQuality(report, generatedAt, source, audit) {
   return `<section class="quality-panel" id="qualidade-dados" aria-labelledby="qualidade-titulo">
     <div class="quality-heading"><div><p class="eyebrow">DADOS PROCESSADOS NESTA CONSULTA</p>
     <h2 id="qualidade-titulo">Qualidade e preparação da base</h2></div>
-    <button type="button" class="refresh-button" id="refresh-data">Recalcular dados ↻</button></div>
+    <button type="button" class="refresh-button" id="refresh-data">Atualizar dados ↻</button></div>
     <p class="quality-lead">${integerFormat.format(report.inputRows)} registros lidos ·
     ${integerFormat.format(report.inScopeRows ?? report.eligibleRows)} registros no recorte de análise.
-    <span id="updated-status" role="status">Recalculado em ${timestamp}</span></p>
+    <span id="updated-status" role="status">Calculado em ${timestamp}</span></p>
     ${source ? `<div class="source-verification"><strong>${escapeHtml(dataStatus)}</strong>
-      <p>${escapeHtml(refreshStatus)} Arquivo: ${escapeHtml(source.name)} · identificação da base: <code>${escapeHtml(source.sha256.slice(0, 12))}</code>.</p>
+      <p>${escapeHtml(refreshStatus)} Fonte: ${escapeHtml(source.name)} · ${source.files?.length ?? 1} arquivo(s) de turmas · identificação da base: <code>${escapeHtml(source.sha256.slice(0, 12))}</code>.</p>
       <p>2026.2: ${format(source.currentRows)} registros na base; ${format(source.currentEligibleRows)} turmas presenciais abertas com capacidade positiva no painel.</p></div>` : ''}
     <details><summary>Ver o tratamento aplicado aos dados</summary>
     <div class="quality-counts">${counts.map(([name, value]) =>
@@ -204,7 +184,7 @@ function dataQuality(report, generatedAt, source, audit) {
     ${report.conflictGroups ? '<p class="quality-warning">Há versões conflitantes de turmas. Os resultados incluem esses registros e devem ser lidos considerando esse conflito.</p>' : ""}
     ${issues ? `<ul class="quality-issues">${issues}</ul>` : ""}
     <p class="muted">O arquivo original é preservado. A preparação ocorre em memória em cada consulta.</p>
-    </details>${auditOverview(audit)}</section>`;
+    </details></section>`;
 }
 
 function statisticalOverview(stats) {
@@ -337,14 +317,16 @@ function disciplineExplorer(area) {
     <div id="analise-${area}" aria-live="polite"></div></section>`;
 }
 
-function mountDisciplineExplorers(disciplines, scope) {
+function mountDisciplineExplorers(disciplines, scope, group) {
+  disciplines = {...disciplines, grupo: disciplines[group?.courseKey ?? 'cct'] ?? []};
   const cleanups = [];
-  for (const area of ["cct", "mc"]) {
+  for (const area of Object.keys(disciplines ?? {})) {
     const items = disciplines?.[area] ?? [];
     const select = document.getElementById(`seletor-${area}`);
     const search = document.getElementById(`busca-${area}`);
     const target = document.getElementById(`analise-${area}`);
-    const state = disciplineState[area];
+    if (!select || !search || !target) continue;
+    const state = disciplineState[area] ??= {query: '', code: ''};
     search.value = state.query;
     let stop = () => {};
     let activeIds = [];
@@ -392,43 +374,50 @@ function mountDisciplineExplorers(disciplines, scope) {
   stopDisciplineExplorers = () => cleanups.forEach(clear => clear());
 }
 
-function dashboard({paineis, quality, generatedAt, source, scope, audit}) {
-  const mcId = "matematica-computacional";
-  const mc = paineis.find(panel => panel.id === mcId);
-  const cct = paineis.filter(panel => panel.id !== mcId);
-  const mcSections = mc.sections.map((section, i) => ({...section, id: `matcomp-secao-${i + 1}`}));
-  const mcNav = links([...mcSections.map(section => [section.id, section.title]), ['cadeiras-mc', 'Análise por cadeira']]);
-  const cctNav = links([...cct.map(panel => [panel.id, panel.title]), ['cadeiras-cct', 'Análise por cadeira']]);
-  const mcCount = mc.sections.reduce((sum, section) => sum + section.plots.length, 0);
-  const cctCount = cct.reduce((sum, panel) => sum + panel.sections.reduce((n, s) => n + s.plots.length, 0), 0);
-  return `${dataQuality(quality, generatedAt, source, audit)}${periodControls(scope)}<section class="area cct-area" id="cct">
-    <div class="area-heading"><div><p class="eyebrow">01 / VISÃO DO CENTRO</p><h2>Resultados gerais do CCT</h2></div><span class="count-badge">${cctCount} gráficos</span></div>
-    <p class="area-description">Oferta presencial do Centro de Ciências e Tecnologia. Os rankings por natureza curricular usam os códigos classificados nas matrizes de referência.</p>
-    ${summaryCards(cct.find(panel => panel.id === "evolucao").summary, scope)}
-    ${comparisonOverview(cct.find(panel => panel.id === "evolucao").summary.comparison)}
-    ${statisticalOverview(cct.find(panel => panel.statisticalSummary)?.statisticalSummary)}
-    <nav class="section-nav" aria-label="Seções do CCT">${cctNav}</nav>
-    <p class="interaction-note">Passe o mouse para ver detalhes. As tabelas abaixo dos gráficos apresentam os valores completos.</p>
-    ${cct.map(panel => `<section class="panel" id="${escapeHtml(panel.id)}" aria-labelledby="${escapeHtml(panel.id)}-titulo">
-      ${panelHeading(panel.id, panel.title, panel.sections.reduce((sum, section) => sum + section.plots.length, 0))}
-      ${panel.description ? `<p class="panel-description">${escapeHtml(panel.description)}</p>` : ""}
-      ${panel.sections.map(section => section.title
-        ? `<h4 class="section-heading">${escapeHtml(section.title)}</h4>${chartGrid(section.plots, "h5")}`
-        : chartGrid(section.plots, "h4")).join("")}
-      <a class="back" href="#cct">↑ Início dos resultados do CCT</a></section>`).join("")}${disciplineExplorer("cct")}</section><section class="area mc-area" id="${mcId}">
-    <div class="area-heading"><div><p class="eyebrow">02 / FOCO NO CURSO</p><h2>${escapeHtml(mc.title)}</h2></div><span class="count-badge">${mcCount} gráficos</span></div>
-    <p class="area-description">${escapeHtml(mc.description)}</p>
-    ${summaryCards(mc.summary, scope)}
-    ${comparisonOverview(mc.summary.comparison)}
-    ${statisticalOverview(mc.statisticalSummary)}
-    <nav class="section-nav" aria-label="Seções de Matemática Computacional">${mcNav}</nav>
-    <p class="interaction-note">Passe o mouse para ver detalhes. Clique nas legendas para comparar séries.
-    Com o teclado, use Tab e as setas nos gráficos.</p>
-    ${mcSections.map(section => `<section class="panel" id="${section.id}" aria-labelledby="${section.id}-titulo">
-      ${panelHeading(section.id, section.title, section.plots.length)}${chartGrid(section.plots, "h4")}
-      <a class="back" href="#${mcId}">↑ Início de Matemática Computacional</a></section>`).join("")}
-    ${disciplineExplorer("mc")}
-    </section>`;
+const specificCharts = new Set(['comparacao', 'natureza', 'historico-obrigatorias', 'historico-optativas',
+  'matriculas-historico', 'baixa-recorrente', 'maior-ocupacao', 'menor-ocupacao', 'mais-vagas', 'mais-turmas',
+  'mais-semestres', 'sobras', 'lotadas', 'acima-capacidade', 'obrigatorias-matriculas', 'optativas-matriculas']);
+
+function specificSections(panel) {
+  return panel.sections.map((section, i) => ({...section, id: `${panel.chartPrefix}-secao-${i + 1}`,
+    plots: section.plots.filter(plot => specificCharts.has(plot.id.slice(panel.chartPrefix.length + 1)))}))
+    .filter(section => section.plots.length);
+}
+
+function courseArea(panel, scope, index) {
+  const sections = specificSections(panel);
+  const count = sections.reduce((sum, section) => sum + section.plots.length, 0);
+  const nav = links([...sections.map(section => [section.id, section.title]), [`cadeiras-${panel.courseKey}`, 'Análise por cadeira']]);
+  return `<section class="area course-area" id="${escapeHtml(panel.id)}">
+    <div class="area-heading"><div><p class="eyebrow">ANÁLISES ESPECÍFICAS DO CURSO</p><h2>${escapeHtml(panel.title)}</h2></div><span class="count-badge">${count} gráficos específicos</span></div>
+    <p class="area-description">${escapeHtml(panel.description)} Os gráficos gerais e as estatísticas estão disponíveis no seletor de grupo acima.</p>
+    ${summaryCards(panel.summary, scope)}${comparisonOverview(panel.summary.comparison)}
+    <nav class="section-nav" aria-label="Seções de ${escapeHtml(panel.title)}">${nav}</nav>
+    ${sections.map(section => `<section class="panel" id="${section.id}" aria-labelledby="${section.id}-titulo">
+      ${panelHeading(section.id, section.title, section.plots.length)}${chartGrid(section.plots, 'h4')}
+      <a class="back" href="#${escapeHtml(panel.id)}">↑ Início de ${escapeHtml(panel.title)}</a></section>`).join('')}
+    ${disciplineExplorer(panel.courseKey)}</section>`;
+}
+
+function dashboard({paineis, groups, courseComparisons, quality, generatedAt, source, scope}) {
+  const courses = paineis.filter(panel => panel.courseKey);
+  const group = groups[selectedGroup] ?? groups.cct;
+  const groupSections = group.sections.map((section, i) => ({...section, id: `grupo-secao-${i + 1}`}));
+  const count = groupSections.reduce((sum, section) => sum + section.plots.length, 0);
+  return `${dataQuality(quality, generatedAt, source)}${periodControls(scope)}
+    <section class="area group-area" id="grupos" aria-labelledby="grupos-titulo">
+      <div class="area-heading"><div><p class="eyebrow">VISÃO AGREGADA POR GRUPO</p><h2 id="grupos-titulo">Gráficos gerais</h2></div><span class="count-badge">${count} gráficos</span></div>
+      <div class="group-controls"><label for="group-select">Grupo dos gráficos gerais</label>
+        <select id="group-select">${Object.entries(groups).map(([key, value]) => `<option value="${escapeHtml(key)}" ${key === selectedGroup ? 'selected' : ''}>${escapeHtml(key.toUpperCase())} · ${escapeHtml(value.title)}</option>`).join('')}</select></div>
+      <p class="area-description selected-group" role="status">Grupo selecionado: <strong>${escapeHtml(group.title)}</strong>. A seleção atualiza os indicadores, as séries, os rankings, os mapas de horários, as estatísticas e as cadeiras desta área.</p>
+      ${summaryCards(group.summary, scope)}${comparisonOverview(group.summary.comparison)}${statisticalOverview(group.statisticalSummary)}
+      <nav class="section-nav" aria-label="Seções dos gráficos gerais">${links([...groupSections.map(section => [section.id, section.title]), ['cadeiras-grupo', 'Análise por cadeira']])}</nav>
+      ${groupSections.map(section => `<section class="panel" id="${section.id}" aria-labelledby="${section.id}-titulo">
+        ${panelHeading(section.id, section.title, section.plots.length)}${chartGrid(section.plots, 'h4')}
+        <a class="back" href="#grupos">↑ Selecionar grupo</a></section>`).join('')}${disciplineExplorer('grupo')}</section>
+    <section class="area" id="comparacao-cursos"><div class="area-heading"><div><p class="eyebrow">VISÃO ENTRE CURSOS</p><h2>${escapeHtml(courseComparisons.title)}</h2></div></div>
+      <p class="area-description">${escapeHtml(courseComparisons.description)}</p>${chartGrid(courseComparisons.plots, 'h3')}</section>
+    ${courses.map((panel, index) => courseArea(panel, scope, index)).join('')}`;
 }
 
 function chartConfiguration(plot) {
@@ -658,6 +647,12 @@ function clearDashboardCharts() {
   activePlots.clear();
 }
 
+function viewPlots(view) {
+  return [...view.paineis.flatMap(panel => panel.sections.flatMap(section => section.plots)),
+    ...Object.values(view.groups).flatMap(group => group.sections.flatMap(section => section.plots)),
+    ...view.courseComparisons.plots];
+}
+
 function renderDashboard(focusControl = false) {
   if (!dashboardBundle) return;
   clearDashboardCharts();
@@ -665,15 +660,21 @@ function renderDashboard(focusControl = false) {
   const main = document.getElementById('painel');
   main.innerHTML = dashboard({...dashboardBundle, ...view});
   const index = document.getElementById('indice');
-  index.innerHTML = links([['cct', '01 · Resultados gerais do CCT'], ['matematica-computacional', '02 · Matemática Computacional']]);
+  index.innerHTML = links([['grupos', 'Gráficos gerais'], ['comparacao-cursos', 'Comparação entre cursos'], ...view.paineis.filter(p => p.courseKey).map(p => [p.id, p.title])]);
   index.hidden = false;
-  const plots = new Map(view.paineis.flatMap(panel => panel.sections.flatMap(section =>
-    section.plots.map(plot => [plot.id, plot]))));
+  const plots = new Map(viewPlots(view).map(plot => [plot.id, plot]));
   plots.forEach((plot, id) => activePlots.set(id, plot));
   stopMounting = mountCharts(plots);
-  mountDisciplineExplorers(view.disciplines, view.scope);
-  document.getElementById('chart-count').textContent = `${plots.size} gráficos · ${view.scope.label}`;
+  mountDisciplineExplorers(view.disciplines, view.scope, view.groups[selectedGroup]);
+  document.getElementById('chart-count').textContent = `${document.querySelectorAll(".chart-card").length} gráficos visíveis · ${view.scope.label}`;
   document.getElementById('refresh-data')?.addEventListener('click', loadDashboard);
+  document.getElementById('group-select')?.addEventListener('change', event => {
+    selectedGroup = event.target.value;
+    disciplineState.grupo = {query: '', code: ''};
+    renderDashboard();
+    document.getElementById('group-select')?.focus({preventScroll: true});
+    document.getElementById('grupos')?.scrollIntoView({block: 'start'});
+  });
   main.querySelectorAll('[data-view]').forEach(button => button.addEventListener('click', () => {
     if (selectedView === button.dataset.view) return;
     selectedView = button.dataset.view;
@@ -702,13 +703,12 @@ async function loadDashboard() {
     if (!data.views) throw new Error('Reinicie o servidor Python para carregar os recortes separados.');
     for (const key of ['accumulated', 'historical', 'current']) {
       const view = data.views[key];
-      const plots = [...view.paineis.flatMap(panel => panel.sections.flatMap(section => section.plots)),
-        ...Object.values(view.disciplines).flatMap(items => items.flatMap(d => d.plots))];
+      const plots = [...viewPlots(view), ...Object.values(view.disciplines).flatMap(items => items.flatMap(d => d.plots))];
       plots.forEach(plot => { plot.comparison = data.plotComparisons[plot.id]; });
     }
     const previous = dashboardBundle?.source?.sha256;
-    dataStatus = previous ? (previous === data.source.sha256 ? 'Base sem alterações desde a última consulta nesta página.' : 'A base mudou desde a última consulta nesta página.') : 'Base conferida nesta consulta.';
-    refreshStatus = 'Recalcular os gráficos não altera o arquivo da base.';
+    dataStatus = previous ? (previous === data.source.sha256 ? 'Base sem alterações desde a última consulta nesta página.' : 'A base mudou desde a última consulta nesta página.') : 'Base carregada nesta consulta.';
+    refreshStatus = 'Os indicadores são calculados a partir dos arquivos da base.';
     dashboardBundle = data;
     renderDashboard();
     document.getElementById(location.hash.slice(1))?.scrollIntoView();
@@ -721,7 +721,7 @@ async function loadDashboard() {
     dashboardLoading = false;
     main.setAttribute('aria-busy', 'false');
     const currentRefresh = document.getElementById('refresh-data');
-    if (currentRefresh) { currentRefresh.disabled = false; currentRefresh.textContent = 'Recalcular dados ↻'; }
+    if (currentRefresh) { currentRefresh.disabled = false; currentRefresh.textContent = 'Atualizar dados ↻'; }
   }
 }
 

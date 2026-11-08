@@ -1468,6 +1468,1906 @@
       "tipos_permitidos": [
         "heatmap"
       ]
+    },
+    "computacao-vagas": {
+      "nome": "Vagas e matrículas por semestre",
+      "descricao": "Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "computacao-comparacao": {
+      "nome": "Ocupação do curso e do CCT",
+      "descricao": "Ocupação é a soma das matrículas dividida pela soma das vagas. O total do CCT inclui o curso. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "computacao-natureza": {
+      "nome": "Ocupação de obrigatórias e optativas",
+      "descricao": "As disciplinas são agrupadas conforme a natureza indicada na matriz de referência do curso. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "computacao-faixas": {
+      "nome": "Turmas por faixa de ocupação",
+      "descricao": "Cada turma é contada na faixa correspondente às suas matrículas divididas pelas vagas. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "tipo": "stackedBar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "computacao-indicador-turmas": {
+      "nome": "Turmas e disciplinas ofertadas",
+      "descricao": "Cada código de disciplina é contado uma vez por semestre. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "tipo": "mixed",
+      "tipos_permitidos": [
+        "mixed"
+      ]
+    },
+    "computacao-indicador-saldo": {
+      "nome": "Vagas não preenchidas e matrículas acima da capacidade",
+      "descricao": "Os dois totais são calculados turma a turma e somados separadamente. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "computacao-indicador-extremos": {
+      "nome": "Percentual de turmas com baixa ocupação ou lotadas",
+      "descricao": "Mostra a parcela de turmas abaixo de 25% e a parcela com ocupação de 100% ou mais. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "computacao-historico-obrigatorias": {
+      "nome": "Ocupação das obrigatórias por disciplina",
+      "descricao": "Inclui os códigos com oferta na base. Um traço indica ausência de oferta no recorte. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "tipo": "heatmap",
+      "tipos_permitidos": [
+        "heatmap"
+      ]
+    },
+    "computacao-historico-optativas": {
+      "nome": "Ocupação das optativas por disciplina",
+      "descricao": "Inclui os códigos com oferta na base. Um traço indica ausência de oferta no recorte. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "tipo": "heatmap",
+      "tipos_permitidos": [
+        "heatmap"
+      ]
+    },
+    "computacao-matriculas-historico": {
+      "nome": "Disciplinas com mais matrículas",
+      "descricao": "As dez disciplinas com maior soma de matrículas nas turmas consolidadas.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "computacao-baixa-recorrente": {
+      "nome": "Disciplinas com mais semestres abaixo de 25% de ocupação",
+      "descricao": "Mostra até dez disciplinas. A ocupação de cada código é calculada com as turmas consolidadas de cada semestre.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "computacao-maior-ocupacao": {
+      "nome": "Disciplinas com maior ocupação acumulada",
+      "descricao": "Até dez disciplinas pela razão entre matrículas e vagas no histórico consolidado.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "computacao-menor-ocupacao": {
+      "nome": "Disciplinas com menor ocupação acumulada",
+      "descricao": "Até dez disciplinas pela razão entre matrículas e vagas no histórico consolidado.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "computacao-mais-vagas": {
+      "nome": "Disciplinas com mais vagas ofertadas",
+      "descricao": "Até dez disciplinas pelo total de vagas nas turmas consolidadas.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "computacao-mais-turmas": {
+      "nome": "Disciplinas com mais turmas",
+      "descricao": "Até dez disciplinas pelo número de turmas consolidadas.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "computacao-mais-semestres": {
+      "nome": "Disciplinas ofertadas em mais semestres",
+      "descricao": "Até dez disciplinas pela frequência da oferta no histórico consolidado.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "computacao-sobras": {
+      "nome": "Disciplinas com mais vagas não preenchidas",
+      "descricao": "Até dez disciplinas pela soma das vagas não preenchidas em cada turma consolidada.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "computacao-lotadas": {
+      "nome": "Disciplinas com mais turmas lotadas",
+      "descricao": "Conta as turmas consolidadas com matrículas iguais ou acima da capacidade.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "computacao-acima-capacidade": {
+      "nome": "Disciplinas com mais matrículas acima da capacidade",
+      "descricao": "Soma o excesso de matrículas das turmas consolidadas acima da capacidade.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "computacao-obrigatorias-matriculas": {
+      "nome": "Obrigatórias com mais matrículas",
+      "descricao": "Até dez disciplinas obrigatórias pelo total de matrículas nas turmas consolidadas.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "computacao-optativas-matriculas": {
+      "nome": "Optativas com mais matrículas",
+      "descricao": "Até dez disciplinas optativas pelo total de matrículas nas turmas consolidadas.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "computacao-abertas-ocupacao": {
+      "nome": "Ocupação das disciplinas abertas",
+      "descricao": "Todas as disciplinas com oferta aberta em 2026.2, em ordem decrescente de ocupação.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "computacao-abertas-vagas": {
+      "nome": "Vagas ainda não preenchidas",
+      "descricao": "Todas as disciplinas com oferta aberta em 2026.2. Soma as vagas não preenchidas turma a turma.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "computacao-abertas-matriculas": {
+      "nome": "Mais matrículas nas turmas abertas",
+      "descricao": "Até dez disciplinas pelo total de matrículas nas turmas abertas em 2026.2.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "computacao-abertas-menor-ocupacao": {
+      "nome": "Menor ocupação nas turmas abertas",
+      "descricao": "Até dez disciplinas pela menor razão entre matrículas e vagas em 2026.2.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "computacao-linha-ocupacao": {
+      "nome": "Ocupação mediana e ocupação geral",
+      "descricao": "A mediana dá o mesmo peso a cada turma. A ocupação geral divide todas as matrículas por todas as vagas. *2026.2 contém turmas abertas e aparece com linha tracejada.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "computacao-linha-tamanho": {
+      "nome": "Vagas e matrículas médias por turma",
+      "descricao": "Em cada semestre, divide vagas e matrículas pelo número de turmas presenciais. *2026.2 contém turmas abertas e aparece com linha tracejada.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "computacao-rosca-historico": {
+      "nome": "Faixas de ocupação nas turmas consolidadas",
+      "descricao": "Cada fatia mostra a parcela das turmas consolidadas na respectiva faixa de ocupação.",
+      "tipo": "donut",
+      "tipos_permitidos": [
+        "donut",
+        "pie"
+      ]
+    },
+    "computacao-rosca-abertas": {
+      "nome": "Faixas de ocupação nas turmas abertas de 2026.2",
+      "descricao": "Cada fatia mostra a parcela das turmas abertas na respectiva faixa de ocupação.",
+      "tipo": "donut",
+      "tipos_permitidos": [
+        "donut",
+        "pie"
+      ]
+    },
+    "computacao-rosca-turnos": {
+      "nome": "Distribuição das turmas consolidadas por turno",
+      "descricao": "Turmas com aulas em mais de um turno entram em Misto.",
+      "tipo": "donut",
+      "tipos_permitidos": [
+        "donut",
+        "pie"
+      ]
+    },
+    "computacao-dispersao": {
+      "nome": "Vagas e matrículas por turma consolidada",
+      "descricao": "O tamanho de cada ponto indica quantas turmas têm a mesma combinação de vagas e matrículas. Acima da diagonal, as matrículas superam as vagas.",
+      "tipo": "scatter",
+      "tipos_permitidos": [
+        "scatter"
+      ]
+    },
+    "computacao-pizza-capacidades": {
+      "nome": "Composição da oferta por capacidade",
+      "descricao": "Distribuição das turmas consolidadas entre as cinco capacidades mais frequentes. As demais capacidades são agrupadas em Outras.",
+      "tipo": "pie",
+      "tipos_permitidos": [
+        "donut",
+        "pie"
+      ]
+    },
+    "computacao-radar-faixas": {
+      "nome": "Perfil de ocupação por faixa",
+      "descricao": "Compara a proporção de turmas em cada faixa no histórico consolidado e nas abertas de 2026.2. Cada eixo mostra uma parcela do total de turmas do respectivo recorte.",
+      "tipo": "radar",
+      "tipos_permitidos": [
+        "radar"
+      ]
+    },
+    "computacao-faixas-percentual": {
+      "nome": "Composição da ocupação ao longo dos semestres",
+      "descricao": "As colunas representam 100% das turmas de cada semestre e facilitam a comparação das proporções. *2026.2 contém turmas abertas.",
+      "tipo": "stackedPercent",
+      "tipos_permitidos": [
+        "stackedPercent"
+      ]
+    },
+    "computacao-bolhas-disciplinas": {
+      "nome": "Dimensão da oferta por disciplina",
+      "descricao": "Cada bolha representa uma disciplina no histórico consolidado. Os eixos somam vagas e matrículas. A área da bolha é proporcional ao número de turmas ofertadas.",
+      "tipo": "bubble",
+      "tipos_permitidos": [
+        "bubble"
+      ]
+    },
+    "computacao-area-natureza": {
+      "nome": "Matrículas por natureza curricular",
+      "descricao": "As áreas empilhadas somam as matrículas de cada semestre, classificadas pelos códigos da matriz de referência. Códigos compartilhados ou sem classificação aparecem em uma categoria própria. *2026.2 contém turmas abertas.",
+      "tipo": "area",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "computacao-estat-histograma": {
+      "nome": "Distribuição detalhada da ocupação",
+      "descricao": "Compara as proporções de turmas consolidadas e abertas em 2026.2 em seis intervalos de ocupação.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "computacao-estat-quartis": {
+      "nome": "Faixa central de ocupação por semestre",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "distributionBand",
+      "tipos_permitidos": [
+        "distributionBand"
+      ]
+    },
+    "computacao-estat-dispersao": {
+      "nome": "Dispersão relativa da ocupação",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "computacao-estat-momentos": {
+      "nome": "Assimetria e caudas da ocupação",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "computacao-estat-tukey": {
+      "nome": "Turmas sinalizadas pela regra de Tukey",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "stackedBar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "computacao-estat-acumulada": {
+      "nome": "Distribuição acumulada da ocupação",
+      "descricao": "Compara a proporção de turmas com ocupação menor ou igual a cada valor do eixo horizontal.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "computacao-estat-lorenz": {
+      "nome": "Concentração das matrículas entre disciplinas",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "computacao-estat-concentracao": {
+      "nome": "Índices de concentração por semestre",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "computacao-estat-diversidade": {
+      "nome": "Disciplinas ofertadas e diversidade efetiva",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "mixed",
+      "tipos_permitidos": [
+        "mixed"
+      ]
+    },
+    "computacao-estat-participacao": {
+      "nome": "Participação das dez maiores disciplinas nas matrículas",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "computacao-estat-correlacoes": {
+      "nome": "Relação entre capacidade e ocupação por semestre",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "computacao-estat-regressao": {
+      "nome": "Capacidade e ocupação com ajuste descritivo",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "statisticalScatter",
+      "tipos_permitidos": [
+        "statisticalScatter"
+      ]
+    },
+    "computacao-estat-markov": {
+      "nome": "Ocupação acima de um limiar e limite de Markov",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "computacao-estat-chebyshev": {
+      "nome": "Concentração em torno da média e limite de Chebyshev",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "civil-vagas": {
+      "nome": "Vagas e matrículas por semestre",
+      "descricao": "Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "civil-comparacao": {
+      "nome": "Ocupação do curso e do CCT",
+      "descricao": "Ocupação é a soma das matrículas dividida pela soma das vagas. O total do CCT inclui o curso. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "civil-natureza": {
+      "nome": "Ocupação de obrigatórias e optativas",
+      "descricao": "As disciplinas são agrupadas conforme a natureza indicada na matriz de referência do curso. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "civil-faixas": {
+      "nome": "Turmas por faixa de ocupação",
+      "descricao": "Cada turma é contada na faixa correspondente às suas matrículas divididas pelas vagas. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "tipo": "stackedBar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "civil-indicador-turmas": {
+      "nome": "Turmas e disciplinas ofertadas",
+      "descricao": "Cada código de disciplina é contado uma vez por semestre. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "tipo": "mixed",
+      "tipos_permitidos": [
+        "mixed"
+      ]
+    },
+    "civil-indicador-saldo": {
+      "nome": "Vagas não preenchidas e matrículas acima da capacidade",
+      "descricao": "Os dois totais são calculados turma a turma e somados separadamente. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "civil-indicador-extremos": {
+      "nome": "Percentual de turmas com baixa ocupação ou lotadas",
+      "descricao": "Mostra a parcela de turmas abaixo de 25% e a parcela com ocupação de 100% ou mais. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "civil-historico-obrigatorias": {
+      "nome": "Ocupação das obrigatórias por disciplina",
+      "descricao": "Inclui os códigos com oferta na base. Um traço indica ausência de oferta no recorte. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "tipo": "heatmap",
+      "tipos_permitidos": [
+        "heatmap"
+      ]
+    },
+    "civil-historico-optativas": {
+      "nome": "Ocupação das optativas por disciplina",
+      "descricao": "Inclui os códigos com oferta na base. Um traço indica ausência de oferta no recorte. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "tipo": "heatmap",
+      "tipos_permitidos": [
+        "heatmap"
+      ]
+    },
+    "civil-matriculas-historico": {
+      "nome": "Disciplinas com mais matrículas",
+      "descricao": "As dez disciplinas com maior soma de matrículas nas turmas consolidadas.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "civil-baixa-recorrente": {
+      "nome": "Disciplinas com mais semestres abaixo de 25% de ocupação",
+      "descricao": "Mostra até dez disciplinas. A ocupação de cada código é calculada com as turmas consolidadas de cada semestre.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "civil-maior-ocupacao": {
+      "nome": "Disciplinas com maior ocupação acumulada",
+      "descricao": "Até dez disciplinas pela razão entre matrículas e vagas no histórico consolidado.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "civil-menor-ocupacao": {
+      "nome": "Disciplinas com menor ocupação acumulada",
+      "descricao": "Até dez disciplinas pela razão entre matrículas e vagas no histórico consolidado.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "civil-mais-vagas": {
+      "nome": "Disciplinas com mais vagas ofertadas",
+      "descricao": "Até dez disciplinas pelo total de vagas nas turmas consolidadas.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "civil-mais-turmas": {
+      "nome": "Disciplinas com mais turmas",
+      "descricao": "Até dez disciplinas pelo número de turmas consolidadas.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "civil-mais-semestres": {
+      "nome": "Disciplinas ofertadas em mais semestres",
+      "descricao": "Até dez disciplinas pela frequência da oferta no histórico consolidado.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "civil-sobras": {
+      "nome": "Disciplinas com mais vagas não preenchidas",
+      "descricao": "Até dez disciplinas pela soma das vagas não preenchidas em cada turma consolidada.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "civil-lotadas": {
+      "nome": "Disciplinas com mais turmas lotadas",
+      "descricao": "Conta as turmas consolidadas com matrículas iguais ou acima da capacidade.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "civil-acima-capacidade": {
+      "nome": "Disciplinas com mais matrículas acima da capacidade",
+      "descricao": "Soma o excesso de matrículas das turmas consolidadas acima da capacidade.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "civil-obrigatorias-matriculas": {
+      "nome": "Obrigatórias com mais matrículas",
+      "descricao": "Até dez disciplinas obrigatórias pelo total de matrículas nas turmas consolidadas.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "civil-optativas-matriculas": {
+      "nome": "Optativas com mais matrículas",
+      "descricao": "Até dez disciplinas optativas pelo total de matrículas nas turmas consolidadas.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "civil-abertas-ocupacao": {
+      "nome": "Ocupação das disciplinas abertas",
+      "descricao": "Todas as disciplinas com oferta aberta em 2026.2, em ordem decrescente de ocupação.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "civil-abertas-vagas": {
+      "nome": "Vagas ainda não preenchidas",
+      "descricao": "Todas as disciplinas com oferta aberta em 2026.2. Soma as vagas não preenchidas turma a turma.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "civil-abertas-matriculas": {
+      "nome": "Mais matrículas nas turmas abertas",
+      "descricao": "Até dez disciplinas pelo total de matrículas nas turmas abertas em 2026.2.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "civil-abertas-menor-ocupacao": {
+      "nome": "Menor ocupação nas turmas abertas",
+      "descricao": "Até dez disciplinas pela menor razão entre matrículas e vagas em 2026.2.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "civil-linha-ocupacao": {
+      "nome": "Ocupação mediana e ocupação geral",
+      "descricao": "A mediana dá o mesmo peso a cada turma. A ocupação geral divide todas as matrículas por todas as vagas. *2026.2 contém turmas abertas e aparece com linha tracejada.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "civil-linha-tamanho": {
+      "nome": "Vagas e matrículas médias por turma",
+      "descricao": "Em cada semestre, divide vagas e matrículas pelo número de turmas presenciais. *2026.2 contém turmas abertas e aparece com linha tracejada.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "civil-rosca-historico": {
+      "nome": "Faixas de ocupação nas turmas consolidadas",
+      "descricao": "Cada fatia mostra a parcela das turmas consolidadas na respectiva faixa de ocupação.",
+      "tipo": "donut",
+      "tipos_permitidos": [
+        "donut",
+        "pie"
+      ]
+    },
+    "civil-rosca-abertas": {
+      "nome": "Faixas de ocupação nas turmas abertas de 2026.2",
+      "descricao": "Cada fatia mostra a parcela das turmas abertas na respectiva faixa de ocupação.",
+      "tipo": "donut",
+      "tipos_permitidos": [
+        "donut",
+        "pie"
+      ]
+    },
+    "civil-rosca-turnos": {
+      "nome": "Distribuição das turmas consolidadas por turno",
+      "descricao": "Turmas com aulas em mais de um turno entram em Misto.",
+      "tipo": "donut",
+      "tipos_permitidos": [
+        "donut",
+        "pie"
+      ]
+    },
+    "civil-dispersao": {
+      "nome": "Vagas e matrículas por turma consolidada",
+      "descricao": "O tamanho de cada ponto indica quantas turmas têm a mesma combinação de vagas e matrículas. Acima da diagonal, as matrículas superam as vagas.",
+      "tipo": "scatter",
+      "tipos_permitidos": [
+        "scatter"
+      ]
+    },
+    "civil-pizza-capacidades": {
+      "nome": "Composição da oferta por capacidade",
+      "descricao": "Distribuição das turmas consolidadas entre as cinco capacidades mais frequentes. As demais capacidades são agrupadas em Outras.",
+      "tipo": "pie",
+      "tipos_permitidos": [
+        "donut",
+        "pie"
+      ]
+    },
+    "civil-radar-faixas": {
+      "nome": "Perfil de ocupação por faixa",
+      "descricao": "Compara a proporção de turmas em cada faixa no histórico consolidado e nas abertas de 2026.2. Cada eixo mostra uma parcela do total de turmas do respectivo recorte.",
+      "tipo": "radar",
+      "tipos_permitidos": [
+        "radar"
+      ]
+    },
+    "civil-faixas-percentual": {
+      "nome": "Composição da ocupação ao longo dos semestres",
+      "descricao": "As colunas representam 100% das turmas de cada semestre e facilitam a comparação das proporções. *2026.2 contém turmas abertas.",
+      "tipo": "stackedPercent",
+      "tipos_permitidos": [
+        "stackedPercent"
+      ]
+    },
+    "civil-bolhas-disciplinas": {
+      "nome": "Dimensão da oferta por disciplina",
+      "descricao": "Cada bolha representa uma disciplina no histórico consolidado. Os eixos somam vagas e matrículas. A área da bolha é proporcional ao número de turmas ofertadas.",
+      "tipo": "bubble",
+      "tipos_permitidos": [
+        "bubble"
+      ]
+    },
+    "civil-area-natureza": {
+      "nome": "Matrículas por natureza curricular",
+      "descricao": "As áreas empilhadas somam as matrículas de cada semestre, classificadas pelos códigos da matriz de referência. Códigos compartilhados ou sem classificação aparecem em uma categoria própria. *2026.2 contém turmas abertas.",
+      "tipo": "area",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "civil-estat-histograma": {
+      "nome": "Distribuição detalhada da ocupação",
+      "descricao": "Compara as proporções de turmas consolidadas e abertas em 2026.2 em seis intervalos de ocupação.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "civil-estat-quartis": {
+      "nome": "Faixa central de ocupação por semestre",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "distributionBand",
+      "tipos_permitidos": [
+        "distributionBand"
+      ]
+    },
+    "civil-estat-dispersao": {
+      "nome": "Dispersão relativa da ocupação",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "civil-estat-momentos": {
+      "nome": "Assimetria e caudas da ocupação",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "civil-estat-tukey": {
+      "nome": "Turmas sinalizadas pela regra de Tukey",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "stackedBar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "civil-estat-acumulada": {
+      "nome": "Distribuição acumulada da ocupação",
+      "descricao": "Compara a proporção de turmas com ocupação menor ou igual a cada valor do eixo horizontal.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "civil-estat-lorenz": {
+      "nome": "Concentração das matrículas entre disciplinas",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "civil-estat-concentracao": {
+      "nome": "Índices de concentração por semestre",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "civil-estat-diversidade": {
+      "nome": "Disciplinas ofertadas e diversidade efetiva",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "mixed",
+      "tipos_permitidos": [
+        "mixed"
+      ]
+    },
+    "civil-estat-participacao": {
+      "nome": "Participação das dez maiores disciplinas nas matrículas",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "civil-estat-correlacoes": {
+      "nome": "Relação entre capacidade e ocupação por semestre",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "civil-estat-regressao": {
+      "nome": "Capacidade e ocupação com ajuste descritivo",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "statisticalScatter",
+      "tipos_permitidos": [
+        "statisticalScatter"
+      ]
+    },
+    "civil-estat-markov": {
+      "nome": "Ocupação acima de um limiar e limite de Markov",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "civil-estat-chebyshev": {
+      "nome": "Concentração em torno da média e limite de Chebyshev",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "materiais-vagas": {
+      "nome": "Vagas e matrículas por semestre",
+      "descricao": "Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "materiais-comparacao": {
+      "nome": "Ocupação do curso e do CCT",
+      "descricao": "Ocupação é a soma das matrículas dividida pela soma das vagas. O total do CCT inclui o curso. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "materiais-natureza": {
+      "nome": "Ocupação de obrigatórias e optativas",
+      "descricao": "As disciplinas são agrupadas conforme a natureza indicada na matriz de referência do curso. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "materiais-faixas": {
+      "nome": "Turmas por faixa de ocupação",
+      "descricao": "Cada turma é contada na faixa correspondente às suas matrículas divididas pelas vagas. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "tipo": "stackedBar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "materiais-indicador-turmas": {
+      "nome": "Turmas e disciplinas ofertadas",
+      "descricao": "Cada código de disciplina é contado uma vez por semestre. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "tipo": "mixed",
+      "tipos_permitidos": [
+        "mixed"
+      ]
+    },
+    "materiais-indicador-saldo": {
+      "nome": "Vagas não preenchidas e matrículas acima da capacidade",
+      "descricao": "Os dois totais são calculados turma a turma e somados separadamente. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "materiais-indicador-extremos": {
+      "nome": "Percentual de turmas com baixa ocupação ou lotadas",
+      "descricao": "Mostra a parcela de turmas abaixo de 25% e a parcela com ocupação de 100% ou mais. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "materiais-historico-obrigatorias": {
+      "nome": "Ocupação das obrigatórias por disciplina",
+      "descricao": "Inclui os códigos com oferta na base. Um traço indica ausência de oferta no recorte. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "tipo": "heatmap",
+      "tipos_permitidos": [
+        "heatmap"
+      ]
+    },
+    "materiais-historico-optativas": {
+      "nome": "Ocupação das optativas por disciplina",
+      "descricao": "Inclui os códigos com oferta na base. Um traço indica ausência de oferta no recorte. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "tipo": "heatmap",
+      "tipos_permitidos": [
+        "heatmap"
+      ]
+    },
+    "materiais-matriculas-historico": {
+      "nome": "Disciplinas com mais matrículas",
+      "descricao": "As dez disciplinas com maior soma de matrículas nas turmas consolidadas.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "materiais-baixa-recorrente": {
+      "nome": "Disciplinas com mais semestres abaixo de 25% de ocupação",
+      "descricao": "Mostra até dez disciplinas. A ocupação de cada código é calculada com as turmas consolidadas de cada semestre.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "materiais-maior-ocupacao": {
+      "nome": "Disciplinas com maior ocupação acumulada",
+      "descricao": "Até dez disciplinas pela razão entre matrículas e vagas no histórico consolidado.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "materiais-menor-ocupacao": {
+      "nome": "Disciplinas com menor ocupação acumulada",
+      "descricao": "Até dez disciplinas pela razão entre matrículas e vagas no histórico consolidado.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "materiais-mais-vagas": {
+      "nome": "Disciplinas com mais vagas ofertadas",
+      "descricao": "Até dez disciplinas pelo total de vagas nas turmas consolidadas.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "materiais-mais-turmas": {
+      "nome": "Disciplinas com mais turmas",
+      "descricao": "Até dez disciplinas pelo número de turmas consolidadas.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "materiais-mais-semestres": {
+      "nome": "Disciplinas ofertadas em mais semestres",
+      "descricao": "Até dez disciplinas pela frequência da oferta no histórico consolidado.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "materiais-sobras": {
+      "nome": "Disciplinas com mais vagas não preenchidas",
+      "descricao": "Até dez disciplinas pela soma das vagas não preenchidas em cada turma consolidada.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "materiais-lotadas": {
+      "nome": "Disciplinas com mais turmas lotadas",
+      "descricao": "Conta as turmas consolidadas com matrículas iguais ou acima da capacidade.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "materiais-acima-capacidade": {
+      "nome": "Disciplinas com mais matrículas acima da capacidade",
+      "descricao": "Soma o excesso de matrículas das turmas consolidadas acima da capacidade.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "materiais-obrigatorias-matriculas": {
+      "nome": "Obrigatórias com mais matrículas",
+      "descricao": "Até dez disciplinas obrigatórias pelo total de matrículas nas turmas consolidadas.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "materiais-optativas-matriculas": {
+      "nome": "Optativas com mais matrículas",
+      "descricao": "Até dez disciplinas optativas pelo total de matrículas nas turmas consolidadas.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "materiais-abertas-ocupacao": {
+      "nome": "Ocupação das disciplinas abertas",
+      "descricao": "Todas as disciplinas com oferta aberta em 2026.2, em ordem decrescente de ocupação.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "materiais-abertas-vagas": {
+      "nome": "Vagas ainda não preenchidas",
+      "descricao": "Todas as disciplinas com oferta aberta em 2026.2. Soma as vagas não preenchidas turma a turma.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "materiais-abertas-matriculas": {
+      "nome": "Mais matrículas nas turmas abertas",
+      "descricao": "Até dez disciplinas pelo total de matrículas nas turmas abertas em 2026.2.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "materiais-abertas-menor-ocupacao": {
+      "nome": "Menor ocupação nas turmas abertas",
+      "descricao": "Até dez disciplinas pela menor razão entre matrículas e vagas em 2026.2.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "materiais-linha-ocupacao": {
+      "nome": "Ocupação mediana e ocupação geral",
+      "descricao": "A mediana dá o mesmo peso a cada turma. A ocupação geral divide todas as matrículas por todas as vagas. *2026.2 contém turmas abertas e aparece com linha tracejada.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "materiais-linha-tamanho": {
+      "nome": "Vagas e matrículas médias por turma",
+      "descricao": "Em cada semestre, divide vagas e matrículas pelo número de turmas presenciais. *2026.2 contém turmas abertas e aparece com linha tracejada.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "materiais-rosca-historico": {
+      "nome": "Faixas de ocupação nas turmas consolidadas",
+      "descricao": "Cada fatia mostra a parcela das turmas consolidadas na respectiva faixa de ocupação.",
+      "tipo": "donut",
+      "tipos_permitidos": [
+        "donut",
+        "pie"
+      ]
+    },
+    "materiais-rosca-abertas": {
+      "nome": "Faixas de ocupação nas turmas abertas de 2026.2",
+      "descricao": "Cada fatia mostra a parcela das turmas abertas na respectiva faixa de ocupação.",
+      "tipo": "donut",
+      "tipos_permitidos": [
+        "donut",
+        "pie"
+      ]
+    },
+    "materiais-rosca-turnos": {
+      "nome": "Distribuição das turmas consolidadas por turno",
+      "descricao": "Turmas com aulas em mais de um turno entram em Misto.",
+      "tipo": "donut",
+      "tipos_permitidos": [
+        "donut",
+        "pie"
+      ]
+    },
+    "materiais-dispersao": {
+      "nome": "Vagas e matrículas por turma consolidada",
+      "descricao": "O tamanho de cada ponto indica quantas turmas têm a mesma combinação de vagas e matrículas. Acima da diagonal, as matrículas superam as vagas.",
+      "tipo": "scatter",
+      "tipos_permitidos": [
+        "scatter"
+      ]
+    },
+    "materiais-pizza-capacidades": {
+      "nome": "Composição da oferta por capacidade",
+      "descricao": "Distribuição das turmas consolidadas entre as cinco capacidades mais frequentes. As demais capacidades são agrupadas em Outras.",
+      "tipo": "pie",
+      "tipos_permitidos": [
+        "donut",
+        "pie"
+      ]
+    },
+    "materiais-radar-faixas": {
+      "nome": "Perfil de ocupação por faixa",
+      "descricao": "Compara a proporção de turmas em cada faixa no histórico consolidado e nas abertas de 2026.2. Cada eixo mostra uma parcela do total de turmas do respectivo recorte.",
+      "tipo": "radar",
+      "tipos_permitidos": [
+        "radar"
+      ]
+    },
+    "materiais-faixas-percentual": {
+      "nome": "Composição da ocupação ao longo dos semestres",
+      "descricao": "As colunas representam 100% das turmas de cada semestre e facilitam a comparação das proporções. *2026.2 contém turmas abertas.",
+      "tipo": "stackedPercent",
+      "tipos_permitidos": [
+        "stackedPercent"
+      ]
+    },
+    "materiais-bolhas-disciplinas": {
+      "nome": "Dimensão da oferta por disciplina",
+      "descricao": "Cada bolha representa uma disciplina no histórico consolidado. Os eixos somam vagas e matrículas. A área da bolha é proporcional ao número de turmas ofertadas.",
+      "tipo": "bubble",
+      "tipos_permitidos": [
+        "bubble"
+      ]
+    },
+    "materiais-area-natureza": {
+      "nome": "Matrículas por natureza curricular",
+      "descricao": "As áreas empilhadas somam as matrículas de cada semestre, classificadas pelos códigos da matriz de referência. Códigos compartilhados ou sem classificação aparecem em uma categoria própria. *2026.2 contém turmas abertas.",
+      "tipo": "area",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "materiais-estat-histograma": {
+      "nome": "Distribuição detalhada da ocupação",
+      "descricao": "Compara as proporções de turmas consolidadas e abertas em 2026.2 em seis intervalos de ocupação.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "materiais-estat-quartis": {
+      "nome": "Faixa central de ocupação por semestre",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "distributionBand",
+      "tipos_permitidos": [
+        "distributionBand"
+      ]
+    },
+    "materiais-estat-dispersao": {
+      "nome": "Dispersão relativa da ocupação",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "materiais-estat-momentos": {
+      "nome": "Assimetria e caudas da ocupação",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "materiais-estat-tukey": {
+      "nome": "Turmas sinalizadas pela regra de Tukey",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "stackedBar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "materiais-estat-acumulada": {
+      "nome": "Distribuição acumulada da ocupação",
+      "descricao": "Compara a proporção de turmas com ocupação menor ou igual a cada valor do eixo horizontal.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "materiais-estat-lorenz": {
+      "nome": "Concentração das matrículas entre disciplinas",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "materiais-estat-concentracao": {
+      "nome": "Índices de concentração por semestre",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "materiais-estat-diversidade": {
+      "nome": "Disciplinas ofertadas e diversidade efetiva",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "mixed",
+      "tipos_permitidos": [
+        "mixed"
+      ]
+    },
+    "materiais-estat-participacao": {
+      "nome": "Participação das dez maiores disciplinas nas matrículas",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "materiais-estat-correlacoes": {
+      "nome": "Relação entre capacidade e ocupação por semestre",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "materiais-estat-regressao": {
+      "nome": "Capacidade e ocupação com ajuste descritivo",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "statisticalScatter",
+      "tipos_permitidos": [
+        "statisticalScatter"
+      ]
+    },
+    "materiais-estat-markov": {
+      "nome": "Ocupação acima de um limiar e limite de Markov",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "materiais-estat-chebyshev": {
+      "nome": "Concentração em torno da média e limite de Chebyshev",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "software-vagas": {
+      "nome": "Vagas e matrículas por semestre",
+      "descricao": "Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "software-comparacao": {
+      "nome": "Ocupação do curso e do CCT",
+      "descricao": "Ocupação é a soma das matrículas dividida pela soma das vagas. O total do CCT inclui o curso. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "software-natureza": {
+      "nome": "Ocupação de obrigatórias e optativas",
+      "descricao": "As disciplinas são agrupadas conforme a natureza indicada na matriz de referência do curso. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "software-faixas": {
+      "nome": "Turmas por faixa de ocupação",
+      "descricao": "Cada turma é contada na faixa correspondente às suas matrículas divididas pelas vagas. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "tipo": "stackedBar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "software-indicador-turmas": {
+      "nome": "Turmas e disciplinas ofertadas",
+      "descricao": "Cada código de disciplina é contado uma vez por semestre. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "tipo": "mixed",
+      "tipos_permitidos": [
+        "mixed"
+      ]
+    },
+    "software-indicador-saldo": {
+      "nome": "Vagas não preenchidas e matrículas acima da capacidade",
+      "descricao": "Os dois totais são calculados turma a turma e somados separadamente. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "software-indicador-extremos": {
+      "nome": "Percentual de turmas com baixa ocupação ou lotadas",
+      "descricao": "Mostra a parcela de turmas abaixo de 25% e a parcela com ocupação de 100% ou mais. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "software-historico-obrigatorias": {
+      "nome": "Ocupação das obrigatórias por disciplina",
+      "descricao": "Inclui os códigos com oferta na base. Um traço indica ausência de oferta no recorte. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "tipo": "heatmap",
+      "tipos_permitidos": [
+        "heatmap"
+      ]
+    },
+    "software-historico-optativas": {
+      "nome": "Ocupação das optativas por disciplina",
+      "descricao": "Inclui os códigos com oferta na base. Um traço indica ausência de oferta no recorte. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "tipo": "heatmap",
+      "tipos_permitidos": [
+        "heatmap"
+      ]
+    },
+    "software-matriculas-historico": {
+      "nome": "Disciplinas com mais matrículas",
+      "descricao": "As dez disciplinas com maior soma de matrículas nas turmas consolidadas.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "software-baixa-recorrente": {
+      "nome": "Disciplinas com mais semestres abaixo de 25% de ocupação",
+      "descricao": "Mostra até dez disciplinas. A ocupação de cada código é calculada com as turmas consolidadas de cada semestre.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "software-maior-ocupacao": {
+      "nome": "Disciplinas com maior ocupação acumulada",
+      "descricao": "Até dez disciplinas pela razão entre matrículas e vagas no histórico consolidado.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "software-menor-ocupacao": {
+      "nome": "Disciplinas com menor ocupação acumulada",
+      "descricao": "Até dez disciplinas pela razão entre matrículas e vagas no histórico consolidado.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "software-mais-vagas": {
+      "nome": "Disciplinas com mais vagas ofertadas",
+      "descricao": "Até dez disciplinas pelo total de vagas nas turmas consolidadas.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "software-mais-turmas": {
+      "nome": "Disciplinas com mais turmas",
+      "descricao": "Até dez disciplinas pelo número de turmas consolidadas.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "software-mais-semestres": {
+      "nome": "Disciplinas ofertadas em mais semestres",
+      "descricao": "Até dez disciplinas pela frequência da oferta no histórico consolidado.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "software-sobras": {
+      "nome": "Disciplinas com mais vagas não preenchidas",
+      "descricao": "Até dez disciplinas pela soma das vagas não preenchidas em cada turma consolidada.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "software-lotadas": {
+      "nome": "Disciplinas com mais turmas lotadas",
+      "descricao": "Conta as turmas consolidadas com matrículas iguais ou acima da capacidade.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "software-acima-capacidade": {
+      "nome": "Disciplinas com mais matrículas acima da capacidade",
+      "descricao": "Soma o excesso de matrículas das turmas consolidadas acima da capacidade.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "software-obrigatorias-matriculas": {
+      "nome": "Obrigatórias com mais matrículas",
+      "descricao": "Até dez disciplinas obrigatórias pelo total de matrículas nas turmas consolidadas.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "software-optativas-matriculas": {
+      "nome": "Optativas com mais matrículas",
+      "descricao": "Até dez disciplinas optativas pelo total de matrículas nas turmas consolidadas.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "software-abertas-ocupacao": {
+      "nome": "Ocupação das disciplinas abertas",
+      "descricao": "Todas as disciplinas com oferta aberta em 2026.2, em ordem decrescente de ocupação.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "software-abertas-vagas": {
+      "nome": "Vagas ainda não preenchidas",
+      "descricao": "Todas as disciplinas com oferta aberta em 2026.2. Soma as vagas não preenchidas turma a turma.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "software-abertas-matriculas": {
+      "nome": "Mais matrículas nas turmas abertas",
+      "descricao": "Até dez disciplinas pelo total de matrículas nas turmas abertas em 2026.2.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "software-abertas-menor-ocupacao": {
+      "nome": "Menor ocupação nas turmas abertas",
+      "descricao": "Até dez disciplinas pela menor razão entre matrículas e vagas em 2026.2.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "software-linha-ocupacao": {
+      "nome": "Ocupação mediana e ocupação geral",
+      "descricao": "A mediana dá o mesmo peso a cada turma. A ocupação geral divide todas as matrículas por todas as vagas. *2026.2 contém turmas abertas e aparece com linha tracejada.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "software-linha-tamanho": {
+      "nome": "Vagas e matrículas médias por turma",
+      "descricao": "Em cada semestre, divide vagas e matrículas pelo número de turmas presenciais. *2026.2 contém turmas abertas e aparece com linha tracejada.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "software-rosca-historico": {
+      "nome": "Faixas de ocupação nas turmas consolidadas",
+      "descricao": "Cada fatia mostra a parcela das turmas consolidadas na respectiva faixa de ocupação.",
+      "tipo": "donut",
+      "tipos_permitidos": [
+        "donut",
+        "pie"
+      ]
+    },
+    "software-rosca-abertas": {
+      "nome": "Faixas de ocupação nas turmas abertas de 2026.2",
+      "descricao": "Cada fatia mostra a parcela das turmas abertas na respectiva faixa de ocupação.",
+      "tipo": "donut",
+      "tipos_permitidos": [
+        "donut",
+        "pie"
+      ]
+    },
+    "software-rosca-turnos": {
+      "nome": "Distribuição das turmas consolidadas por turno",
+      "descricao": "Turmas com aulas em mais de um turno entram em Misto.",
+      "tipo": "donut",
+      "tipos_permitidos": [
+        "donut",
+        "pie"
+      ]
+    },
+    "software-dispersao": {
+      "nome": "Vagas e matrículas por turma consolidada",
+      "descricao": "O tamanho de cada ponto indica quantas turmas têm a mesma combinação de vagas e matrículas. Acima da diagonal, as matrículas superam as vagas.",
+      "tipo": "scatter",
+      "tipos_permitidos": [
+        "scatter"
+      ]
+    },
+    "software-pizza-capacidades": {
+      "nome": "Composição da oferta por capacidade",
+      "descricao": "Distribuição das turmas consolidadas entre as cinco capacidades mais frequentes. As demais capacidades são agrupadas em Outras.",
+      "tipo": "pie",
+      "tipos_permitidos": [
+        "donut",
+        "pie"
+      ]
+    },
+    "software-radar-faixas": {
+      "nome": "Perfil de ocupação por faixa",
+      "descricao": "Compara a proporção de turmas em cada faixa no histórico consolidado e nas abertas de 2026.2. Cada eixo mostra uma parcela do total de turmas do respectivo recorte.",
+      "tipo": "radar",
+      "tipos_permitidos": [
+        "radar"
+      ]
+    },
+    "software-faixas-percentual": {
+      "nome": "Composição da ocupação ao longo dos semestres",
+      "descricao": "As colunas representam 100% das turmas de cada semestre e facilitam a comparação das proporções. *2026.2 contém turmas abertas.",
+      "tipo": "stackedPercent",
+      "tipos_permitidos": [
+        "stackedPercent"
+      ]
+    },
+    "software-bolhas-disciplinas": {
+      "nome": "Dimensão da oferta por disciplina",
+      "descricao": "Cada bolha representa uma disciplina no histórico consolidado. Os eixos somam vagas e matrículas. A área da bolha é proporcional ao número de turmas ofertadas.",
+      "tipo": "bubble",
+      "tipos_permitidos": [
+        "bubble"
+      ]
+    },
+    "software-area-natureza": {
+      "nome": "Matrículas por natureza curricular",
+      "descricao": "As áreas empilhadas somam as matrículas de cada semestre, classificadas pelos códigos da matriz de referência. Códigos compartilhados ou sem classificação aparecem em uma categoria própria. *2026.2 contém turmas abertas.",
+      "tipo": "area",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "software-estat-histograma": {
+      "nome": "Distribuição detalhada da ocupação",
+      "descricao": "Compara as proporções de turmas consolidadas e abertas em 2026.2 em seis intervalos de ocupação.",
+      "tipo": "bar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "software-estat-quartis": {
+      "nome": "Faixa central de ocupação por semestre",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "distributionBand",
+      "tipos_permitidos": [
+        "distributionBand"
+      ]
+    },
+    "software-estat-dispersao": {
+      "nome": "Dispersão relativa da ocupação",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "software-estat-momentos": {
+      "nome": "Assimetria e caudas da ocupação",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "software-estat-tukey": {
+      "nome": "Turmas sinalizadas pela regra de Tukey",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "stackedBar",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "software-estat-acumulada": {
+      "nome": "Distribuição acumulada da ocupação",
+      "descricao": "Compara a proporção de turmas com ocupação menor ou igual a cada valor do eixo horizontal.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "software-estat-lorenz": {
+      "nome": "Concentração das matrículas entre disciplinas",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "software-estat-concentracao": {
+      "nome": "Índices de concentração por semestre",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "software-estat-diversidade": {
+      "nome": "Disciplinas ofertadas e diversidade efetiva",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "mixed",
+      "tipos_permitidos": [
+        "mixed"
+      ]
+    },
+    "software-estat-participacao": {
+      "nome": "Participação das dez maiores disciplinas nas matrículas",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "software-estat-correlacoes": {
+      "nome": "Relação entre capacidade e ocupação por semestre",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "software-estat-regressao": {
+      "nome": "Capacidade e ocupação com ajuste descritivo",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "statisticalScatter",
+      "tipos_permitidos": [
+        "statisticalScatter"
+      ]
+    },
+    "software-estat-markov": {
+      "nome": "Ocupação acima de um limiar e limite de Markov",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "software-estat-chebyshev": {
+      "nome": "Concentração em torno da média e limite de Chebyshev",
+      "descricao": "Somente turmas presenciais consolidadas.",
+      "tipo": "line",
+      "tipos_permitidos": [
+        "bar",
+        "line",
+        "stackedBar",
+        "area"
+      ]
+    },
+    "geral-ranking-matriculas": {
+      "nome": "Disciplinas com mais matrículas",
+      "descricao": "Até dez códigos ordenados pelo resultado no grupo e no recorte selecionados. Cada turma contribui uma vez para o total de seu código.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "geral-ranking-vagas": {
+      "nome": "Disciplinas com mais vagas ofertadas",
+      "descricao": "Até dez códigos ordenados pelo resultado no grupo e no recorte selecionados. Cada turma contribui uma vez para o total de seu código.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "geral-ranking-ocupacao": {
+      "nome": "Disciplinas com maior ocupação",
+      "descricao": "Até dez códigos ordenados pelo resultado no grupo e no recorte selecionados. Cada turma contribui uma vez para o total de seu código.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "geral-ranking-disponiveis": {
+      "nome": "Disciplinas com mais vagas não preenchidas",
+      "descricao": "Até dez códigos ordenados pelo resultado no grupo e no recorte selecionados. Cada turma contribui uma vez para o total de seu código.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "entre-cursos-ocupacao": {
+      "nome": "Ocupação geral por curso",
+      "descricao": "Comparação das matrizes de referência no mesmo recorte. Códigos compartilhados podem aparecer em mais de um curso; os valores dos cursos não devem ser somados para reconstruir o CCT.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "entre-cursos-volume": {
+      "nome": "Vagas e matrículas por curso",
+      "descricao": "Comparação das matrizes de referência no mesmo recorte. Códigos compartilhados podem aparecer em mais de um curso; os valores dos cursos não devem ser somados para reconstruir o CCT.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
+    },
+    "entre-cursos-turmas": {
+      "nome": "Turmas ofertadas por curso",
+      "descricao": "Comparação das matrizes de referência no mesmo recorte. Códigos compartilhados podem aparecer em mais de um curso; os valores dos cursos não devem ser somados para reconstruir o CCT.",
+      "tipo": "horizontalBar",
+      "tipos_permitidos": [
+        "horizontalBar"
+      ]
     }
   }
 }

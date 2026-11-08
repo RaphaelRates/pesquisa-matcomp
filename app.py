@@ -7,7 +7,9 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 from pathlib import Path
 
-from services.graph import DEFAULT_DATA, TITLE, TOOLTIPS, dashboard_data
+from services.config import DEFAULT_DATA, TITLE
+from services.presentation.export import TOOLTIPS
+from services.dashboard.payload import dashboard_data
 
 
 SCRIPT_PATH = Path(__file__).resolve().with_name("painel.js")
@@ -34,7 +36,7 @@ def dashboard_shell():
 <div class="hero-content"><div>
 <p class="eyebrow">PAINEL ACADÊMICO</p>
 <h1>Oferta de disciplinas<br>do CCT da UFCA<span>.</span></h1>
-<p class="hero-description">Explore vagas, matrículas e ocupação. Do panorama do CCT aos detalhes de Matemática Computacional.</p>
+<p class="hero-description">Explore vagas, matrículas e ocupação. Do panorama do CCT aos detalhes de cada curso.</p>
 <div class="hero-tags"><span>2023.1 — 2026.2</span><span id="chart-count">Carregando visualizações</span><span>Fonte · JSON de turmas</span></div>
 </div><div class="hero-aside" aria-hidden="true">
 <span class="aside-label">OFERTA / OCUPAÇÃO / EVOLUÇÃO</span>
@@ -77,13 +79,11 @@ class DashboardHandler(BaseHTTPRequestHandler):
             path, media_type = ASSETS[route]
             self.respond(HTTPStatus.OK, path.read_text(encoding="utf-8"), media_type)
             return
-        if route not in {"/api/painel", "/api/conferencia"}:
+        if route != "/api/painel":
             self.respond(HTTPStatus.NOT_FOUND, "Página não encontrada.", "text/plain")
             return
         try:
-            bundle = dashboard_data(self.server.data_path, include_audit_details=route == '/api/conferencia')
-            result = {**bundle['audit'], 'source': bundle['source'], 'quality': bundle['quality']} if route == '/api/conferencia' else bundle
-            payload = json.dumps(result, ensure_ascii=False, allow_nan=False)
+            payload = json.dumps(dashboard_data(self.server.data_path), ensure_ascii=False, allow_nan=False)
         except (OSError, ValueError, TypeError, KeyError) as error:
             self.log_error("Falha ao carregar os dados: %s", error)
             self.respond(HTTPStatus.SERVICE_UNAVAILABLE,
@@ -111,7 +111,7 @@ class DashboardHandler(BaseHTTPRequestHandler):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--dados", type=Path, default=DEFAULT_DATA, help="Caminho do JSON de turmas.")
+    parser.add_argument("--dados", type=Path, default=DEFAULT_DATA, help="Pasta de semestres ou arquivo JSON de turmas.")
     parser.add_argument("--porta", type=int, default=8000, help="Porta local (padrão: 8000).")
     args = parser.parse_args()
     if not 0 <= args.porta <= 65535:
