@@ -91,9 +91,15 @@ Cada registro contém `periodo`, `codigo`, `disciplina`, `turma`, `docentes`, `t
 
 Textos, códigos, números e horários são normalizados antes dos cálculos. Duplicatas exatas com identidade confirmada são removidas em memória; conflitos são preservados e informados. Entram nos gráficos as turmas presenciais com capacidade positiva e situação compatível com o recorte. EAD e registros de outras situações permanecem nos arquivos, mas ficam fora desses indicadores.
 
-Na base incluída, o acumulado do CCT contém **1.380 turmas, 55.721 vagas e 30.126 matrículas**, com **54,1% de ocupação**. Os números somam oito semestres; não representam estudantes únicos nem vagas simultâneas.
+Na base incluída, o acumulado do CCT contém **1.350 turmas, 54.478 vagas e 29.421 matrículas**, com **54,0% de ocupação**. Os números somam oito semestres; não representam estudantes únicos nem vagas simultâneas.
 
 O botão **Atualizar dados** relê os arquivos e recalcula a resposta em memória. A identificação SHA-256 considera os nomes e conteúdos dos arquivos, permitindo indicar se a fonte mudou desde a última consulta na página. Não são gerados arquivos de resultados durante esse processamento.
+
+## Possíveis ofertas conjuntas e choques de horário
+
+A preparação sinaliza códigos distintos com docentes, horários completos, datas e locais coincidentes, além de sobreposições de horário de um mesmo docente. Esses casos aparecem em **Qualidade e preparação da base** e em `quality.consistency` na API. O relatório da base atual está em [docs/consistencia-turmas.md](docs/consistencia-turmas.md).
+
+São indícios, não duplicatas confirmadas: a capacidade pode representar uma cota por código. Todos os registros envolvidos nos casos sinalizados ficam fora dos indicadores até revisão, incluindo equivalências de local inferidas e sobreposições de docente. Os arquivos originais permanecem intactos; capacidades não são substituídas por estimativas. Equivalências de rótulos de local, como Sala/Bloco, são identificadas como inferidas. Confirmar vínculos e cotas no sistema acadêmico é necessário antes de deduplicar ou criar um identificador de turma conjunta. Os totais representam ofertas por código e não garantem contagem de turmas físicas únicas.
 
 ## Configuração e cálculos
 

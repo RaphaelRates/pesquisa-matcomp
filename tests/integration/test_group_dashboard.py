@@ -82,13 +82,13 @@ class GroupDashboardTests(unittest.TestCase):
         raw, _ = load_offers(DEFAULT_DATA)
         rows, _ = preprocess_offers(raw)
         views = prepare(rows)
-        for scope, expected in [('historical', (1208, 48726, 26094)),
-                                ('current', (172, 6995, 4032)),
-                                ('accumulated', (1380, 55721, 30126))]:
+        for scope, expected in [('historical', (1182, 47633, 25473)),
+                                ('current', (168, 6845, 3948)),
+                                ('accumulated', (1350, 54478, 29421))]:
             group = views[scope]['groups']['cct']['summary']['selected']
             self.assertEqual((group['n'], group['c'], group['m']), expected)
             self.assertAlmostEqual(group['rate'], expected[2] / expected[1])
-        for key, n in [('mc', 137), ('cc', 215), ('em', 389), ('eci', 476), ('es', 31)]:
+        for key, n in [('mc', 134), ('cc', 214), ('em', 385), ('eci', 462), ('es', 31)]:
             self.assertEqual(views['accumulated']['groups'][key]['summary']['selected']['n'], n)
 
 

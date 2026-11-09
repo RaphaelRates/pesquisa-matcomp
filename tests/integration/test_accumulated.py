@@ -28,16 +28,16 @@ class AccumulatedViewTests(unittest.TestCase):
         self.assertEqual(offers, original)
         cct = panel(view, 'evolucao')['summary']
         mc = panel(view, 'matematica-computacional')['summary']
-        for summary, expected in [(cct, (1380, 55721, 30126)), (mc, (137, 6348, 2921))]:
+        for summary, expected in [(cct, (1350, 54478, 29421)), (mc, (134, 6195, 2844))]:
             m = summary['selected']
             self.assertEqual((m['n'], m['c'], m['m']), expected)
             self.assertAlmostEqual(m['rate'], expected[2] / expected[1])
             self.assertEqual(summary['historico']['n'] + summary['abertas']['n'], m['n'])
-        self.assertEqual(cct['historico']['n'], 1208)
-        self.assertEqual(cct['abertas']['n'], 172)
+        self.assertEqual(cct['historico']['n'], 1182)
+        self.assertEqual(cct['abertas']['n'], 168)
         chart = next(p for s in panel(view, 'evolucao')['sections'] for p in s['plots']
                      if p['id'] == 'ufca-capacidade-matriculas')
-        self.assertEqual(chart['rows'][-1], ['2026.2*', 6995, 4032])
+        self.assertEqual(chart['rows'][-1], ['2026.2*', 6845, 3948])
         self.assertIn('2023.1', view['scope']['periods'])
         self.assertIn('2026.2', view['scope']['periods'])
         self.assertEqual(view['scope']['status'], 'MISTA')

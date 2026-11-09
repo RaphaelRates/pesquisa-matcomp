@@ -151,15 +151,29 @@ function summaryCards(summary, scope) {
     `<div class="metric"><span>${name}</span><strong>${typeof value === "number" ? integerFormat.format(value) : value}</strong></div>`).join("")}</div>
     <p class="data-note">${escapeHtml(scope?.note ?? 'Turmas presenciais do recorte selecionado.')}
     ${['historical', 'accumulated'].includes(scope?.id) ? `Totais acumulados de ${scope.periods.length} semestres; vagas são ofertas somadas ao longo do período.` : ''}
-    Matrículas contam registros nas turmas, não estudantes únicos.</p>`;
+    Turmas contam ofertas por código, após excluir os registros sinalizados por possíveis irregularidades. Matrículas são registros, não estudantes únicos.</p>`;
+}
+
+function consistencyWarnings(report) {
+  if (!report?.findings?.length) return '';
+  const names = {possible_joint_class: 'Possível turma conjunta · mesmo nome', simultaneous_different_subjects: 'Coincidência entre disciplinas diferentes', teacher_schedule_overlap: 'Sobreposição de horário de docente'};
+  return `<div class="quality-warning consistency-warning"><p><strong>Há possíveis irregularidades: ${format(report.excludedRecords)} registros excluídos dos cálculos.</strong> ${format(report.candidateGroups)} grupos de possível oferta conjunta e ${format(report.overlappingPairs)} pares com sobreposição de docente. Os arquivos originais foram preservados.</p>
+    <details><summary>Ver os casos sinalizados</summary>${report.findings.map(f => `<section class="consistency-case"><h3>${escapeHtml(f.period)} · ${escapeHtml(names[f.kind])}</h3>
+      <p>${escapeHtml(f.evidence)}</p><ul>${f.records.map(r => `<li><strong>${escapeHtml(r.codigo)} · ${escapeHtml(r.disciplina)}</strong> · ${escapeHtml(r.turma)} · ${format(r.matriculas)}/${format(r.capacidade)} matrículas/vagas<br>
+        ${escapeHtml(r.docentes ?? '')} · ${escapeHtml(r.local ?? '')}<br>${escapeHtml(r.horario ?? '')}</li>`).join('')}</ul><p>${escapeHtml(f.action)}</p></section>`).join('')}</details></div>`;
 }
 
 function dataQuality(report, generatedAt, source) {
   if (!report) return "";
+  const irregular = report.consistency?.excludedRecords ?? 0;
+  const used = report.inScopeRows ?? report.eligibleRows;
+  const otherExcluded = report.validRows - used - irregular;
+  const selection = [["Registros lidos", report.inputRows], ["Excluídos por possíveis irregularidades", irregular],
+    ["Outras exclusões do recorte", otherExcluded], ["Usados nos gráficos", used]];
   const counts = [
-    ["Registros lidos", report.inputRows], ["Registros válidos", report.validRows],
+    ["Formato válido — antes das exclusões", report.validRows],
     ["Normalizados", report.normalizedRows], ["Inválidos descartados", report.discardedRows],
-    ["Duplicatas removidas", report.duplicateRows], ["Grupos com conflito", report.conflictGroups],
+    ["Duplicatas exatas removidas", report.duplicateRows], ["Conflitos com a mesma identidade", report.conflictGroups],
   ];
   const issues = [...(report.issues ?? []), ...(report.exclusionReasons ?? []),
     ...(report.outOfScopeReasons ?? []), ...(report.warnings ?? [])].map(issue =>
@@ -172,15 +186,20 @@ function dataQuality(report, generatedAt, source) {
     <p class="quality-lead">${integerFormat.format(report.inputRows)} registros lidos ·
     ${integerFormat.format(report.inScopeRows ?? report.eligibleRows)} registros no recorte de análise.
     <span id="updated-status" role="status">Calculado em ${timestamp}</span></p>
+    <div class="quality-counts quality-selection">${selection.map(([name, value]) =>
+      `<div><strong>${integerFormat.format(value)}</strong><span>${name}</span></div>`).join('')}</div>
     ${source ? `<div class="source-verification"><strong>${escapeHtml(dataStatus)}</strong>
       <p>${escapeHtml(refreshStatus)} Fonte: ${escapeHtml(source.name)} · ${source.files?.length ?? 1} arquivo(s) de turmas · identificação da base: <code>${escapeHtml(source.sha256.slice(0, 12))}</code>.</p>
       <p>2026.2: ${format(source.currentRows)} registros na base; ${format(source.currentEligibleRows)} turmas presenciais abertas com capacidade positiva no painel.</p></div>` : ''}
+    ${consistencyWarnings(report.consistency)}
     <details><summary>Ver o tratamento aplicado aos dados</summary>
     <div class="quality-counts">${counts.map(([name, value]) =>
       `<div><strong>${integerFormat.format(value ?? 0)}</strong><span>${name}</span></div>`).join("")}</div>
     <p>Textos, códigos, semestres e contagens são validados antes dos indicadores. Duplicatas exatas com identidade
     de turma confirmada são removidas. Registros conflitantes são preservados e sinalizados.
     Matrículas acima da capacidade continuam na análise.</p>
+    <p>Formato válido não significa ausência de irregularidades. Os ${integerFormat.format(irregular)} registros sinalizados foram excluídos dos indicadores.
+    As outras exclusões incluem modalidades e situações fora do recorte. Uma possível oferta conjunta entre códigos diferentes não é uma duplicata exata nem um conflito da mesma identidade cadastral.</p>
     ${report.conflictGroups ? '<p class="quality-warning">Há versões conflitantes de turmas. Os resultados incluem esses registros e devem ser lidos considerando esse conflito.</p>' : ""}
     ${issues ? `<ul class="quality-issues">${issues}</ul>` : ""}
     <p class="muted">O arquivo original é preservado. A preparação ocorre em memória em cada consulta.</p>

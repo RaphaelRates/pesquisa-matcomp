@@ -4,6 +4,7 @@ import unittest
 
 from services.data.preprocessing import preprocess_offers
 from services.dashboard.periods import build_period_views
+from services.data.consistency import find_consistency_issues
 
 
 def offer(period, status, *, code='MC0001', modality='Presencial', capacity=10):
@@ -13,6 +14,41 @@ def offer(period, status, *, code='MC0001', modality='Presencial', capacity=10):
 
 
 class PreprocessingTests(unittest.TestCase):
+    def joint(self, **changes):
+        return dict(offer('2023.2', 'CONSOLIDADA'), docentes='Docente (32h)',
+                    local='Sala A24-S', horario='TER 10:00-12:00\nQUI 10:00-12:00\n(27/11/2023 - 13/04/2024)') | changes
+
+    def test_joint_candidates_are_excluded_without_changing_source(self):
+        first = self.joint(codigo='CC0017', disciplina='Algoritmos em Grafos', matriculas=36, capacidade=60)
+        second = self.joint(codigo='MC0016', disciplina='Algoritmos em Grafos', matriculas=3, capacidade=50)
+        rows, report = preprocess_offers([first, second])
+        self.assertEqual(rows, [])
+        self.assertEqual((first['matriculas'],first['capacidade'],second['matriculas'],second['capacidade']), (36,60,3,50))
+        self.assertEqual(report['excludedRows'],2)
+        self.assertEqual(report['inScopeRows'],0)
+        self.assertEqual(report['duplicateRows'], 0)
+        self.assertEqual(report['consistency']['candidateGroups'], 1)
+        self.assertEqual(report['consistency']['findings'][0]['kind'], 'possible_joint_class')
+
+    def test_same_days_but_different_hours_are_not_duplicates(self):
+        rows = [self.joint(codigo='CC0001'), self.joint(codigo='CC0051', horario='TER 16:00-18:00\nQUI 16:00-18:00\n(27/11/2023 - 13/04/2024)')]
+        self.assertEqual(find_consistency_issues(rows)['findings'], [])
+
+    def test_disjoint_dates_and_missing_metadata_do_not_invent_matches(self):
+        self.assertEqual(find_consistency_issues([self.joint(), self.joint(codigo='CC0017', horario='TER 10:00-12:00\nQUI 10:00-12:00\n(14/04/2024 - 20/04/2024)')])['findings'], [])
+        self.assertEqual(find_consistency_issues([self.joint(docentes=''), self.joint(codigo='CC0017', docentes='')])['findings'], [])
+
+    def test_room_alias_is_explicitly_inferred(self):
+        report = find_consistency_issues([self.joint(local='SALA K 101'), self.joint(codigo='EM0028',local='Bloco K 101')])
+        self.assertEqual(report['candidateGroups'], 1)
+        self.assertTrue(report['findings'][0]['locationAlias'])
+
+    def test_partial_teacher_overlap_is_separate_from_joint_candidates(self):
+        rows = [self.joint(), self.joint(codigo='CC0017', horario='TER 11:00-13:00\n(27/11/2023 - 13/04/2024)',local='Sala B')]
+        result = find_consistency_issues(rows)
+        self.assertEqual(result['candidateGroups'], 0)
+        self.assertEqual(result['overlappingPairs'], 1)
+
     def test_quality_count_excludes_current_or_future_consolidated_classes(self):
         raw = [offer('2026.1', 'CONSOLIDADA'), offer('2026.2', 'ABERTA'),
                offer('2026.2', 'CONSOLIDADA', code='MC0002'),

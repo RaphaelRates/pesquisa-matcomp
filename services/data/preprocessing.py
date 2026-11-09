@@ -6,6 +6,7 @@ import json
 import math
 import re
 import unicodedata
+from services.data.consistency import find_consistency_issues
 
 
 MAX_SAFE_INTEGER = 2**53 - 1
@@ -143,11 +144,16 @@ def preprocess_offers(raw):
                                          "codigo": clean["codigo"], "reason": reason})
         cleaned.append(clean)
 
+    consistency = find_consistency_issues(cleaned)
+    suspicious = set(consistency.pop('recordIndices'))
+    accepted = [row for index, row in enumerate(cleaned) if index not in suspicious]
     excluded = Counter()
+    if suspicious:
+        excluded['Registros sinalizados por possível oferta conjunta ou sobreposição de docente.'] = len(suspicious)
     in_scope = 0
     eligible = 0
     out_of_scope = Counter()
-    for row in cleaned:
+    for row in accepted:
         if row["modalidade"] != "Presencial":
             excluded["Modalidade diferente de Presencial."] += 1
         elif row["capacidade"] == 0:
@@ -190,4 +196,5 @@ def preprocess_offers(raw):
                   "Duplicatas com identidade e conteúdo coincidentes são removidas. "
                   "Registros conflitantes são preservados para revisão.",
     }
-    return cleaned, report
+    report['consistency'] = consistency
+    return accepted, report
