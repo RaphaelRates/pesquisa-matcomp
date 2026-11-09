@@ -170,14 +170,18 @@ function dataQuality(report, generatedAt, source) {
   const otherExcluded = report.validRows - used - irregular;
   const selection = [["Registros lidos", report.inputRows], ["Excluídos por possíveis irregularidades", irregular],
     ["Outras exclusões do recorte", otherExcluded], ["Usados nos gráficos", used]];
-  const counts = [
-    ["Formato válido — antes das exclusões", report.validRows],
-    ["Normalizados", report.normalizedRows], ["Inválidos descartados", report.discardedRows],
-    ["Duplicatas exatas removidas", report.duplicateRows], ["Conflitos com a mesma identidade", report.conflictGroups],
-  ];
-  const issues = [...(report.issues ?? []), ...(report.exclusionReasons ?? []),
-    ...(report.outOfScopeReasons ?? []), ...(report.warnings ?? [])].map(issue =>
+  const counts = [...selection, ...[
+    ["Formatos inválidos descartados", report.discardedRows],
+    ["Duplicatas exatas removidas", report.duplicateRows],
+    ["Registros normalizados", report.normalizedRows],
+    ["Conflitos cadastrais", report.conflictGroups],
+  ].filter(([, value]) => value > 0)];
+  const reasons = [...(report.issues ?? []), ...(report.exclusionReasons ?? []),
+    ...(report.outOfScopeReasons ?? [])];
+  const listIssues = items => items.map(issue =>
     `<li>${escapeHtml(issue.reason)} <strong>${integerFormat.format(issue.count)}</strong></li>`).join("");
+  const issues = listIssues(reasons);
+  const warnings = listIssues(report.warnings ?? []);
   const timestamp = generatedAt ? new Intl.DateTimeFormat("pt-BR", {dateStyle: "short", timeStyle: "medium"}).format(new Date(generatedAt)) : "";
   return `<section class="quality-panel" id="qualidade-dados" aria-labelledby="qualidade-titulo">
     <div class="quality-heading"><div><p class="eyebrow">DADOS PROCESSADOS NESTA CONSULTA</p>
@@ -195,13 +199,11 @@ function dataQuality(report, generatedAt, source) {
     <details><summary>Ver o tratamento aplicado aos dados</summary>
     <div class="quality-counts">${counts.map(([name, value]) =>
       `<div><strong>${integerFormat.format(value ?? 0)}</strong><span>${name}</span></div>`).join("")}</div>
-    <p>Textos, códigos, semestres e contagens são validados antes dos indicadores. Duplicatas exatas com identidade
-    de turma confirmada são removidas. Registros conflitantes são preservados e sinalizados.
-    Matrículas acima da capacidade continuam na análise.</p>
-    <p>Formato válido não significa ausência de irregularidades. Os ${integerFormat.format(irregular)} registros sinalizados foram excluídos dos indicadores.
-    As outras exclusões incluem modalidades e situações fora do recorte. Uma possível oferta conjunta entre códigos diferentes não é uma duplicata exata nem um conflito da mesma identidade cadastral.</p>
+    <p>Os ${integerFormat.format(irregular)} registros com possíveis irregularidades foram retirados da base usada por todos os gráficos, indicadores e comparações.
+    Após as demais exclusões do recorte, ${integerFormat.format(used)} registros entram nos cálculos.</p>
     ${report.conflictGroups ? '<p class="quality-warning">Há versões conflitantes de turmas. Os resultados incluem esses registros e devem ser lidos considerando esse conflito.</p>' : ""}
-    ${issues ? `<ul class="quality-issues">${issues}</ul>` : ""}
+    ${issues ? `<p>Motivos de exclusão:</p><ul class="quality-issues">${issues}</ul>` : ""}
+    ${warnings ? `<p>Avisos de preenchimento (não são exclusões adicionais):</p><ul class="quality-issues">${warnings}</ul>` : ""}
     <p class="muted">O arquivo original é preservado. A preparação ocorre em memória em cada consulta.</p>
     </details></section>`;
 }
