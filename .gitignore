@@ -22,6 +22,7 @@ htmlcov/
 # Empacotamento Python
 build/
 dist/
+node_modules/
 *.egg-info/
 .eggs/
 

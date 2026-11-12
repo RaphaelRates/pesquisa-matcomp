@@ -1,15 +1,15 @@
 # Possíveis turmas conjuntas e inconsistências de horário
 
-Verificação da base em 08/11/2026. Esta é uma lista de indícios para revisão cadastral, não uma confirmação de duplicidade.
+Verificação da base em 12/11/2026. Esta é uma lista de indícios para revisão cadastral, não uma confirmação de duplicidade.
 
-Fonte: `data/ufca/` · 1390 registros · SHA-256 da coleção: `5dc78359f27811cadd8b5d9eb65422a22542e74032cb5749428b7bf30d92978e`.
+Fonte: `data/ufca/` · 1555 registros · SHA-256 da coleção: `f8cf50dae9492c48c4e4ca1cd9669b2d28e87c56776b7b197210f8a1cda76a72`.
 
 ## Resultado
 
-- 8 grupos com códigos diferentes, conjunto de docentes e faixas completas de horário coincidentes: cinco com local normalizado igual e três com equivalência Sala/Bloco inferida.
+- 9 grupos com códigos diferentes, conjunto de docentes e faixas completas de horário coincidentes: seis com local normalizado igual e três com equivalência Sala/Bloco inferida.
 - 8 pares adicionais com docente em comum e sobreposição parcial ou total de horário, sem coincidência completa de todos os metadados.
-- Entre os oito grupos, apenas CC0017/MC0016 tem também o mesmo nome de disciplina. Os outros sete exigem distinguir oferta conjunta de possível erro de horário, local ou associação de docente.
-- Política atual: os 31 registros envolvidos nestes casos são excluídos dos indicadores até revisão (30 contribuíam anteriormente para o acumulado). Os arquivos originais e seus valores permanecem intactos.
+- Entre os nove grupos, apenas CC0017/MC0016 tem também o mesmo nome de disciplina. Os outros oito exigem distinguir oferta conjunta de possível erro de horário, local ou associação de docente.
+- Política atual: os 33 registros envolvidos ficam fora dos indicadores até revisão, incluindo dois de 2022.1. Os arquivos originais e seus valores permanecem intactos.
 
 ## Critérios e limites
 
@@ -18,6 +18,22 @@ A comparação exige o mesmo semestre e modalidade presencial. As faixas conside
 As informações não revelam se a capacidade é uma cota por código, uma capacidade compartilhada, nem se os estudantes se repetem. Não há base para fundir registros ou substituir a ocupação de MC pela ocupação agregada de outro código. Por solicitação do responsável, os registros sinalizados são excluídos integralmente dos cálculos enquanto aguardam revisão. O CCT soma ofertas por código; essa contagem pode exceder a de turmas físicas.
 
 ## Casos para revisão
+
+### 2022.1 — ECI0115 / EM0028
+
+Coincidência entre disciplinas diferentes. Mesmo conjunto de docentes e mesmas faixas completas de horário; mesmas datas cadastradas; mesmo local normalizado.
+
+| Código e disciplina | Turma | Matrículas/vagas | Local | Linha no anexo |
+| --- | --- | ---: | --- | ---: |
+| ECI0115 — INSTALAÇÕES ELÉTRICAS | Turma 01 | 18/50 | Sala: E03 | 328 |
+| EM0028 — ELETROTÉCNICA | Turma 01 | 10/30 | Sala: E03 | 193 |
+
+Arquivo [data/ufca/2022.1.json](../data/ufca/2022.1.json).
+
+- **ECI0115** — GABRIELA LINHARES LANDIM (32h). Horário SEG 08:00-10:00, QUA 08:00-10:00, (15/08/2022 - 17/12/2022).
+- **EM0028** — GABRIELA LINHARES LANDIM (32h). Horário SEG 08:00-10:00, QUA 08:00-10:00, (15/08/2022 - 17/12/2022).
+
+Confirmar no SIGAA se há turma conjunta, cotas separadas ou erro de cadastro. Não deduplicar automaticamente.
 
 ### 1. 2023.1 — ECI0115 / EM0028
 
