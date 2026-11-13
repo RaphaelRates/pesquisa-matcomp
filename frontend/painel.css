@@ -1379,26 +1379,6 @@ details table {
   margin-bottom: 15px
 }
 
-.consistency-warning {
-  margin-top: 20px;
-  font-size: .78rem;
-  line-height: 1.8
-}
-
-.consistency-case {
-  padding: 16px 0;
-  border-bottom: 1px solid var(--line)
-}
-
-.consistency-case h3 {
-  font-size: .85rem
-}
-
-.consistency-case li {
-  margin: 12px 0;
-  white-space: normal
-}
-
 .page-title {
   color: #1b2d43;
   font-size: clamp(1.8rem, 3.3vw, 3.1rem);

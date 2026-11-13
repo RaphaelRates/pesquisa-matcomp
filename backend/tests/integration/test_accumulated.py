@@ -23,7 +23,8 @@ class AccumulatedViewTests(unittest.TestCase):
     def test_included_dataset_totals_include_open_2026_2(self):
         raw, _ = load_offers(DEFAULT_DATA)
         offers, report = preprocess_offers(raw)
-        new_findings = [case for case in report['consistency']['findings'] if case['period'] == '2022.1']
+        new_findings = [case for case in report['consistency']['findings']
+                        if case['period'] == '2022.1' and case['kind'] == 'simultaneous_different_subjects']
         self.assertEqual(len(new_findings), 1)
         self.assertEqual({row['codigo'] for row in new_findings[0]['records']}, {'ECI0115', 'EM0028'})
         self.assertFalse(any(row['periodo'] == '2022.1' and row['codigo'] in {'ECI0115', 'EM0028'} for row in offers))
@@ -32,16 +33,16 @@ class AccumulatedViewTests(unittest.TestCase):
         self.assertEqual(offers, original)
         cct = panel(view, 'evolucao')['summary']
         mc = panel(view, 'matematica-computacional')['summary']
-        for summary, expected in [(cct, (1512, 60855, 33045)), (mc, (147, 6765, 3061))]:
+        for summary, expected in [(cct, (1485, 59924, 32592)), (mc, (147, 6765, 3061))]:
             m = summary['selected']
             self.assertEqual((m['n'], m['c'], m['m']), expected)
             self.assertAlmostEqual(m['rate'], expected[2] / expected[1])
             self.assertEqual(summary['historico']['n'] + summary['abertas']['n'], m['n'])
-        self.assertEqual(cct['historico']['n'], 1344)
+        self.assertEqual(cct['historico']['n'], 1317)
         self.assertEqual(cct['abertas']['n'], 168)
         chart = next(p for s in panel(view, 'evolucao')['sections'] for p in s['plots']
                      if p['id'] == 'ufca-capacidade-matriculas')
-        self.assertEqual(chart['rows'][0], ['2022.1', 6377, 3624])
+        self.assertEqual(chart['rows'][0], ['2022.1', 5927, 3447])
         self.assertEqual(chart['rows'][-1], ['2026.2*', 6845, 3948])
         self.assertIn('2023.1', view['scope']['periods'])
         self.assertIn('2026.2', view['scope']['periods'])

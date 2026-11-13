@@ -120,7 +120,7 @@ data/
     └── 2026.2.json
 ```
 
-A coleção contém **1.555 registros**. Os 165 registros de 2022.1 vêm da listagem do SIGAA fornecida no anexo. Desse semestre, 162 turmas entram nos indicadores, duas foram sinalizadas por possível oferta conjunta e uma está interrompida. Os 1.390 registros dos outros semestres preservam os campos e a ordem originais. 2026.2 contém a oferta aberta.
+A coleção contém **1.555 registros**. Os 165 registros de 2022.1 vêm da listagem do SIGAA fornecida no anexo. Desse semestre, 150 turmas entram nos indicadores. Quatorze foram sinalizadas por coincidências de oferta ou sala e uma está interrompida. Os 1.390 registros dos outros semestres preservam os campos e a ordem originais. 2026.2 contém a oferta aberta.
 
 O carregador lê os arquivos em ordem de semestre e exige que o campo `periodo` de cada registro coincida com o nome do arquivo. Nomes de semestre inválidos, períodos conflitantes, fontes vazias ou JSON malformado produzem uma mensagem de erro. Documentos como o README são ignorados.
 
@@ -128,13 +128,13 @@ Cada registro contém `periodo`, `codigo`, `disciplina`, `turma`, `docentes`, `t
 
 Textos, códigos, números e horários são normalizados antes dos cálculos. Duplicatas exatas com identidade confirmada são removidas em memória; conflitos são preservados e informados. Entram nos gráficos as turmas presenciais com capacidade positiva e situação compatível com o recorte. EAD e registros de outras situações permanecem nos arquivos, mas ficam fora desses indicadores.
 
-Na base incluída, o acumulado do CCT contém **1.512 turmas, 60.855 vagas e 33.045 matrículas**, com **54,3% de ocupação**. Os números somam nove semestres, com as matrículas contadas por registro de turma e as vagas por oferta.
+Na base incluída, o acumulado do CCT contém **1.485 turmas, 59.924 vagas e 32.592 matrículas**, com **54,4% de ocupação**. Os números somam nove semestres, com as matrículas contadas por registro de turma e as vagas por oferta.
 
 O botão **Atualizar dados**, na seção de qualidade, relê a base e o catálogo. A identificação SHA-256 da fonte considera os nomes e conteúdos dos arquivos. A preparação e os cálculos ocorrem em memória.
 
 ## Possíveis ofertas conjuntas e choques de horário
 
-A preparação sinaliza códigos distintos com docentes, horários completos, datas e locais coincidentes, além de sobreposições de horário de um mesmo docente. Esses casos aparecem em **Qualidade e preparação da base** e em `quality.consistency` na API. O relatório da base atual está em [docs/consistencia-turmas.md](docs/consistencia-turmas.md).
+A preparação sinaliza códigos distintos com docentes, horários completos, datas e locais coincidentes, além de sobreposições de horário de um mesmo docente. Também sinaliza turmas presenciais distintas com o mesmo código de sala e sobreposição de horário em datas compatíveis, inclusive quando os docentes são diferentes. O aviso amarelo do CCT mostra todos os casos da base. Nas páginas de curso, aparece somente se houver casos que envolvam alguma turma da matriz. Os detalhes mantêm as demais turmas envolvidas para explicar o conflito. A seção **Qualidade e preparação da base** tem um atalho quando há casos a mostrar. O relatório da base atual está em [docs/consistencia-turmas.md](docs/consistencia-turmas.md).
 
 São indícios, não duplicatas confirmadas: a capacidade pode representar uma cota por código. Todos os registros envolvidos nos casos sinalizados ficam fora dos indicadores até revisão, incluindo equivalências de local inferidas e sobreposições de docente. Os arquivos originais permanecem intactos; capacidades não são substituídas por estimativas. Equivalências de rótulos de local, como Sala/Bloco, são identificadas como inferidas. Confirmar vínculos e cotas no sistema acadêmico é necessário antes de deduplicar ou criar um identificador de turma conjunta. Os totais representam ofertas por código e não garantem contagem de turmas físicas únicas.
 
@@ -219,7 +219,7 @@ O envelope é `{"data": {...}, "meta": {"version": 1, "revision": "..."}, "error
 | 503 | `data_unavailable` | Falha ao ler ou processar a base ou o catálogo |
 | 503 | `server_busy` | Limite de consultas simultâneas. A resposta inclui `Retry-After`. |
 
-Na resposta de página, `summary.selected` tem `n` (turmas), `c` (vagas), `m` (matrículas), `rate` (fração ocupada), `free` (vagas não preenchidas) e `extra` (matrículas excedentes), além de contagens por faixa. `source` identifica os arquivos e `quality.consistency` detalha as turmas sinalizadas.
+Na resposta de página, `summary.selected` tem `n` (turmas), `c` (vagas), `m` (matrículas), `rate` (fração ocupada), `free` (vagas não preenchidas) e `extra` (matrículas excedentes), além de contagens por faixa. `source` identifica os arquivos e `quality.consistency` detalha todas as turmas sinalizadas na base. Nas páginas de curso, `data.consistency` traz os casos da matriz do curso. Cada registro da matriz é contado uma vez, mesmo que apareça em vários casos.
 
 Nas páginas de curso, `scope.periods` e `scopes[].periods` listam os semestres com turmas elegíveis da matriz no respectivo recorte. Uma lista vazia indica ausência de oferta.
 

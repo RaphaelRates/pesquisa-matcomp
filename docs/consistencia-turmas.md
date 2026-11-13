@@ -8,12 +8,15 @@ Fonte: `data/ufca/` · 1555 registros · SHA-256 da coleção: `f8cf50dae9492c48
 
 - 9 grupos com códigos diferentes, conjunto de docentes e faixas completas de horário coincidentes: seis com local normalizado igual e três com equivalência Sala/Bloco inferida.
 - 8 pares adicionais com docente em comum e sobreposição parcial ou total de horário, sem coincidência completa de todos os metadados.
+- 14 pares adicionais de turmas distintas com sobreposição na mesma sala.
 - Entre os nove grupos, apenas CC0017/MC0016 tem também o mesmo nome de disciplina. Os outros oito exigem distinguir oferta conjunta de possível erro de horário, local ou associação de docente.
-- Política atual: os 33 registros envolvidos ficam fora dos indicadores até revisão, incluindo dois de 2022.1. Os arquivos originais e seus valores permanecem intactos.
+- Política atual: os 60 registros envolvidos ficam fora dos indicadores até revisão, incluindo 14 de 2022.1. Os arquivos originais e seus valores permanecem intactos.
 
 ## Critérios e limites
 
 A comparação exige o mesmo semestre e modalidade presencial. As faixas consideram dia, início e fim da aula — coincidir apenas nos dias da semana não basta. Datas disjuntas não geram sobreposição. Docentes são normalizados por nome, sem confundir carga horária com identidade. Rótulos Sala/Bloco só produzem equivalência inferida, destacada separadamente. Metadados ausentes não são usados como uma identidade confiável; a ausência de datas é indicada no caso quando há coincidência dos demais campos.
+
+O choque de sala exige código de sala identificável, duas turmas com capacidade positiva, situação aberta ou consolidada e sobreposição de horários em um dia de aula dentro da interseção das datas. Os códigos são comparados com variações de rótulo e pontuação, como Sala A24-S e A24S. Locais genéricos ou descrições de várias salas ficam fora dessa regra. O docente pode ser diferente ou estar ausente.
 
 As informações não revelam se a capacidade é uma cota por código, uma capacidade compartilhada, nem se os estudantes se repetem. Não há base para fundir registros ou substituir a ocupação de MC pela ocupação agregada de outro código. Por solicitação do responsável, os registros sinalizados são excluídos integralmente dos cálculos enquanto aguardam revisão. O CCT soma ofertas por código; essa contagem pode exceder a de turmas físicas.
 
@@ -328,3 +331,24 @@ Revisar horário, alternância de aulas e eventual oferta conjunta; coincidênci
 Consultar no sistema acadêmico ou com a coordenação: identificador da turma física/conjunta, vínculo entre códigos, capacidade total versus cotas por código e política de contagem das matrículas. Um futuro campo de turma conjunta deve ser preenchido somente com essa evidência, e não inferido automaticamente por nome, docente ou sala.
 
 O painel recebe a lista atualizada em `quality.consistency` a cada carregamento e a mostra em Qualidade e preparação da base. A regra de deduplicação exata continua separada desse alerta.
+
+## Pares adicionais com choque de sala
+
+As faixas abaixo são os trechos sobrepostos. O painel mostra os registros completos de cada par.
+
+| Semestre | Sala | Turmas | Faixa sobreposta |
+| --- | --- | --- | --- |
+| [2022.1](../data/ufca/2022.1.json) | K05 | ECI0080 · Turma 01 / ECI0110 · Turma 01 | TER 16:00–18:00 |
+| [2022.1](../data/ufca/2022.1.json) | K05 | ECI0097 · Turma 01 / CC0026 · Turma 01 | SEG 08:00–10:00, QUA 08:00–10:00 |
+| [2022.1](../data/ufca/2022.1.json) | K04 | ECI0103 · Turma 01 / ECI0092 · Turma 01 | QUI 14:00–16:00 |
+| [2022.1](../data/ufca/2022.1.json) | I105 | EM0020 · Turma 01 / CAR0002 · Turma 02 | QUA 08:00–10:00, SEX 08:00–10:00 |
+| [2022.1](../data/ufca/2022.1.json) | I102 | EM0021 · Turma 01A / EM0021 · Turma 02A | QUI 16:00–18:00 |
+| [2022.1](../data/ufca/2022.1.json) | M01 | EM0029 · Turma 01 / EM0073 · Turma 01 | QUA 10:00–12:00 |
+| [2023.1](../data/ufca/2023.1.json) | M104 | ECI0031 · Turma 01 / ECI0104 · Turma 01A | QUI 08:00–10:00 |
+| [2023.1](../data/ufca/2023.1.json) | M104 | ECI0104 · Turma 01A / EM0013 · Turma 01 | QUI 10:00–12:00 |
+| [2023.2](../data/ufca/2023.2.json) | E03 | CC0010 · Turma 01 / EM0081 · Turma 01 | TER 15:00–16:00 |
+| [2024.1](../data/ufca/2024.1.json) | E03 | CAR0012 · Turma 01 / CC0004 · Turma 01 | QUA 10:00–12:00 |
+| [2024.1](../data/ufca/2024.1.json) | E04 | ECI0104 · Turma 01A / ECI0104 · Turma 02A | QUI 09:00–12:00 |
+| [2024.2](../data/ufca/2024.2.json) | M102 | ECI0031 · Turma 01 / ECI0031 · Turma 02 | TER 08:00–10:00, QUI 08:00–10:00 |
+| [2025.1](../data/ufca/2025.1.json) | K103 | ECI0107 · Turma 01 / ECI0107 · Turma 02 | TER 08:00–10:00, QUI 08:00–10:00 |
+| [2025.1](../data/ufca/2025.1.json) | I104 | ECI0109 · Turma 01 / ECI0109 · Turma 02 | SEG 08:00–10:00, QUA 08:00–10:00 |

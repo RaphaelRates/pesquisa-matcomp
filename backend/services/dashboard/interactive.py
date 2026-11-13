@@ -13,6 +13,7 @@ from services.dashboard.catalog import apply_catalog, load_catalog_entries
 from services.dashboard.groups import GROUPS, GROUP_FAMILIES, course_comparisons, group_sections
 from services.dashboard.periods import _keep_plot, period_samples, scope_summary
 from services.dashboard.scopes import course_scope, scope_plot, scope_text
+from services.data.consistency import course_consistency
 from services.data.loader import load_offers
 from services.data.preprocessing import preprocess_offers
 from services.domain.courses import COURSES, curriculum
@@ -61,11 +62,12 @@ class DashboardSnapshot:
         summary['comparison'] = compare_summary(
             metrics(baseline) if self.baseline else None, metrics(current), self.baseline)
         sections = list(GROUP_FAMILIES) + (['curso'] if course else ['comparacao'])
+        context = {'consistency': course_consistency(self.quality['consistency'], allowed)} if course else {}
         return dict(group=group, scope=scope, scopes=[scopes[key] for key in SCOPES],
                     summary=summary, source=self.source, quality=self.quality, generatedAt=self.generated_at,
                     sections=[dict(id=key, title=FAMILIES[key]) for key in sections],
                     disciplines=[dict(code=code, name=self.known[code]) for code in sorted(allowed & self.known.keys())],
-                    currentPeriod=CURRENT_PERIOD, baselinePeriod=self.baseline)
+                    currentPeriod=CURRENT_PERIOD, baselinePeriod=self.baseline, **context)
 
     def charts(self, group_id, scope_id, family=None, code=None):
         group = GROUP_BY_ID[group_id]

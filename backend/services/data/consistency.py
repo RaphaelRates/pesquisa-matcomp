@@ -9,6 +9,8 @@ import unicodedata
 
 SLOTS = re.compile(r'\b(SEG|TER|QUA|QUI|SEX|SAB|DOM) (\d{2}):(\d{2})-(\d{2}):(\d{2})')
 DATES = re.compile(r'(\d{2}/\d{2}/\d{4})\s*-\s*(\d{2}/\d{2}/\d{4})')
+ROOM_CODE = re.compile(r'[A-Z]\s*\d{1,3}(?:\s*-?\s*S)?')
+WEEKDAYS = {day: index for index, day in enumerate(('SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB', 'DOM'))}
 
 
 def text(value):
@@ -34,9 +36,39 @@ def location(value, alias=False):
     return re.sub(r'[^A-Z0-9]', '', value)
 
 
+def classroom(value):
+    """Reconhece um código de sala específico, inclusive com rótulo de laboratório."""
+    if not isinstance(value, str):
+        return ''
+    label = re.sub(r'^(?:(?:LAB\.?\s*(?:DE\s+)?INFORMATICA\s+)?SALA\b|LAB\b\.?)\s*[:.-]?\s*', '', text(value))
+    if ROOM_CODE.fullmatch(label):
+        return re.sub(r'[^A-Z0-9]', '', label)
+    return ''
+
+
+def shared_slots(first, second):
+    return [(day, max(start, other_start), min(end, other_end))
+            for day, start, end in first['slots'] for other_day, other_start, other_end in second['slots']
+            if day == other_day and max(start, other_start) < min(end, other_end)]
+
+
 def describe(row):
     return {key: row.get(key) for key in ('periodo', 'codigo', 'disciplina', 'turma', 'docentes',
             'horario', 'local', 'situacao', 'matriculas', 'capacidade', 'origem', 'linha')} | {'arquivo': f"{row['periodo']}.json"}
+
+
+def summarize_findings(findings, excluded_records):
+    counts = Counter(finding['kind'] for finding in findings)
+    return dict(candidateGroups=counts['possible_joint_class'] + counts['simultaneous_different_subjects'],
+                overlappingPairs=counts['teacher_schedule_overlap'], roomOverlappingPairs=counts['room_schedule_overlap'],
+                excludedRecords=excluded_records, countsByKind=dict(counts), findings=findings)
+
+
+def course_consistency(report, codes):
+    findings = [finding for finding in report['findings']
+                if any(row['codigo'] in codes for row in finding['records'])]
+    excluded = sum(count for code, count in report['excludedRecordsByCode'].items() if code in codes)
+    return summarize_findings(findings, excluded)
 
 
 def find_consistency_issues(rows):
@@ -58,17 +90,17 @@ def find_consistency_issues(rows):
             except ValueError:
                 pass
         staff = teachers(row.get('docentes', ''))
-        # Metadados ausentes não formam uma identidade confiável.
-        if not slots or not staff or staff == ('A DEFINIR',):
+        if not slots:
             continue
         indexed.append(dict(index=i, row=row, slots=slots, dates=tuple(sorted(dates)), teachers=staff,
-                            room=location(row.get('local')), alias=location(row.get('local'), True)))
+                            room=location(row.get('local')), alias=location(row.get('local'), True),
+                            classroom=classroom(row.get('local'))))
     findings, covered, involved = [], set(), set()
     for inferred in (False, True):
         groups = defaultdict(list)
         for entry in indexed:
             room = entry['alias' if inferred else 'room']
-            if room:
+            if room and entry['teachers']:
                 groups[(entry['row']['periodo'], entry['slots'], entry['dates'], entry['teachers'], room)].append(entry)
         for entries in groups.values():
             if len({e['row']['codigo'] for e in entries}) < 2:
@@ -101,18 +133,43 @@ def find_consistency_issues(rows):
                 continue
             if not a['dates'] or not b['dates'] or not any(max(sa,sb) <= min(ea,eb) for sa,ea in a['dates'] for sb,eb in b['dates']):
                 continue
-            overlap = [(d, max(sa,sb), min(ea,eb)) for d,sa,ea in a['slots'] for db,sb,eb in b['slots']
-                       if d == db and max(sa,sb) < min(ea,eb)]
+            overlap = shared_slots(a, b)
             if overlap:
+                covered.add((a['index'], b['index']))
                 involved.update((a['index'], b['index']))
                 findings.append(dict(kind='teacher_schedule_overlap', period=a['row']['periodo'],
                                      locationAlias=False, evidence='Docente em comum, datas sobrepostas e ao menos uma faixa de aula simultânea.',
                                      sharedTeachers=sorted(shared), overlappingSlots=overlap,
                                      records=[describe(a['row']),describe(b['row'])],
                                      action='Revisar horário, alternância de aulas e eventual oferta conjunta; coincidência não prova duplicata.'))
+
+    by_classroom = defaultdict(list)
+    for entry in indexed:
+        row = entry['row']
+        if entry['classroom'] and entry['dates'] and row['situacao'] in {'CONSOLIDADA', 'ABERTA'} and row['capacidade'] > 0:
+            by_classroom[row['periodo'], entry['classroom']].append(entry)
+    for (period, room), entries in by_classroom.items():
+        for a, b in combinations(entries, 2):
+            indices = a['index'], b['index']
+            first, second = a['row'], b['row']
+            if indices in covered or (first['codigo'], text(first['turma'])) == (second['codigo'], text(second['turma'])):
+                continue
+            dates = [(max(start, other_start), min(end, other_end))
+                     for start, end in a['dates'] for other_start, other_end in b['dates']]
+            overlap = [slot for slot in shared_slots(a, b)
+                       if any((WEEKDAYS[slot[0]] - start.weekday()) % 7 <= (end - start).days
+                              for start, end in dates)]
+            if not overlap:
+                continue
+            involved.update(indices)
+            findings.append(dict(kind='room_schedule_overlap', period=period, locationAlias=False, room=room,
+                                 evidence='Mesmo código de sala e faixa de aula sobreposta em datas compatíveis.',
+                                 overlappingSlots=overlap, records=[describe(first), describe(second)],
+                                 action='Confirmar a sala e a distribuição dos horários no SIGAA.'))
+
     findings.sort(key=lambda f:(f['period'],f['kind'],tuple(r['codigo'] for r in f['records'])))
-    return dict(candidateGroups=sum(f['kind'] != 'teacher_schedule_overlap' for f in findings),
-                overlappingPairs=sum(f['kind'] == 'teacher_schedule_overlap' for f in findings),
-                recordIndices=sorted(involved), excludedRecords=len(involved), countsByKind=dict(Counter(f['kind'] for f in findings)), findings=findings,
+    return dict(summarize_findings(findings, len(involved)),
+                recordIndices=sorted(involved),
+                excludedRecordsByCode=dict(Counter(rows[index]['codigo'] for index in involved)),
                 policy='Registros sinalizados são excluídos dos indicadores até revisão; os arquivos originais são preservados. '
                        'os totais do painel representam ofertas por código, não turmas físicas únicas.')

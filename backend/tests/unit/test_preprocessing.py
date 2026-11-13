@@ -36,7 +36,9 @@ class PreprocessingTests(unittest.TestCase):
 
     def test_disjoint_dates_and_missing_metadata_do_not_invent_matches(self):
         self.assertEqual(find_consistency_issues([self.joint(), self.joint(codigo='CC0017', horario='TER 10:00-12:00\nQUI 10:00-12:00\n(14/04/2024 - 20/04/2024)')])['findings'], [])
-        self.assertEqual(find_consistency_issues([self.joint(docentes=''), self.joint(codigo='CC0017', docentes='')])['findings'], [])
+        self.assertEqual(find_consistency_issues([
+            self.joint(docentes='', local=''), self.joint(codigo='CC0017', docentes='', local='')
+        ])['findings'], [])
 
     def test_room_alias_is_explicitly_inferred(self):
         report = find_consistency_issues([self.joint(local='SALA K 101'), self.joint(codigo='EM0028',local='Bloco K 101')])
@@ -48,6 +50,40 @@ class PreprocessingTests(unittest.TestCase):
         result = find_consistency_issues(rows)
         self.assertEqual(result['candidateGroups'], 0)
         self.assertEqual(result['overlappingPairs'], 1)
+
+    def test_room_conflict_excludes_both_offers_with_different_teachers(self):
+        first = self.joint(codigo='CC0017')
+        second = self.joint(codigo='MC0016', docentes='Outro docente (32h)', local='A24S',
+                            horario='TER 11:00-13:00\n(27/11/2023 - 13/04/2024)')
+        rows, report = preprocess_offers([first, second])
+        self.assertEqual(rows, [])
+        self.assertEqual(report['inScopeRows'], 0)
+        self.assertEqual(report['consistency']['roomOverlappingPairs'], 1)
+        finding, = report['consistency']['findings']
+        self.assertEqual(finding['kind'], 'room_schedule_overlap')
+        self.assertEqual(finding['room'], 'A24S')
+        self.assertEqual(finding['overlappingSlots'], [('TER', 660, 720)])
+
+    def test_room_conflict_requires_a_room_and_a_matching_class_date(self):
+        first = self.joint(docentes='Primeiro docente (32h)')
+        second = self.joint(codigo='CC0017', docentes='Outro docente (32h)')
+        for changes in [
+            {'local': 'Bloco A'},
+            {'local': 'Sala A24-S e sala B01'},
+            {'horario': 'TER 10:00-12:00\n(27/11/2023 - 27/11/2023)'},
+            {'horario': 'TER 12:00-14:00\n(27/11/2023 - 13/04/2024)'},
+            {'situacao': 'INTERROMPIDA'},
+        ]:
+            with self.subTest(changes=changes):
+                self.assertEqual(find_consistency_issues([first, second | changes])['findings'], [])
+
+    def test_distinct_sections_of_the_same_discipline_can_conflict_without_teacher_metadata(self):
+        first = self.joint(turma='01', docentes='')
+        second = self.joint(turma='02', docentes='')
+        result = find_consistency_issues([first, second])
+        self.assertEqual(result['roomOverlappingPairs'], 1)
+        self.assertEqual(result['recordIndices'], [0, 1])
+        self.assertEqual(find_consistency_issues([first, dict(first)])['findings'], [])
 
     def test_quality_count_excludes_current_or_future_consolidated_classes(self):
         raw = [offer('2026.1', 'CONSOLIDADA'), offer('2026.2', 'ABERTA'),

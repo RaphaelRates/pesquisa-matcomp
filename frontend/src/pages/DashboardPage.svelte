@@ -7,6 +7,7 @@
   import Header from '../components/layout/Header.svelte';
   import LoadError from '../components/feedback/LoadError.svelte';
   import ComparisonOverview from '../features/dashboard/ComparisonOverview.svelte';
+  import ConsistencyNotice from '../features/dashboard/ConsistencyNotice.svelte';
   import DataQuality from '../features/dashboard/DataQuality.svelte';
   import SummaryCards from '../features/dashboard/SummaryCards.svelte';
 
@@ -108,6 +109,9 @@
   <h1 class="page-title" id="curso-titulo" tabindex="-1">{title}</h1>
   {#if page}
     {@const data = page.data}
+    {@const consistency = data.consistency ?? data.quality.consistency}
+    <ConsistencyNotice {consistency} course={group !== 'cct'}
+      expanded={hash === 'inconsistencias'} />
     <section class="period-controls" aria-labelledby="recorte-titulo">
       <h2 id="recorte-titulo">Recorte dos gráficos</h2>
       <div class="period-buttons" role="group" aria-label="Recorte dos gráficos">
@@ -135,6 +139,7 @@
     <DisciplineExplorer disciplines={data.disciplines} scope={data.scope} {group}
       revision={page.meta.revision} {hash} refresh={() => load()} {syncLocation} />
     <DataQuality report={data.quality} generatedAt={data.generatedAt} source={data.source}
+      hasCases={Boolean(consistency.findings.length)} showBaseReport={group === 'cct'}
       {dataStatus} {currentPeriod} refresh={() => load('refresh-data')} />
   {:else if error}
     <LoadError {error} retry={() => load()} />

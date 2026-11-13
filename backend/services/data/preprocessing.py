@@ -149,7 +149,7 @@ def preprocess_offers(raw):
     accepted = [row for index, row in enumerate(cleaned) if index not in suspicious]
     excluded = Counter()
     if suspicious:
-        excluded['Registros sinalizados por possível oferta conjunta ou sobreposição de docente.'] = len(suspicious)
+        excluded['Registros sinalizados por possível oferta conjunta ou choque de sala ou docente.'] = len(suspicious)
     in_scope = 0
     eligible = 0
     out_of_scope = Counter()

@@ -1,7 +1,7 @@
 <script>
   import { format, integerFormat } from '../../lib/format.js';
 
-  let { report, generatedAt, source, dataStatus, currentPeriod, refresh } = $props();
+  let { report, generatedAt, source, dataStatus, currentPeriod, refresh, hasCases, showBaseReport } = $props();
   const consistency = $derived(report.consistency);
   const irregular = $derived(consistency?.excludedRecords ?? 0);
   const used = $derived(report.inScopeRows ?? report.eligibleRows);
@@ -15,11 +15,6 @@
   ].filter(([, value]) => value > 0));
   const reasons = $derived([...(report.issues ?? []), ...(report.exclusionReasons ?? []), ...(report.outOfScopeReasons ?? [])]);
   const timestamp = $derived(generatedAt && new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'medium' }).format(new Date(generatedAt)));
-  const names = {
-    possible_joint_class: 'Possível turma conjunta · mesmo nome',
-    simultaneous_different_subjects: 'Coincidência entre disciplinas diferentes',
-    teacher_schedule_overlap: 'Sobreposição de horário de docente',
-  };
 </script>
 
 {#snippet counters(entries, highlighted = false)}
@@ -42,53 +37,37 @@
 <div class="quality-area">
   <section class="quality-panel" id="qualidade-dados" aria-labelledby="qualidade-titulo">
     <h2 id="qualidade-titulo">Qualidade e preparação da base</h2>
-    <p class="quality-lead">{integerFormat.format(report.inputRows)} registros lidos ·
-      {integerFormat.format(used)} registros no recorte de análise.
+    <p class="quality-lead">
+      {#if showBaseReport}
+        {integerFormat.format(report.inputRows)} registros lidos · {integerFormat.format(used)} registros no recorte de análise.
+      {/if}
       {#if timestamp}<span id="updated-status" role="status">Calculado em {timestamp}</span>{/if}
     </p>
-    {@render counters(selection, true)}
+    {#if showBaseReport}{@render counters(selection, true)}{/if}
     {#if source}
       <div class="source-verification">
         <strong>{dataStatus}</strong>
         <p>Fonte: {source.name} · {source.files?.length ?? 1} arquivo(s) de turmas · identificação da base: <code>{source.sha256.slice(0, 12)}</code>.</p>
-        <p>{currentPeriod}: {format(source.currentRows)} registros na base; {format(source.currentEligibleRows)} turmas presenciais abertas com capacidade positiva no painel.</p>
+        {#if showBaseReport}
+          <p>{currentPeriod}: {format(source.currentRows)} registros na base; {format(source.currentEligibleRows)} turmas presenciais abertas com capacidade positiva no painel.</p>
+        {/if}
       </div>
     {/if}
-    {#if consistency?.findings?.length}
-      <div class="quality-warning consistency-warning">
-        <p><strong>{format(irregular)} registros excluídos dos cálculos.</strong>
-          {format(consistency.candidateGroups)} grupos de possível oferta conjunta e {format(consistency.overlappingPairs)} pares com sobreposição de docente.
-        </p>
-        <details>
-          <summary>Ver os casos sinalizados</summary>
-          {#each consistency.findings as finding}
-            <section class="consistency-case">
-              <h3>{finding.period} · {names[finding.kind] ?? finding.kind}</h3>
-              <p>{finding.evidence}</p>
-              <ul>
-                {#each finding.records as row}
-                  <li><strong>{row.codigo} · {row.disciplina}</strong> · {row.turma} ·
-                    {format(row.matriculas)}/{format(row.capacidade)} matrículas/vagas<br>
-                    {row.docentes ?? ''} · {row.local ?? ''}<br>{row.horario ?? ''}
-                  </li>
-                {/each}
-              </ul>
-              <p>{finding.action}</p>
-            </section>
-          {/each}
-        </details>
-      </div>
+    {#if hasCases}
+      <p class="quality-lead"><a href="#inconsistencias">Ver os casos sinalizados</a></p>
     {/if}
-    <details>
-      <summary>Ver o tratamento aplicado aos dados</summary>
-      {@render counters(counts)}
-      <p>Após os filtros da base, {integerFormat.format(used)} registros entram nos cálculos.</p>
-      {#if report.conflictGroups}
-        <p class="quality-warning">Os resultados incluem versões conflitantes de turmas sinalizadas para revisão.</p>
-      {/if}
-      {@render issues('Motivos de exclusão', reasons)}
-      {@render issues('Avisos de preenchimento', report.warnings)}
-    </details>
+    {#if showBaseReport}
+      <details>
+        <summary>Ver o tratamento aplicado aos dados</summary>
+        {@render counters(counts)}
+        <p>Após os filtros da base, {integerFormat.format(used)} registros entram nos cálculos.</p>
+        {#if report.conflictGroups}
+          <p class="quality-warning">Os resultados incluem versões conflitantes de turmas sinalizadas para revisão.</p>
+        {/if}
+        {@render issues('Motivos de exclusão', reasons)}
+        {@render issues('Avisos de preenchimento', report.warnings)}
+      </details>
+    {/if}
   </section>
   <button id="refresh-data" class="refresh-button" type="button" onclick={refresh}>Atualizar dados ↻</button>
 </div>

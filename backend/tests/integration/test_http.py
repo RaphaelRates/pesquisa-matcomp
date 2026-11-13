@@ -158,3 +158,20 @@ class HttpTests(TestCase):
             self.assertNotIn('2022.1', plot['scopeNote'])
         _, body, _ = self.request('/api/v1/painel/cct')
         self.assertEqual(json.loads(body)['data']['scope']['periods'][0], '2022.1')
+
+    def test_course_notice_filters_cases_and_preserves_cross_course_evidence(self):
+        reports = {}
+        for group in ('cct', 'es', 'cc', 'eci'):
+            status, body, _ = self.request(f'/api/v1/painel/{group}')
+            self.assertEqual(status, 200)
+            data = json.loads(body)['data']
+            reports[group] = data.get('consistency', data['quality']['consistency'])
+        self.assertEqual(reports['cct']['excludedRecords'], 60)
+        self.assertEqual(len(reports['cct']['findings']), 31)
+        self.assertEqual(reports['es']['findings'], [])
+        self.assertEqual(reports['es']['excludedRecords'], 0)
+        self.assertEqual(len(reports['cc']['findings']), 4)
+        self.assertEqual(len(reports['eci']['findings']), 21)
+        cross_course = next(finding for finding in reports['cc']['findings']
+                            if any(row['codigo'] == 'ECI0097' for row in finding['records']))
+        self.assertEqual({row['codigo'] for row in cross_course['records']}, {'ECI0097', 'CC0026'})
