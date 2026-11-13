@@ -147,19 +147,19 @@
             onclick={() => changeScope(id)}>{label}</button>
         {/each}
       </div>
-      {#if scope === 'compare' && data.periodBreakdown.semesters.length >= 2}
+      {#if scope === 'compare' && data.availableSemesters.length >= 2}
         <form class="semester-selects" onsubmit={applyPair}>
           <div class="discipline-controls">
             <label>Semestre de referência
               <select bind:value={reference}>
-                {#each data.periodBreakdown.semesters as item (item.period)}
+                {#each data.availableSemesters as item (item.period)}
                   <option value={item.period} disabled={item.period === target}>{item.period}{item.open ? ' *' : ''}</option>
                 {/each}
               </select>
             </label>
             <label>Semestre comparado
               <select bind:value={target}>
-                {#each data.periodBreakdown.semesters as item (item.period)}
+                {#each data.availableSemesters as item (item.period)}
                   <option value={item.period} disabled={item.period === reference}>{item.period}{item.open ? ' *' : ''}</option>
                 {/each}
               </select>

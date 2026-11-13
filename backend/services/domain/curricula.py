@@ -19,6 +19,21 @@ sources = {
     "Ciência da Computação (CC001)": ("https://sigaa.ufca.edu.br/sigaa/public/curso/curriculo.jsf?id=32652294&lc=pt_BR",
         "CC0036 CC0037 CC0038 CC0039 CC0040 CC0041 CC0042 CC0043 CC0044 CC0045 CC0046 CC0047 CC0048 CC0049 CC0050 CC0051 CC0052 CC0053 CC0054 CC0055 CC0056 CC0057 CC0058 CC0059 CC0060 CC0076 CC0083 CC0084 CC0097 CC0098 CC0099 CC0100 CC0101",
         " ".join(f"CC{i:04}" for i in range(1,36))),
+    # Relatório oficial da estrutura 2010.1, seção Componentes Optativos.
+    "Engenharia de Materiais (2010.1)": (
+        "https://documentos.ufca.edu.br/wp-folder/wp-content/uploads/2025/02/Estrutura-Curricular-2010.1.pdf",
+        "CAR0010 EM0026 EM0044 EM0045 EM0046 EM0047 EM0054 EM0055 EM0056 EM0057 EM0058 EM0059 "
+        "EM0061 EM0062 EM0063 EM0064 EM0065 EM0066 EM0067 EM0068 EM0073 EM0074 EM0075 PRG0002 PRG0003 PRG0004",
+        "",
+    ),
+    # PPC 2018.2, tabela 6, e PPC 2006.2, estrutura das eletivas (p. 30–31 do PDF).
+    # Códigos conferidos pelo nome e carga horária no catálogo do CCT no SIGAA.
+    "Engenharia Civil (2006.2 e 2018.2)": (
+        "https://www.ufca.edu.br/cursos/graduacao/engenharia-civil/projeto-pedagogico/",
+        "ECI0056 ECI0060 ECI0062 ECI0063 ECI0064 ECI0065 ECI0068 ECI0070 ECI0073 "
+        "ECI0083 ECI0086 ECI0095 ECI0123 ECI0134",
+        "",
+    ),
 }
 current = list(sources)[:5]
 

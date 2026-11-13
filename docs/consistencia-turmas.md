@@ -8,13 +8,13 @@ Fonte `data/ufca/` · 2643 registros · SHA-256 da coleção `6e54cf1d4eda61ebb7
 
 - 29 grupos com códigos diferentes, mesmo conjunto de docentes e faixas completas de horário coincidentes. Em 26, o local normalizado coincide. Em três, há equivalência de local inferida.
 - Em 15 desses grupos, o nome da disciplina também coincide.
-- 20 pares adicionais com docente em comum e sobreposição parcial ou total de horário.
+- 19 pares adicionais com docente em comum e sobreposição parcial ou total de horário.
 - 20 pares adicionais com sobreposição de horário na mesma sala.
-- Os 133 registros envolvidos ficam fora dos indicadores até revisão.
+- Os 131 registros envolvidos ficam fora dos indicadores até revisão.
 
 ## Critérios e limites
 
-A comparação exige o mesmo semestre e modalidade presencial. As faixas consideram dia, início e fim da aula — coincidir apenas nos dias da semana não basta. Datas disjuntas não geram sobreposição. Docentes são normalizados por nome, sem confundir carga horária com identidade. Rótulos Sala/Bloco só produzem equivalência inferida, destacada separadamente. Metadados ausentes não são usados como uma identidade confiável; a ausência de datas é indicada no caso quando há coincidência dos demais campos.
+A comparação exige o mesmo semestre, modalidade presencial, capacidade positiva e situação aberta ou consolidada. As faixas consideram dia, início e fim da aula. Choques exigem ao menos um dia de aula na interseção das datas. Docentes são normalizados por nome, sem confundir carga horária com identidade. Rótulos Sala/Bloco só produzem equivalência inferida, destacada separadamente. A ausência de datas é indicada nos casos de possível oferta conjunta quando os demais campos coincidem.
 
 O choque de sala exige código de sala identificável, duas turmas com capacidade positiva, situação aberta ou consolidada e sobreposição de horários em um dia de aula dentro da interseção das datas. Os códigos são comparados com variações de rótulo e pontuação, como Sala A24-S e A24S. Locais genéricos ou descrições de várias salas ficam fora dessa regra. O docente pode ser diferente ou estar ausente.
 
@@ -263,11 +263,9 @@ Arquivo: [data/ufca/2026.1.json](../data/ufca/2026.1.json).
 
 Confirmar no SIGAA se há turma conjunta, cotas separadas ou erro de cadastro. Não deduplicar automaticamente.
 
-### 11. 2026.1 — ECI0079 / ECI0126
+### 11. 2026.1 — ECI0079 / ECI0126 (caso retirado)
 
-sobreposição de horário de docente
-
-Docente em comum, datas sobrepostas e ao menos uma faixa de aula simultânea.
+ECI0126 está interrompida no anexo. ECI0079 está consolidada e voltou a contribuir com 60 vagas e 56 matrículas no painel.
 
 | Código e disciplina | Turma | Matrículas/vagas | Local | Linha na fonte original |
 | --- | --- | ---: | --- | ---: |
@@ -278,8 +276,6 @@ Arquivo: [data/ufca/2026.1.json](../data/ufca/2026.1.json).
 
 - **ECI0079** — AMANDA BEZERRA DE SOUSA PINO (32h); horário: QUA 10:00-12:00; (22/04/2026 - 31/08/2026).
 - **ECI0126** — AMANDA BEZERRA DE SOUSA PINO (32h) e MARIA GORETHE DE SOUSA LIMA BRITO (32h); horário: SEG 10:00-12:00; QUA 10:00-12:00; (20/04/2026 - 29/08/2026).
-
-Revisar horário, alternância de aulas e eventual oferta conjunta; coincidência não prova duplicata.
 
 ### 12. 2026.1 — ECI0100 / ECI0106
 

@@ -145,7 +145,7 @@ data/
     └── 2026.2.json
 ```
 
-Os 1.253 registros de 2019.1 a 2022.2 vêm das listagens do SIGAA fornecidas em anexos. A oferta aberta mais recente da base é de 2026.2.
+Os 2.643 registros de 2019.1 a 2026.2 vêm das listagens do SIGAA fornecidas em anexos. A oferta aberta mais recente da base é de 2026.2.
 
 Para acrescentar um semestre, coloque um arquivo `AAAA.1.json` ou `AAAA.2.json` em `data/ufca/` e use **Atualizar dados**. A API relê a pasta, valida o JSON e recalcula os recortes sem alterações no código ou reinício. Use uma lista de objetos em UTF-8 e informe em cada objeto o mesmo `periodo` do nome do arquivo. Nomes de semestre inválidos, períodos conflitantes e JSON malformado geram erro de leitura.
 
@@ -153,7 +153,9 @@ Cada registro contém `periodo`, `codigo`, `disciplina`, `turma`, `docentes`, `t
 
 Textos, códigos, números e horários são normalizados antes dos cálculos. Duplicatas exatas com identidade confirmada são removidas em memória; conflitos são preservados e informados. Entram nos gráficos as turmas presenciais com capacidade positiva e situação compatível com o recorte. EAD e registros de outras situações permanecem nos arquivos, mas ficam fora desses indicadores.
 
-Na base incluída, o acumulado do CCT contém **2.500 turmas, 103.735 vagas e 55.460 matrículas**, com **53,5% de ocupação**. Os números somam 16 semestres, com as matrículas contadas por registro de turma e as vagas por oferta.
+Na base incluída, o acumulado do CCT contém **2.501 turmas, 103.795 vagas e 55.516 matrículas**, com **53,5% de ocupação**. Os números somam 16 semestres, com as matrículas contadas por registro de turma e as vagas por oferta.
+
+No mapa de horários, uma turma com aula das 8h às 10h entra nas faixas de 08h e 09h do dia correspondente. Selecione uma célula para ver a contagem por semestre no mapa do grupo, ou a lista de turmas no mapa da disciplina.
 
 O botão **Atualizar dados**, na seção de qualidade, relê a base e o catálogo. A identificação SHA-256 da fonte considera os nomes e conteúdos dos arquivos. A preparação e os cálculos ocorrem em memória.
 
@@ -167,7 +169,7 @@ São indícios, não duplicatas confirmadas: a capacidade pode representar uma c
 
 Edite `data/graficos.json` para alterar `nome`, `descricao` e `tipo`. O campo `tipos_permitidos` documenta os formatos compatíveis, validados no servidor. Os gráficos gerais de grupo compartilham as entradas originais por `catalogKey`; os quatro rankings gerais e as três comparações entre cursos têm entradas próprias. As chaves `cadeira-*` personalizam as análises individuais. Salve e use Atualizar dados; não é necessário reiniciar o servidor para alterações nos dados ou catálogo.
 
-O cadastro dos cursos fica em `backend/services/domain/courses.py`. As classificações de referência ficam em `backend/services/domain/curricula.py`, e a ordem de obrigatórias de cada PPC em `backend/services/domain/ppcs.py`. O recorte do curso inclui também códigos obrigatórios exclusivos de matrizes anteriores. A classificação da matriz atual tem precedência nas análises gerais.
+O cadastro dos cursos fica em `backend/services/domain/courses.py`. As classificações de referência ficam em `backend/services/domain/curricula.py`, e a ordem de obrigatórias de cada PPC em `backend/services/domain/ppcs.py`. O recorte inclui os códigos identificados em matrizes anteriores, inclusive optativas. A classificação da matriz atual tem precedência nas análises gerais.
 
 | Indicador | Cálculo |
 | --- | --- |
@@ -217,7 +219,7 @@ A API versionada usa `/api/v1` na porta definida por `API_PORT`, com padrão 800
 
 | Rota | Parâmetros de consulta | Campos principais em `data` |
 | --- | --- | --- |
-| `/api/v1/painel/{grupo}` | `recorte`, `referencia` e `semestre` no modo `compare` | `group`, `scope`, `scopes`, `summary`, `periodBreakdown`, `sections`, `disciplines`, `source`, `quality`, `generatedAt`, `currentPeriod`, `baselinePeriod`, `comparedPeriod` |
+| `/api/v1/painel/{grupo}` | `recorte`, `referencia` e `semestre` no modo `compare` | `group`, `scope`, `scopes`, `summary`, `periodBreakdown`, `availableSemesters`, `sections`, `disciplines`, `source`, `quality`, `generatedAt`, `currentPeriod`, `baselinePeriod`, `comparedPeriod` |
 | `/api/v1/painel/{grupo}/secoes/{secao}` | Mesmo recorte e par da página, com `revisao` obrigatória | `sections`, `statisticalSummary` quando aplicável, `description` quando disponível |
 | `/api/v1/painel/{grupo}/disciplinas/{codigo}` | Mesmo recorte e par da página, com `revisao` obrigatória | `code`, `name`, `summary`, `offeredSemesters`, `sections` |
 | `/api/v1/graficos` | Nenhum | Catálogo de `data/graficos.json` |
@@ -246,7 +248,7 @@ O envelope é `{"data": {...}, "meta": {"version": 1, "revision": "..."}, "error
 
 Na resposta de página, `summary.selected` tem `n` (turmas), `c` (vagas), `m` (matrículas), `rate` (fração ocupada), `free` (vagas não preenchidas) e `extra` (matrículas excedentes), além de contagens por faixa. `source` identifica os arquivos e `quality.consistency` detalha todas as turmas sinalizadas na base. Nas páginas de curso, `data.consistency` traz os casos da matriz do curso. Cada registro da matriz é contado uma vez, mesmo que apareça em vários casos.
 
-Nas páginas de curso, `scope.periods` lista os semestres selecionados. `periodBreakdown.years` traz os totais anuais do recorte e `periodBreakdown.semesters` inclui os semestres disponíveis para comparação. `baselinePeriod` e `comparedPeriod` identificam o par ativo nos modos de comparação.
+Nas páginas de curso, `scope.periods` lista os semestres selecionados. `periodBreakdown` traz os totais por ano e por semestre do recorte. Nos modos de comparação, `availableSemesters` lista as opções do grupo e `baselinePeriod` e `comparedPeriod` identificam o par ativo.
 
 Nas respostas de gráficos, cada item em `sections[].plots` tem `id`, `title`, `description`, `columns`, `rows` e `spec` (tipo e eixos). Os valores em `rows` seguem a ordem de `columns`. As comparações contêm `baselinePeriod`, `currentPeriod`, `rows` e, quando disponível, `baselinePlot`. Uma proporção como `0.54` representa 54%. Medidas indefinidas são `null`.
 

@@ -174,6 +174,9 @@ class HttpTests(TestCase):
         data = page['data']
         self.assertEqual(data['scope']['periods'], ['2019.1', '2020.2'])
         self.assertEqual([row['year'] for row in data['periodBreakdown']['years']], ['2019', '2020'])
+        self.assertEqual([row['period'] for row in data['periodBreakdown']['semesters']], ['2019.1', '2020.2'])
+        self.assertIn('2026.2', [row['period'] for row in data['availableSemesters']])
+        self.assertIn('2019.1 e 2020.2', data['scope']['note'])
         self.assertEqual((data['baselinePeriod'], data['comparedPeriod']), ('2019.1', '2020.2'))
         self.assertEqual(data['summary']['selected']['m'], 159 + 162)
         for endpoint in ('secoes/evolucao', 'disciplinas/MC0001'):
@@ -224,12 +227,12 @@ class HttpTests(TestCase):
             self.assertEqual(status, 200)
             data = json.loads(body)['data']
             reports[group] = data.get('consistency', data['quality']['consistency'])
-        self.assertEqual(reports['cct']['excludedRecords'], 133)
-        self.assertEqual(len(reports['cct']['findings']), 69)
+        self.assertEqual(reports['cct']['excludedRecords'], 131)
+        self.assertEqual(len(reports['cct']['findings']), 68)
         self.assertEqual(reports['es']['findings'], [])
         self.assertEqual(reports['es']['excludedRecords'], 0)
         self.assertEqual(len(reports['cc']['findings']), 20)
-        self.assertEqual(len(reports['eci']['findings']), 48)
+        self.assertEqual(len(reports['eci']['findings']), 47)
         cross_course = next(finding for finding in reports['cc']['findings']
                             if any(row['codigo'] == 'ECI0097' for row in finding['records']))
         self.assertEqual({row['codigo'] for row in cross_course['records']}, {'ECI0097', 'CC0026'})

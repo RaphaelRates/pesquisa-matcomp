@@ -5,8 +5,8 @@ from services.data.selection import split_offers
 from services.domain.courses import COURSES, curriculum
 
 from services.analytics.metrics import (
-    chart, codes, sources, days, distribution, group, hourly_slots, metrics,
-    occupancy_bands, occupancy_details, rate, semester_label, shift,
+    chart, sources, distribution, group, metrics, occupancy_bands,
+    occupancy_details, rate, schedule_heatmap, semester_label, shift,
 )
 
 
@@ -66,11 +66,11 @@ def discipline_cohort_analyses(primary_rows, comparison_rows, periods, known_dis
             dict(type='horizontalBar', x=['Ocupação'], y='Turno', valueFormat={'style': 'percent'}), ['Turno', 'Ocupação'],
             [[label, metrics(rs)['rate']] for label, rs in sorted(shifts.items())],
             [occupancy_details(metrics(rs)) for _, rs in sorted(shifts.items())])
-        hours = range(7, 22)
-        slots = [hourly_slots(r, hours) for r in past]
-        add('horarios', 'Oferta por dia e horário', 'Conta turmas consolidadas com aula em cada faixa. Uma turma pode ocupar várias células.',
-            dict(type='heatmap', x='Dia', y='Horário', value='Turmas', xOrder=list(days.values()), yOrder=[f'{h:02d}h' for h in hours]),
-            ['Dia', 'Horário', 'Turmas'], [[label, f'{h:02d}h', sum((day, h) in s for s in slots)] for day, label in days.items() for h in hours] if past else [])
+        schedule = schedule_heatmap(f'cadeira-{code}-horarios', 'Oferta por dia e horário',
+                                    'Cada célula lista as turmas com aula naquela faixa.',
+                                    past, hour_label='Horário', by_class=True)
+        schedule['catalogKey'] = 'cadeira-horarios'
+        plots.append(schedule)
         result.append(dict(code=code, name=name, summary=dict(historico=metrics(past), abertas=metrics(latest)),
                            offeredSemesters=len({r['periodo'] for r in past}), plots=plots))
     return {'cct': result, **{config['key']: [d for d in result if d['code'] in set.union(*curriculum(sources, config))]

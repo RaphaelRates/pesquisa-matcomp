@@ -15,7 +15,10 @@ def course_scope(scope, rows, *, course=True):
         return dict(scope, periods=periods, label=f'{title} · sem oferta',
                     note=f'Sem turmas elegíveis{group} neste recorte.')
 
-    span = f'{periods[0]} a {periods[-1]}' if len(periods) > 1 else periods[0]
+    if scope['id'] in {'latest', 'compare'}:
+        span = ' e '.join(periods)
+    else:
+        span = f'{periods[0]} a {periods[-1]}' if len(periods) > 1 else periods[0]
     status = {'ABERTA': ' abertas', 'CONSOLIDADA': ' consolidadas'}.get(scope['status'], '')
     note = f'Turmas presenciais{status}{group} no recorte de {span}.'
     if open_periods:

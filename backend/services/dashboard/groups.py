@@ -9,6 +9,7 @@ from collections import defaultdict
 from fractions import Fraction
 
 from services.analytics.metrics import chart, metrics, overview_panels, sources, varied_charts
+from services.domain.curricula import changed
 from services.analytics.statistics import statistical_panel, statistical_summary
 from services.analytics.comparison import compare_plots, compare_statistics, compare_summary
 from services.domain.courses import COURSES, curriculum
@@ -74,7 +75,13 @@ def group_sections(rows, scope, definition, config, family, *, summary=None, cat
         panel, = overview_panels(rows, [], scope['periods'], only=panel_id)
         sections = [dict(title=GROUP_FAMILIES[family], plots=panel['sections'][0]['plots'])]
     elif family == 'distribuicao':
-        classification = curriculum(sources, config) if config else None
+        if config:
+            classification = curriculum(sources, config)
+        else:
+            classifications = [curriculum(sources, course) for course in COURSES]
+            required = set.union(*(required for required, _ in classifications))
+            optional = set.union(*(optional for _, optional in classifications))
+            classification = required - optional - changed, optional - required - changed
         plots = varied_charts('ufca', rows, [], scope['periods'], classification)
         sections = [dict(title=GROUP_FAMILIES[family],
                          plots=[p for p in plots if not p['id'].endswith('-rosca-abertas')])]

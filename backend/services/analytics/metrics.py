@@ -69,7 +69,7 @@ notes = {
     "ufca-faixas": "Cada segmento conta quantas turmas ficaram em uma faixa de ocupação. A faixa de cada turma é definida pelas suas matrículas divididas pela sua capacidade. A altura total da barra é o número de turmas presenciais do semestre. O segmento de 100% ou mais inclui turmas lotadas e acima da capacidade. O asterisco identifica semestres que incluem turmas abertas.",
     "ufca-prefixos": "Cada célula cruza um prefixo de código, como EM ou ECI, com um semestre. A cor e o percentual mostram a soma das matrículas dividida pela soma das vagas nas turmas presenciais consolidadas daquele prefixo e semestre. A unidade de agrupamento é o prefixo da disciplina.",
     "ufca-codigos": "Cada linha acompanha um dos oito códigos selecionados. Em cada semestre, a célula soma matrículas e capacidade de todas as turmas incluídas daquele código e mostra a razão em porcentagem. Uma célula vazia indica ausência de turma no recorte. O asterisco identifica semestres que incluem turmas abertas.",
-    "ufca-grade-horaria": "Cada célula conta as turmas presenciais consolidadas com aula naquele dia da semana e naquela faixa de uma hora. Uma turma que ocupa duas horas ou tem aula em dois dias aparece nas respectivas células. Por isso, a soma das células conta ocorrências de horário.",
+    "ufca-grade-horaria": "Cada célula conta as turmas com aula naquele dia da semana e naquela faixa de uma hora. A mesma turma aparece em todas as faixas em que tem aula. Consulte a célula para ver a contagem por semestre.",
     "ufca-turnos": "Cada barra divide o total de matrículas pelo total de vagas das turmas presenciais consolidadas classificadas naquele turno. Aulas antes das 12h entram na manhã, das 12h às 18h na tarde e a partir das 18h na noite. Turmas com aulas em mais de um turno entram em Misto. O rótulo informa o número de turmas.",
     "ufca-opt-curso": "Para cada curso, o gráfico seleciona os códigos listados como optativos na matriz pública de referência. A ocupação divide as matrículas pelas vagas das turmas selecionadas.",
     "ufca-opt-periodo": "Em cada semestre, as duas barras mostram a ocupação de optativas e obrigatórias presenciais consolidadas, calculada separadamente pela soma de matrículas dividida pela soma de vagas. O recorte original exclui códigos sem classificação ou com mudança de natureza conhecida e usa as matrizes de referência dessa análise.",
@@ -114,6 +114,40 @@ def occupancy_details(m, include_rate=True):
         return ""
     totals = f'Turmas: {integer(m["n"])} · Matrículas: {integer(m["m"])} · Vagas: {integer(m["c"])}'
     return f'{totals}\nOcupação: {percent(m["rate"])}' if include_rate else totals
+
+
+def schedule_heatmap(id, title, description, rows, *, hour_label, by_class=False):
+    hours = range(7, 22)
+    labels = [f'{hour:02d}h' for hour in hours]
+    slots = defaultdict(list)
+    scheduled = 0
+    for row in rows:
+        class_slots = hourly_slots(row, hours)
+        scheduled += bool(class_slots)
+        for slot in class_slots:
+            slots[slot].append(row)
+
+    values, details = [], []
+    for day, label in days.items():
+        for hour, hour_name in zip(hours, labels, strict=True):
+            classes = slots[day, hour]
+            values.append([label, hour_name, len(classes)])
+            if by_class:
+                ordered = sorted(classes, key=lambda row: (row['periodo'], row['turma']))
+                details.append('\n'.join(
+                    f"{semester_label(row['periodo'], [row])} · {row['turma']}" for row in ordered))
+            else:
+                by_period = group(classes, lambda row: row['periodo'])
+                details.append('\n'.join(
+                    f'{semester_label(period, sample)} · {integer(len(sample))}'
+                    for period, sample in sorted(by_period.items())))
+    plot = chart(id, title, description,
+                 dict(type='heatmap', x='Dia', y=hour_label, value='Turmas',
+                      xOrder=list(days.values()), yOrder=labels),
+                 ['Dia', hour_label, 'Turmas'], values if rows else [], 520,
+                 tooltips=details if rows else [])
+    plot['scopeDetail'] = f'{integer(len(rows))} turmas no recorte · {integer(scheduled)} com horário no mapa.'
+    return plot
 
 
 def offer_indicators(prefix, by_period):
@@ -336,10 +370,6 @@ def overview_panels(hist, latest, periods, *, only=None):
         ])
 
     if only in (None, 'horarios-capacidade'):
-        slots = Counter(slot for row in hist for slot in hourly_slots(row, range(7, 22)))
-        active_days = {day: label for day, label in days.items()
-                       if day != "DOM" or any(d == day for d, _ in slots)}
-        hours = [f"{h:02d}h" for h in range(7,22)]
         shifts = group(hist, shift)
         capacities = group(hist, lambda r:r["capacidade"])
         counts = Counter({capacity: len(rows) for capacity, rows in capacities.items()})
@@ -347,20 +377,15 @@ def overview_panels(hist, latest, periods, *, only=None):
         covered = sum(counts[capacity] for capacity in common_sizes)
 
         add("horarios-capacidade", "Horários, turnos e tamanho das turmas", [
-            chart("ufca-grade-horaria", "Concentração da oferta ao longo da semana",
-                  "Turmas presenciais consolidadas por faixa de uma hora, somadas no recorte selecionado.",
-                  dict(type="heatmap", x="Dia", y="Hora", value="Turmas", xOrder=list(active_days.values()),
-                       yOrder=hours, showValues=True),
-                  ["Dia","Hora","Turmas"],
-                  [[day_label,f"{h:02d}h",slots[(day,h)]] for day,day_label in active_days.items() for h in range(7,22)],
-                  520),
+            schedule_heatmap("ufca-grade-horaria", "Concentração da oferta ao longo da semana",
+                             notes["ufca-grade-horaria"], hist, hour_label="Hora"),
             chart("ufca-turnos", "Ocupação por turno",
                   "Turmas presenciais consolidadas. Misto abrange aulas em mais de um turno.",
                   dict(type="horizontalBar", y="Turno", x="Ocupação", xLabel="Matrículas ÷ capacidade",
                        xDomain=[0,1], valueFormat=percent, showValues=True),
                   ["Turno","Ocupação"],
                   [[f"{s} · {len(shifts.get(s, []))} turmas", metrics(shifts.get(s, []))["rate"]]
-                   for s in ["Manhã","Tarde","Noite","Misto"]], 240),
+                   for s in ["Manhã","Tarde","Noite","Misto","Sem horário"] if s in shifts], 240),
             chart("ufca-tamanho", "Ocupação segundo o tamanho da turma",
                   f"Até cinco capacidades mais frequentes, que somam {integer(covered)} das "
                   f"{integer(len(hist))} turmas presenciais consolidadas. "

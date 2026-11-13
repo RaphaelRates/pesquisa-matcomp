@@ -88,7 +88,7 @@
     {#if payload}
       {@const m = payload.summary.selected}
       <h3 class="section-heading">{payload.code} · {payload.name}</h3>
-      <SummaryCards summary={payload.summary} {scope} />
+      <SummaryCards summary={payload.summary} scope={payload.summary.scope} />
       {#if scope.id !== 'accumulated'}
         <ComparisonOverview comparison={payload.summary.comparison} heading="Comparação desta cadeira" id={null} />
       {/if}

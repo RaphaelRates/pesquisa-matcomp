@@ -5,6 +5,7 @@ from datetime import datetime
 from itertools import combinations
 import re
 import unicodedata
+from services.data.selection import is_in_scope
 
 
 SLOTS = re.compile(r'\b(SEG|TER|QUA|QUI|SEX|SAB|DOM) (\d{2}):(\d{2})-(\d{2}):(\d{2})')
@@ -52,6 +53,14 @@ def shared_slots(first, second):
             if day == other_day and max(start, other_start) < min(end, other_end)]
 
 
+def overlapping_class_hours(first, second):
+    dates = [(max(start, other_start), min(end, other_end))
+             for start, end in first['dates'] for other_start, other_end in second['dates']]
+    return [slot for slot in shared_slots(first, second)
+            if any((WEEKDAYS[slot[0]] - start.weekday()) % 7 <= (end - start).days
+                   for start, end in dates)]
+
+
 def describe(row):
     return {key: row.get(key) for key in ('periodo', 'codigo', 'disciplina', 'turma', 'docentes',
             'horario', 'local', 'situacao', 'matriculas', 'capacidade', 'origem', 'linha')} | {'arquivo': f"{row['periodo']}.json"}
@@ -75,7 +84,7 @@ def find_consistency_issues(rows):
     """Evidência cadastral não determina cota, equivalência ou capacidade física."""
     indexed = []
     for i, row in enumerate(rows):
-        if row['modalidade'] != 'Presencial':
+        if not is_in_scope(row):
             continue
         slots = tuple(sorted(set((d, int(sh)*60+int(sm), int(eh)*60+int(em))
                                  for d, sh, sm, eh, em in SLOTS.findall(text(row['horario']))
@@ -131,9 +140,7 @@ def find_consistency_issues(rows):
             shared = set(a['teachers']) & set(b['teachers'])
             if not shared or a['row']['codigo'] == b['row']['codigo']:
                 continue
-            if not a['dates'] or not b['dates'] or not any(max(sa,sb) <= min(ea,eb) for sa,ea in a['dates'] for sb,eb in b['dates']):
-                continue
-            overlap = shared_slots(a, b)
+            overlap = overlapping_class_hours(a, b)
             if overlap:
                 covered.add((a['index'], b['index']))
                 involved.update((a['index'], b['index']))
@@ -146,7 +153,7 @@ def find_consistency_issues(rows):
     by_classroom = defaultdict(list)
     for entry in indexed:
         row = entry['row']
-        if entry['classroom'] and entry['dates'] and row['situacao'] in {'CONSOLIDADA', 'ABERTA'} and row['capacidade'] > 0:
+        if entry['classroom'] and entry['dates']:
             by_classroom[row['periodo'], entry['classroom']].append(entry)
     for (period, room), entries in by_classroom.items():
         for a, b in combinations(entries, 2):
@@ -154,11 +161,7 @@ def find_consistency_issues(rows):
             first, second = a['row'], b['row']
             if indices in covered or (first['codigo'], text(first['turma'])) == (second['codigo'], text(second['turma'])):
                 continue
-            dates = [(max(start, other_start), min(end, other_end))
-                     for start, end in a['dates'] for other_start, other_end in b['dates']]
-            overlap = [slot for slot in shared_slots(a, b)
-                       if any((WEEKDAYS[slot[0]] - start.weekday()) % 7 <= (end - start).days
-                              for start, end in dates)]
+            overlap = overlapping_class_hours(a, b)
             if not overlap:
                 continue
             involved.update(indices)

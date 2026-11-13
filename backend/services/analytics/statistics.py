@@ -131,7 +131,7 @@ def statistical_summary(hist, latest=()):
 
 def statistical_panel(prefix, title, hist, latest, periods, *, summary=None):
     """Monta 14 gráficos e um resumo, sem inferir uma população externa à base."""
-    from services.analytics.metrics import chart
+    from services.analytics.metrics import chart, semester_label
 
     def rates(rows):
         return [row["matriculas"] / row["capacidade"] for row in rows]
@@ -154,6 +154,7 @@ def statistical_panel(prefix, title, hist, latest, periods, *, summary=None):
     by_period_stats = {period: distribution_statistics(rates(by_period[period])) for period in historical_periods}
     by_period_concentration = {period: concentration_statistics(by_period[period]) for period in historical_periods}
     by_period_association = {period: association_statistics(by_period[period]) for period in historical_periods}
+    labels = {period: semester_label(period, by_period[period]) for period in historical_periods}
     if summary is None:
         summary = statistical_summary(hist, latest)
     historical = summary["occupancy"]
@@ -194,7 +195,7 @@ def statistical_panel(prefix, title, hist, latest, periods, *, summary=None):
         "quartis", "Faixa central de ocupação por semestre", note,
         dict(type="distributionBand", x="Semestre", y=["Q1", "Mediana", "Q3"], valueFormat=PERCENT),
         ["Semestre", "Q1", "Mediana", "Q3"],
-        [[period, stats["q1"], stats["median"], stats["q3"]] for period, stats in by_period_stats.items()],
+        [[labels[period], stats["q1"], stats["median"], stats["q3"]] for period, stats in by_period_stats.items()],
         "Quartis por interpolação linear inclusiva, posição (n − 1)p. A faixa entre Q1 e Q3 representa os 50% centrais.",
         "Faixas largas indicam maior dispersão da ocupação entre as turmas do semestre.", row_details,
     ))
@@ -202,7 +203,7 @@ def statistical_panel(prefix, title, hist, latest, periods, *, summary=None):
         "dispersao", "Dispersão relativa da ocupação", note,
         dict(type="line", x="Semestre", y=["Coeficiente de variação", "MAD / mediana"], valueFormat=PERCENT),
         ["Semestre", "Coeficiente de variação", "MAD / mediana"],
-        [[period, stats["coefficientVariation"], stats["mad"] / stats["median"] if stats["median"] else None]
+        [[labels[period], stats["coefficientVariation"], stats["mad"] / stats["median"] if stats["median"] else None]
          for period, stats in by_period_stats.items()],
         "CV = desvio-padrão populacional / média. MAD é a mediana dos desvios absolutos em relação à mediana.",
         "Os índices comparam dispersão com o nível central. Denominadores iguais a zero deixam o índice sem registro.",
@@ -212,7 +213,7 @@ def statistical_panel(prefix, title, hist, latest, periods, *, summary=None):
         "momentos", "Assimetria e caudas da ocupação", note,
         dict(type="line", x="Semestre", y=["Assimetria", "Curtose excedente"], valueFormat=DECIMAL),
         ["Semestre", "Assimetria", "Curtose excedente"],
-        [[period, stats["skewness"], stats["excessKurtosis"]] for period, stats in by_period_stats.items()],
+        [[labels[period], stats["skewness"], stats["excessKurtosis"]] for period, stats in by_period_stats.items()],
         "Momentos padronizados populacionais de ordem 3 e 4. A curtose excedente subtrai 3 do quarto momento.",
         "Assimetria positiva indica cauda à direita. A curtose descreve extremos relativos ao desvio-padrão, "
         "sem estabelecer normalidade dos dados.", row_details,
@@ -221,7 +222,7 @@ def statistical_panel(prefix, title, hist, latest, periods, *, summary=None):
         "tukey", "Turmas sinalizadas pela regra de Tukey", note,
         dict(type="stackedBar", x="Semestre", y=["Abaixo do limite", "Acima do limite"]),
         ["Semestre", "Abaixo do limite", "Acima do limite"],
-        [[period, stats["outliersLow"], stats["outliersHigh"]] for period, stats in by_period_stats.items()],
+        [[labels[period], stats["outliersLow"], stats["outliersHigh"]] for period, stats in by_period_stats.items()],
         "Sinaliza valores abaixo de Q1 − 1,5 × IQR ou acima de Q3 + 1,5 × IQR, com IQR = Q3 − Q1.",
         "São observações para inspeção. O sinalizador preserva todas as turmas nos indicadores.",
         [f'Limite inferior: {percent(stats["tukeyLower"])}\nLimite superior: {percent(stats["tukeyUpper"])}\n'
@@ -267,7 +268,7 @@ def statistical_panel(prefix, title, hist, latest, periods, *, summary=None):
         "concentracao", "Índices de concentração por semestre", note,
         dict(type="line", x="Semestre", y=["Gini", "HHI"], valueFormat=DECIMAL, yDomain=[0, 1]),
         ["Semestre", "Gini", "HHI"],
-        [[period, values["gini"], values["hhi"]] for period, values in by_period_concentration.items()],
+        [[labels[period], values["gini"], values["hhi"]] for period, values in by_period_concentration.items()],
         "Gini é calculado sobre os totais por código. HHI = soma dos quadrados das participações nas matrículas, "
         "na escala de 0 a 1.",
         "Os índices descrevem concentração com fórmulas diferentes. O número de disciplinas ofertadas também "
@@ -278,7 +279,7 @@ def statistical_panel(prefix, title, hist, latest, periods, *, summary=None):
         dict(type="mixed", x="Semestre", y=["Disciplinas ofertadas", "Número efetivo (HHI)"],
              lineSeries=["Número efetivo (HHI)"]),
         ["Semestre", "Disciplinas ofertadas", "Número efetivo (HHI)"],
-        [[period, values["disciplines"], values["effectiveDisciplines"]]
+        [[labels[period], values["disciplines"], values["effectiveDisciplines"]]
          for period, values in by_period_concentration.items()],
         "O número efetivo é 1 / HHI. Ele representa quantas disciplinas de participação igual produziriam o mesmo HHI.",
         "Uma distância grande entre as duas séries indica concentração das matrículas em parte dos códigos ofertados.",
@@ -301,7 +302,7 @@ def statistical_panel(prefix, title, hist, latest, periods, *, summary=None):
         "correlacoes", "Relação entre capacidade e ocupação por semestre", note,
         dict(type="line", x="Semestre", y=["Pearson", "Spearman"], valueFormat=DECIMAL, yDomain=[-1, 1]),
         ["Semestre", "Pearson", "Spearman"],
-        [[period, values["pearson"], values["spearman"]] for period, values in by_period_association.items()],
+        [[labels[period], values["pearson"], values["spearman"]] for period, values in by_period_association.items()],
         "Pearson usa os valores originais. Spearman aplica Pearson aos postos médios, preservando os empates.",
         "Valores próximos de ±1 indicam associação forte, linear em Pearson e monotônica em Spearman. "
         "A associação observada permite descrever relações, sem identificar suas causas.", row_details,

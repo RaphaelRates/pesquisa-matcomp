@@ -51,6 +51,14 @@ class PreprocessingTests(unittest.TestCase):
         self.assertEqual(result['candidateGroups'], 0)
         self.assertEqual(result['overlappingPairs'], 1)
 
+    def test_interrupted_class_does_not_exclude_a_consolidated_class(self):
+        first = self.joint()
+        interrupted = self.joint(codigo='CC0017', situacao='INTERROMPIDA')
+        _, report = preprocess_offers([first, interrupted])
+        self.assertEqual(report['consistency']['findings'], [])
+        self.assertEqual(report['inScopeRows'], 1)
+        self.assertEqual(report['outOfScopeRows'], 1)
+
     def test_room_conflict_excludes_both_offers_with_different_teachers(self):
         first = self.joint(codigo='CC0017')
         second = self.joint(codigo='MC0016', docentes='Outro docente (32h)', local='A24S',

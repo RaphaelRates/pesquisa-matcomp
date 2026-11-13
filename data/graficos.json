@@ -544,7 +544,7 @@
     },
     "ufca-grade-horaria": {
       "nome": "Concentração da oferta ao longo da semana",
-      "descricao": "Cada célula conta as turmas presenciais consolidadas com aula naquele dia da semana e naquela faixa de uma hora. Uma turma que ocupa duas horas ou tem aula em dois dias aparece nas respectivas células. Por isso, a soma das células conta ocorrências de horário.",
+      "descricao": "Cada célula conta as turmas com aula naquele dia e naquela faixa de uma hora. A mesma turma aparece em todas as faixas em que tem aula. Selecione uma célula para ver a contagem por semestre.",
       "tipo": "heatmap",
       "tipos_permitidos": [
         "heatmap"
@@ -560,7 +560,7 @@
     },
     "ufca-tamanho": {
       "nome": "Ocupação segundo o tamanho da turma",
-      "descricao": "Até cinco capacidades mais frequentes, que somam 1.064 das 1.208 turmas presenciais consolidadas. A ocupação divide as matrículas pelo total de vagas em cada grupo.",
+      "descricao": "Mostra as cinco capacidades mais frequentes no recorte e quantas turmas têm cada capacidade. A ocupação divide as matrículas pelo total de vagas em cada grupo.",
       "tipo": "horizontalBar",
       "tipos_permitidos": [
         "horizontalBar"
@@ -1463,7 +1463,7 @@
     },
     "cadeira-horarios": {
       "nome": "Oferta por dia e horário",
-      "descricao": "Conta turmas consolidadas com aula em cada faixa. Uma turma pode ocupar várias células.",
+      "descricao": "Cada célula conta as turmas com aula naquele dia e naquela faixa de uma hora. A mesma turma aparece em todas as faixas em que tem aula. Selecione uma célula para ver os semestres e as turmas.",
       "tipo": "heatmap",
       "tipos_permitidos": [
         "heatmap"

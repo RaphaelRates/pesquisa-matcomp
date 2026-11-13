@@ -91,13 +91,15 @@ class DashboardSnapshot:
                 metrics(baseline) if baseline else None, metrics(current) if current else None,
                 baseline_period, current_period)
         breakdown = period_breakdown(selected)
-        if scope_id == 'current' or scope_id in COMPARISON_SCOPES:
-            breakdown['semesters'] = period_breakdown(samples['accumulated'])['semesters']
+        available_semesters = period_breakdown(
+            [row for row in samples['accumulated'] if row['codigo'] in allowed]
+        )['semesters'] if scope_id in COMPARISON_SCOPES else breakdown['semesters']
         sections = list(GROUP_FAMILIES) + (['curso'] if course else ['comparacao'])
         disciplines = {row['codigo'] for row in selected} if scope_id in COMPARISON_SCOPES else allowed & self.known.keys()
         context = {'consistency': course_consistency(self.quality['consistency'], allowed)} if course else {}
         return dict(group=group, scope=scope, scopes=[scopes[key] for key in SCOPES],
-                    summary=summary, periodBreakdown=breakdown, source=self.source, quality=self.quality,
+                    summary=summary, periodBreakdown=breakdown, availableSemesters=available_semesters,
+                    source=self.source, quality=self.quality,
                     generatedAt=self.generated_at,
                     sections=[dict(id=key, title=FAMILIES[key]) for key in sections],
                     disciplines=[dict(code=code, name=self.known[code]) for code in sorted(disciplines)],
@@ -181,10 +183,11 @@ class DashboardSnapshot:
         items = discipline_cohort_analyses(rows, [], scope['periods'], {code: self.known[code]}, only=code)
         result, = items['cct']
         apply_catalog([], items, self.catalog)
-        result['summary'] = scope_summary(rows, scope)
+        discipline_scope = course_scope(scope, rows, course=False)
+        result['summary'] = scope_summary(rows, discipline_scope)
         plots = [plot for plot in result.pop('plots') if _keep_plot(plot)]
         for plot in plots:
-            scope_plot(plot, scope, len(rows))
+            scope_plot(plot, discipline_scope, len(rows))
         result['sections'] = [dict(plots=plots)]
         return result
 

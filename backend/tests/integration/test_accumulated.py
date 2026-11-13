@@ -33,13 +33,14 @@ class AccumulatedViewTests(unittest.TestCase):
         self.assertEqual(offers, original)
         cct = panel(view, 'evolucao')['summary']
         mc = panel(view, 'matematica-computacional')['summary']
-        for summary, expected in [(cct, (2500, 103735, 55460)), (mc, (222, 10320, 4285))]:
+        for summary, expected in [(cct, (2501, 103795, 55516)), (mc, (222, 10320, 4285))]:
             m = summary['selected']
             self.assertEqual((m['n'], m['c'], m['m']), expected)
             self.assertAlmostEqual(m['rate'], expected[2] / expected[1])
             self.assertEqual(summary['historico']['n'] + summary['abertas']['n'], m['n'])
-        self.assertEqual(cct['historico']['n'], 2330)
+        self.assertEqual(cct['historico']['n'], 2331)
         self.assertEqual(cct['abertas']['n'], 170)
+        self.assertTrue(any(row['periodo'] == '2026.1' and row['codigo'] == 'ECI0079' for row in offers))
         chart = next(p for s in panel(view, 'evolucao')['sections'] for p in s['plots']
                      if p['id'] == 'ufca-capacidade-matriculas')
         self.assertEqual(chart['rows'][0], ['2019.1', 6420, 4052])
@@ -49,6 +50,18 @@ class AccumulatedViewTests(unittest.TestCase):
         self.assertIn('2023.1', view['scope']['periods'])
         self.assertIn('2026.2', view['scope']['periods'])
         self.assertEqual(view['scope']['status'], 'MISTA')
+
+        discipline = next(d for d in view['disciplines']['mc'] if d['code'] == 'MC0001')
+        schedule = next(p for p in discipline['plots'] if p['catalogKey'] == 'cadeira-horarios')
+        cells = {(day, hour): (count, details.splitlines()) for (day, hour, count), details
+                 in zip(schedule['rows'], schedule['tooltips'], strict=True)}
+        monday = cells['Seg', '08h']
+        self.assertEqual(monday[0], 14)
+        self.assertEqual(len(monday[1]), 14)
+        self.assertIn('2026.2* · Turma 01', monday[1])
+        self.assertNotIn('2026.1 · Turma 02', monday[1])
+        self.assertEqual(monday, cells['Qua', '08h'])
+        self.assertEqual(monday, cells['Sex', '08h'])
 
     def test_accumulated_includes_all_dates_and_excludes_unselected_statuses(self):
         offers = [offer('2018.2', 99, 99), offer('2019.1', 10, 2), offer('2026.1', 20, 10),
