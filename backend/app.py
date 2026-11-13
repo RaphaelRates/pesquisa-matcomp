@@ -15,9 +15,11 @@ import re
 from threading import BoundedSemaphore, Thread
 from urllib.parse import parse_qs
 
-from services.config import CATALOG_PATH, CURRENT_PERIOD, DEFAULT_DATA, PROJECT_ROOT, TITLE
+from services.config import CATALOG_PATH, DEFAULT_DATA, PROJECT_ROOT, TITLE
 from services.dashboard.groups import GROUPS
-from services.dashboard.interactive import DashboardSnapshots, DisciplineNotFound, FAMILIES, GROUP_BY_ID, SCOPES
+from services.dashboard.interactive import (
+    COMPARISON_SCOPES, DashboardSnapshots, DisciplineNotFound, FAMILIES, GROUP_BY_ID, InvalidSemesterPair, SCOPES,
+)
 from services.presentation.export import TOOLTIPS
 from services.dashboard.payload import dashboard_data
 
@@ -27,7 +29,7 @@ HTTP_LOGGER = logging.getLogger('painel.http')
 LOG_CONTROL = re.compile(r'[\x00-\x1f\x7f-\x9f\u202a-\u202e\u2066-\u2069]')
 GZIP_ENCODING = re.compile(r'\s*gzip\s*(?:;\s*q\s*=\s*(?:1(?:\.0{0,3})?|0\.(?=\d*[1-9])\d{1,3}))?\s*')
 TOOLTIP_HASH = b64encode(sha256(TOOLTIPS.encode('utf-8')).digest()).decode('ascii')
-MAX_QUERY_FIELDS = 2
+MAX_QUERY_FIELDS = 4
 MAX_TARGET_LENGTH = 2048
 CHUNK_PATH = re.compile(r'/chunks/[A-Za-z0-9_-]+\.js')
 ASSETS = {
@@ -40,7 +42,7 @@ ASSETS = {
 def dashboard_shell(group_id, api_port):
     group = GROUP_BY_ID[group_id]
     config = json.dumps(dict(group=group_id, title=group['title'], siteTitle=TITLE, courses=GROUPS,
-                             currentPeriod=CURRENT_PERIOD, apiPort=api_port),
+                             apiPort=api_port),
                         ensure_ascii=False).replace('<', '\\u003c')
     assets_ready = all(ASSETS[url][0].is_file() for url in ('/painel.js', '/painel.css'))
     assets = ('<link rel="stylesheet" href="/painel.css"><script type="module" src="/painel.js"></script>'
@@ -285,8 +287,13 @@ class DashboardHandler(LocalHandler):
         allowed_params = {'recorte'} if page else {'recorte', 'revisao'}
         scope = query.get('recorte', ['accumulated'])[0]
         revision = query.get('revisao', [''])[0]
+        pair = None
+        if scope == 'compare':
+            allowed_params.update(('referencia', 'semestre'))
+            if query.keys() & {'referencia', 'semestre'}:
+                pair = (query.get('referencia', [''])[0], query.get('semestre', [''])[0])
         if (query.keys() - allowed_params or any(len(values) != 1 for values in query.values())
-                or scope not in SCOPES or (not page and not revision)):
+                or scope not in SCOPES + COMPARISON_SCOPES or (not page and not revision)):
             self.api_response(HTTPStatus.BAD_REQUEST, error=dict(
                 code='invalid_query', message='Informe um recorte válido e, ao consultar gráficos, a revisão da página.'))
             return
@@ -297,15 +304,17 @@ class DashboardHandler(LocalHandler):
                     code='revision_changed', message='A base mudou. Atualize os dados para consultar esta revisão.'))
                 return
             if page:
-                data = snapshot.page(group, scope)
+                data = snapshot.page(group, scope, pair)
             elif resource == 'secoes':
-                data = snapshot.charts(group, scope, family=identifier)
+                data = snapshot.charts(group, scope, family=identifier, pair=pair)
             else:
-                data = snapshot.charts(group, scope, code=identifier)
+                data = snapshot.charts(group, scope, code=identifier, pair=pair)
             self.api_response(HTTPStatus.OK, data=data, revision=snapshot.revision)
         except DisciplineNotFound:
             self.api_response(HTTPStatus.NOT_FOUND, error=dict(
                 code='not_found', message='Disciplina não encontrada neste grupo.'))
+        except InvalidSemesterPair:
+            self.reject(HTTPStatus.BAD_REQUEST, 'invalid_query', 'Escolha dois semestres distintos com oferta neste grupo.')
         except (OSError, ValueError, TypeError, KeyError) as error:
             self.api_data_error(error)
 

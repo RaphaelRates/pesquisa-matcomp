@@ -4,7 +4,7 @@
   "graficos": {
     "matcomp-vagas": {
       "nome": "Vagas e matrículas por semestre",
-      "descricao": "Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "descricao": "Turmas presenciais do recorte selecionado.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -15,7 +15,7 @@
     },
     "matcomp-comparacao": {
       "nome": "Ocupação do curso e do CCT",
-      "descricao": "Ocupação é a soma das matrículas dividida pela soma das vagas. O total do CCT inclui o curso. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "descricao": "Ocupação é a soma das matrículas dividida pela soma das vagas. O total do CCT inclui o curso. Turmas presenciais do recorte selecionado.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -26,7 +26,7 @@
     },
     "matcomp-natureza": {
       "nome": "Ocupação de obrigatórias e optativas",
-      "descricao": "As disciplinas são agrupadas conforme a natureza indicada na matriz de referência do curso. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "descricao": "As disciplinas são agrupadas conforme a natureza indicada na matriz de referência do curso. Turmas presenciais do recorte selecionado.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -37,7 +37,7 @@
     },
     "matcomp-faixas": {
       "nome": "Turmas por faixa de ocupação",
-      "descricao": "Cada turma é contada na faixa correspondente às suas matrículas divididas pelas vagas. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "descricao": "Cada turma é contada na faixa correspondente às suas matrículas divididas pelas vagas. Turmas presenciais do recorte selecionado.",
       "tipo": "stackedBar",
       "tipos_permitidos": [
         "bar",
@@ -48,7 +48,7 @@
     },
     "matcomp-indicador-turmas": {
       "nome": "Turmas e disciplinas ofertadas",
-      "descricao": "Cada código de disciplina é contado uma vez por semestre. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "descricao": "Cada código de disciplina é contado uma vez por semestre. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "mixed",
       "tipos_permitidos": [
         "mixed"
@@ -56,7 +56,7 @@
     },
     "matcomp-indicador-saldo": {
       "nome": "Vagas não preenchidas e matrículas acima da capacidade",
-      "descricao": "Os dois totais são calculados turma a turma e somados separadamente. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "descricao": "Os dois totais são calculados turma a turma e somados separadamente. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -67,7 +67,7 @@
     },
     "matcomp-indicador-extremos": {
       "nome": "Percentual de turmas com baixa ocupação ou lotadas",
-      "descricao": "Mostra a parcela de turmas abaixo de 25% e a parcela com ocupação de 100% ou mais. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "descricao": "Mostra a parcela de turmas abaixo de 25% e a parcela com ocupação de 100% ou mais. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -78,7 +78,7 @@
     },
     "matcomp-historico-obrigatorias": {
       "nome": "Ocupação das obrigatórias por disciplina",
-      "descricao": "Inclui os códigos com oferta na base. Um traço indica ausência de oferta no recorte. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "descricao": "As linhas seguem o semestre curricular da matriz selecionada. As colunas mostram os semestres da oferta. Um traço indica ausência de oferta.",
       "tipo": "heatmap",
       "tipos_permitidos": [
         "heatmap"
@@ -86,7 +86,7 @@
     },
     "matcomp-historico-optativas": {
       "nome": "Ocupação das optativas por disciplina",
-      "descricao": "Inclui os códigos com oferta na base. Um traço indica ausência de oferta no recorte. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "descricao": "Inclui os códigos com oferta na base. Um traço indica ausência de oferta no recorte. Turmas presenciais do recorte selecionado.",
       "tipo": "heatmap",
       "tipos_permitidos": [
         "heatmap"
@@ -190,7 +190,7 @@
     },
     "matcomp-abertas-ocupacao": {
       "nome": "Ocupação das disciplinas abertas",
-      "descricao": "Todas as disciplinas com oferta aberta em 2026.2, em ordem decrescente de ocupação.",
+      "descricao": "Todas as disciplinas com oferta aberta na oferta aberta, em ordem decrescente de ocupação.",
       "tipo": "horizontalBar",
       "tipos_permitidos": [
         "horizontalBar"
@@ -198,7 +198,7 @@
     },
     "matcomp-abertas-vagas": {
       "nome": "Vagas ainda não preenchidas",
-      "descricao": "Todas as disciplinas com oferta aberta em 2026.2. Soma as vagas não preenchidas turma a turma.",
+      "descricao": "Todas as disciplinas com oferta aberta na oferta aberta. Soma as vagas não preenchidas turma a turma.",
       "tipo": "horizontalBar",
       "tipos_permitidos": [
         "horizontalBar"
@@ -206,7 +206,7 @@
     },
     "matcomp-abertas-matriculas": {
       "nome": "Mais matrículas nas turmas abertas",
-      "descricao": "Até dez disciplinas pelo total de matrículas nas turmas abertas em 2026.2.",
+      "descricao": "Até dez disciplinas pelo total de matrículas nas turmas abertas.",
       "tipo": "horizontalBar",
       "tipos_permitidos": [
         "horizontalBar"
@@ -214,7 +214,7 @@
     },
     "matcomp-abertas-menor-ocupacao": {
       "nome": "Menor ocupação nas turmas abertas",
-      "descricao": "Até dez disciplinas pela menor razão entre matrículas e vagas em 2026.2.",
+      "descricao": "Até dez disciplinas pela menor razão entre matrículas e vagas na oferta aberta.",
       "tipo": "horizontalBar",
       "tipos_permitidos": [
         "horizontalBar"
@@ -222,7 +222,7 @@
     },
     "matcomp-linha-ocupacao": {
       "nome": "Ocupação mediana e ocupação geral",
-      "descricao": "A mediana dá o mesmo peso a cada turma. A ocupação geral divide todas as matrículas por todas as vagas. *2026.2 contém turmas abertas e aparece com linha tracejada.",
+      "descricao": "A mediana dá o mesmo peso a cada turma. A ocupação geral divide todas as matrículas por todas as vagas. O trecho tracejado indica um semestre que inclui turmas abertas.",
       "tipo": "line",
       "tipos_permitidos": [
         "bar",
@@ -233,7 +233,7 @@
     },
     "matcomp-linha-tamanho": {
       "nome": "Vagas e matrículas médias por turma",
-      "descricao": "Em cada semestre, divide vagas e matrículas pelo número de turmas presenciais. *2026.2 contém turmas abertas e aparece com linha tracejada.",
+      "descricao": "Em cada semestre, divide vagas e matrículas pelo número de turmas presenciais. O trecho tracejado indica um semestre que inclui turmas abertas.",
       "tipo": "line",
       "tipos_permitidos": [
         "bar",
@@ -252,7 +252,7 @@
       ]
     },
     "matcomp-rosca-abertas": {
-      "nome": "Faixas de ocupação nas turmas abertas de 2026.2",
+      "nome": "Faixas de ocupação nas turmas abertas",
       "descricao": "Cada fatia mostra a parcela das turmas abertas na respectiva faixa de ocupação.",
       "tipo": "donut",
       "tipos_permitidos": [
@@ -288,7 +288,7 @@
     },
     "matcomp-radar-faixas": {
       "nome": "Perfil de ocupação por faixa",
-      "descricao": "Compara a proporção de turmas em cada faixa no histórico consolidado e nas abertas de 2026.2. Cada eixo mostra uma parcela do total de turmas do respectivo recorte.",
+      "descricao": "Compara a proporção de turmas em cada faixa no histórico consolidado e nas abertas. Cada eixo mostra uma parcela do total de turmas do respectivo recorte.",
       "tipo": "radar",
       "tipos_permitidos": [
         "radar"
@@ -296,7 +296,7 @@
     },
     "matcomp-faixas-percentual": {
       "nome": "Composição da ocupação ao longo dos semestres",
-      "descricao": "As colunas representam 100% das turmas de cada semestre e facilitam a comparação das proporções. *2026.2 contém turmas abertas.",
+      "descricao": "As colunas representam 100% das turmas de cada semestre e facilitam a comparação das proporções. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "stackedPercent",
       "tipos_permitidos": [
         "stackedPercent"
@@ -312,7 +312,7 @@
     },
     "matcomp-area-natureza": {
       "nome": "Matrículas por natureza curricular",
-      "descricao": "As áreas empilhadas somam as matrículas de cada semestre, classificadas pelos códigos da matriz de referência. Códigos compartilhados ou sem classificação aparecem em uma categoria própria. *2026.2 contém turmas abertas.",
+      "descricao": "As áreas empilhadas somam as matrículas de cada semestre, classificadas pelos códigos da matriz de referência. Códigos compartilhados ou sem classificação aparecem em uma categoria própria. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "area",
       "tipos_permitidos": [
         "bar",
@@ -323,7 +323,7 @@
     },
     "matcomp-estat-histograma": {
       "nome": "Distribuição detalhada da ocupação",
-      "descricao": "Compara as proporções de turmas consolidadas e abertas em 2026.2 em seis intervalos de ocupação.",
+      "descricao": "Compara as proporções de turmas consolidadas e abertas em seis intervalos de ocupação.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -465,7 +465,7 @@
     },
     "ufca-capacidade-matriculas": {
       "nome": "Vagas e matrículas por semestre",
-      "descricao": "Cada par de barras compara a soma das vagas informadas com a soma das matrículas registradas nas turmas presenciais de um semestre. As barras mostram totais absolutos. Até 2026.1 entram turmas consolidadas. O asterisco em 2026.2 marca as turmas abertas.",
+      "descricao": "Cada par de barras compara a soma das vagas informadas com a soma das matrículas registradas nas turmas presenciais de um semestre. As barras mostram totais absolutos. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -476,7 +476,7 @@
     },
     "ufca-faixas": {
       "nome": "Distribuição das turmas por faixa de ocupação",
-      "descricao": "Cada segmento conta quantas turmas ficaram em uma faixa de ocupação. A faixa de cada turma é definida pelas suas matrículas divididas pela sua capacidade. A altura total da barra é o número de turmas presenciais do semestre. O segmento de 100% ou mais inclui turmas lotadas e acima da capacidade. O asterisco identifica as turmas abertas de 2026.2.",
+      "descricao": "Cada segmento conta quantas turmas ficaram em uma faixa de ocupação. A faixa de cada turma é definida pelas suas matrículas divididas pela sua capacidade. A altura total da barra é o número de turmas presenciais do semestre. O segmento de 100% ou mais inclui turmas lotadas e acima da capacidade. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "stackedBar",
       "tipos_permitidos": [
         "bar",
@@ -487,7 +487,7 @@
     },
     "ufca-indicador-turmas": {
       "nome": "Turmas e disciplinas ofertadas",
-      "descricao": "Cada código de disciplina é contado uma vez por semestre. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "descricao": "Cada código de disciplina é contado uma vez por semestre. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "mixed",
       "tipos_permitidos": [
         "mixed"
@@ -495,7 +495,7 @@
     },
     "ufca-indicador-saldo": {
       "nome": "Vagas não preenchidas e matrículas acima da capacidade",
-      "descricao": "Os dois totais são calculados turma a turma e somados separadamente. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "descricao": "Os dois totais são calculados turma a turma e somados separadamente. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -506,7 +506,7 @@
     },
     "ufca-indicador-ocupacao": {
       "nome": "Ocupação geral por semestre",
-      "descricao": "Divide o total de matrículas pelo total de vagas. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "descricao": "Divide o total de matrículas pelo total de vagas. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -517,7 +517,7 @@
     },
     "ufca-indicador-extremos": {
       "nome": "Percentual de turmas com baixa ocupação ou lotadas",
-      "descricao": "Mostra a parcela de turmas abaixo de 25% e a parcela com ocupação de 100% ou mais. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "descricao": "Mostra a parcela de turmas abaixo de 25% e a parcela com ocupação de 100% ou mais. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -536,7 +536,7 @@
     },
     "ufca-codigos": {
       "nome": "Ocupação de oito disciplinas selecionadas",
-      "descricao": "Cada linha acompanha um dos oito códigos selecionados. Em cada semestre, a célula soma matrículas e capacidade de todas as turmas incluídas daquele código e mostra a razão em porcentagem. Uma célula vazia indica ausência de turma no recorte. O asterisco marca as turmas abertas de 2026.2.",
+      "descricao": "Cada linha acompanha um dos oito códigos selecionados. Em cada semestre, a célula soma matrículas e capacidade de todas as turmas incluídas daquele código e mostra a razão em porcentagem. Uma célula vazia indica ausência de turma no recorte. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "heatmap",
       "tipos_permitidos": [
         "heatmap"
@@ -568,7 +568,7 @@
     },
     "ufca-opt-curso": {
       "nome": "Ocupação das disciplinas listadas como optativas",
-      "descricao": "Para cada curso, o gráfico seleciona os códigos listados como optativos na matriz pública de referência. Compara matrículas divididas por vagas nas turmas presenciais consolidadas até 2026.1 e nas abertas de 2026.2. Engenharia de Software ficou sem registros correspondentes nos arquivos.",
+      "descricao": "Para cada curso, o gráfico seleciona os códigos listados como optativos na matriz pública de referência. A ocupação divide as matrículas pelas vagas das turmas selecionadas.",
       "tipo": "horizontalBar",
       "tipos_permitidos": [
         "horizontalBar"
@@ -587,7 +587,7 @@
     },
     "ufca-linha-ocupacao": {
       "nome": "Ocupação mediana e ocupação geral",
-      "descricao": "A mediana dá o mesmo peso a cada turma. A ocupação geral divide todas as matrículas por todas as vagas. *2026.2 contém turmas abertas e aparece com linha tracejada.",
+      "descricao": "A mediana dá o mesmo peso a cada turma. A ocupação geral divide todas as matrículas por todas as vagas. O trecho tracejado indica um semestre que inclui turmas abertas.",
       "tipo": "line",
       "tipos_permitidos": [
         "bar",
@@ -598,7 +598,7 @@
     },
     "ufca-linha-tamanho": {
       "nome": "Vagas e matrículas médias por turma",
-      "descricao": "Em cada semestre, divide vagas e matrículas pelo número de turmas presenciais. *2026.2 contém turmas abertas e aparece com linha tracejada.",
+      "descricao": "Em cada semestre, divide vagas e matrículas pelo número de turmas presenciais. O trecho tracejado indica um semestre que inclui turmas abertas.",
       "tipo": "line",
       "tipos_permitidos": [
         "bar",
@@ -617,7 +617,7 @@
       ]
     },
     "ufca-rosca-abertas": {
-      "nome": "Faixas de ocupação nas turmas abertas de 2026.2",
+      "nome": "Faixas de ocupação nas turmas abertas",
       "descricao": "Cada fatia mostra a parcela das turmas abertas na respectiva faixa de ocupação.",
       "tipo": "donut",
       "tipos_permitidos": [
@@ -653,7 +653,7 @@
     },
     "ufca-radar-faixas": {
       "nome": "Perfil de ocupação por faixa",
-      "descricao": "Compara a proporção de turmas em cada faixa no histórico consolidado e nas abertas de 2026.2. Cada eixo mostra uma parcela do total de turmas do respectivo recorte.",
+      "descricao": "Compara a proporção de turmas em cada faixa no histórico consolidado e nas abertas. Cada eixo mostra uma parcela do total de turmas do respectivo recorte.",
       "tipo": "radar",
       "tipos_permitidos": [
         "radar"
@@ -661,7 +661,7 @@
     },
     "ufca-faixas-percentual": {
       "nome": "Composição da ocupação ao longo dos semestres",
-      "descricao": "As colunas representam 100% das turmas de cada semestre e facilitam a comparação das proporções. *2026.2 contém turmas abertas.",
+      "descricao": "As colunas representam 100% das turmas de cada semestre e facilitam a comparação das proporções. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "stackedPercent",
       "tipos_permitidos": [
         "stackedPercent"
@@ -677,7 +677,7 @@
     },
     "ufca-area-natureza": {
       "nome": "Matrículas por natureza curricular",
-      "descricao": "As áreas empilhadas somam as matrículas de cada semestre, classificadas pelos códigos da matriz de referência. Códigos compartilhados ou sem classificação aparecem em uma categoria própria. *2026.2 contém turmas abertas.",
+      "descricao": "As áreas empilhadas somam as matrículas de cada semestre, classificadas pelos códigos da matriz de referência. Códigos compartilhados ou sem classificação aparecem em uma categoria própria. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "area",
       "tipos_permitidos": [
         "bar",
@@ -840,7 +840,7 @@
     },
     "ufca-ranking-obrigatorias-4-1": {
       "nome": "Mais matrículas",
-      "descricao": "Soma as matrículas das turmas abertas de 2026.2 por código e mostra os maiores totais.",
+      "descricao": "Soma as matrículas das turmas abertas por código e mostra os maiores totais.",
       "tipo": "ranking",
       "tipos_permitidos": [
         "ranking"
@@ -848,7 +848,7 @@
     },
     "ufca-ranking-obrigatorias-4-2": {
       "nome": "Maior ocupação",
-      "descricao": "Mostra os maiores percentuais de ocupação por código entre as turmas abertas de 2026.2. O rótulo informa a porcentagem e os totais de matrículas e vagas.",
+      "descricao": "Mostra os maiores percentuais de ocupação por código entre as turmas abertas. O rótulo informa a porcentagem e os totais de matrículas e vagas.",
       "tipo": "ranking",
       "tipos_permitidos": [
         "ranking"
@@ -856,7 +856,7 @@
     },
     "ufca-ranking-obrigatorias-4-3": {
       "nome": "Mais vagas não preenchidas",
-      "descricao": "Soma as vagas que sobraram em cada turma aberta de 2026.2, agrupadas por código. Turmas acima da capacidade contribuem com zero para esse total.",
+      "descricao": "Soma as vagas que sobraram em cada turma aberta, agrupadas por código. Turmas acima da capacidade contribuem com zero para esse total.",
       "tipo": "ranking",
       "tipos_permitidos": [
         "ranking"
@@ -864,7 +864,7 @@
     },
     "ufca-ranking-obrigatorias-4-4": {
       "nome": "Menor ocupação",
-      "descricao": "Mostra os menores percentuais de ocupação por código entre as turmas abertas de 2026.2. O rótulo informa a porcentagem e os totais de matrículas e vagas.",
+      "descricao": "Mostra os menores percentuais de ocupação por código entre as turmas abertas. O rótulo informa a porcentagem e os totais de matrículas e vagas.",
       "tipo": "ranking",
       "tipos_permitidos": [
         "ranking"
@@ -1024,7 +1024,7 @@
     },
     "ufca-ranking-optativas-4-1": {
       "nome": "Mais matrículas",
-      "descricao": "Soma as matrículas das turmas abertas de 2026.2 por código e mostra os maiores totais.",
+      "descricao": "Soma as matrículas das turmas abertas por código e mostra os maiores totais.",
       "tipo": "ranking",
       "tipos_permitidos": [
         "ranking"
@@ -1032,7 +1032,7 @@
     },
     "ufca-ranking-optativas-4-2": {
       "nome": "Maior ocupação",
-      "descricao": "Mostra os maiores percentuais de ocupação por código entre as turmas abertas de 2026.2. O rótulo informa a porcentagem e os totais de matrículas e vagas.",
+      "descricao": "Mostra os maiores percentuais de ocupação por código entre as turmas abertas. O rótulo informa a porcentagem e os totais de matrículas e vagas.",
       "tipo": "ranking",
       "tipos_permitidos": [
         "ranking"
@@ -1040,7 +1040,7 @@
     },
     "ufca-ranking-optativas-4-3": {
       "nome": "Mais vagas não preenchidas",
-      "descricao": "Soma as vagas que sobraram em cada turma aberta de 2026.2, agrupadas por código. Turmas acima da capacidade contribuem com zero para esse total.",
+      "descricao": "Soma as vagas que sobraram em cada turma aberta, agrupadas por código. Turmas acima da capacidade contribuem com zero para esse total.",
       "tipo": "ranking",
       "tipos_permitidos": [
         "ranking"
@@ -1048,7 +1048,7 @@
     },
     "ufca-ranking-optativas-4-4": {
       "nome": "Menor ocupação",
-      "descricao": "Mostra os menores percentuais de ocupação por código entre as turmas abertas de 2026.2. O rótulo informa a porcentagem e os totais de matrículas e vagas.",
+      "descricao": "Mostra os menores percentuais de ocupação por código entre as turmas abertas. O rótulo informa a porcentagem e os totais de matrículas e vagas.",
       "tipo": "ranking",
       "tipos_permitidos": [
         "ranking"
@@ -1208,7 +1208,7 @@
     },
     "ufca-ranking-geral-4-1": {
       "nome": "Mais matrículas",
-      "descricao": "Soma as matrículas das turmas abertas de 2026.2 por código e mostra os maiores totais.",
+      "descricao": "Soma as matrículas das turmas abertas por código e mostra os maiores totais.",
       "tipo": "ranking",
       "tipos_permitidos": [
         "ranking"
@@ -1216,7 +1216,7 @@
     },
     "ufca-ranking-geral-4-2": {
       "nome": "Maior ocupação",
-      "descricao": "Mostra os maiores percentuais de ocupação por código entre as turmas abertas de 2026.2. O rótulo informa a porcentagem e os totais de matrículas e vagas.",
+      "descricao": "Mostra os maiores percentuais de ocupação por código entre as turmas abertas. O rótulo informa a porcentagem e os totais de matrículas e vagas.",
       "tipo": "ranking",
       "tipos_permitidos": [
         "ranking"
@@ -1224,7 +1224,7 @@
     },
     "ufca-ranking-geral-4-3": {
       "nome": "Mais vagas não preenchidas",
-      "descricao": "Soma as vagas que sobraram em cada turma aberta de 2026.2, agrupadas por código. Turmas acima da capacidade contribuem com zero para esse total.",
+      "descricao": "Soma as vagas que sobraram em cada turma aberta, agrupadas por código. Turmas acima da capacidade contribuem com zero para esse total.",
       "tipo": "ranking",
       "tipos_permitidos": [
         "ranking"
@@ -1232,7 +1232,7 @@
     },
     "ufca-ranking-geral-4-4": {
       "nome": "Menor ocupação",
-      "descricao": "Mostra os menores percentuais de ocupação por código entre as turmas abertas de 2026.2. O rótulo informa a porcentagem e os totais de matrículas e vagas.",
+      "descricao": "Mostra os menores percentuais de ocupação por código entre as turmas abertas. O rótulo informa a porcentagem e os totais de matrículas e vagas.",
       "tipo": "ranking",
       "tipos_permitidos": [
         "ranking"
@@ -1240,7 +1240,7 @@
     },
     "ufca-estat-histograma": {
       "nome": "Distribuição detalhada da ocupação",
-      "descricao": "Compara as proporções de turmas consolidadas e abertas em 2026.2 em seis intervalos de ocupação.",
+      "descricao": "Compara as proporções de turmas consolidadas e abertas em seis intervalos de ocupação.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -1382,7 +1382,7 @@
     },
     "cadeira-oferta": {
       "nome": "Vagas e matrículas por semestre",
-      "descricao": "Totais da disciplina por semestre. *2026.2 representa turmas abertas; os demais semestres usam consolidadas. Sem oferta aparece como lacuna.",
+      "descricao": "Totais da disciplina por semestre. O asterisco identifica semestres que incluem turmas abertas. Sem oferta aparece como lacuna.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -1393,7 +1393,7 @@
     },
     "cadeira-ocupacao": {
       "nome": "Ocupação geral e mediana por semestre",
-      "descricao": "Compara a razão entre totais com a mediana das ocupações das turmas. *2026.2 representa turmas abertas; os demais semestres usam consolidadas. Sem oferta aparece como lacuna.",
+      "descricao": "Compara a razão entre totais com a mediana das ocupações das turmas. O asterisco identifica semestres que incluem turmas abertas. Sem oferta aparece como lacuna.",
       "tipo": "line",
       "tipos_permitidos": [
         "bar",
@@ -1404,7 +1404,7 @@
     },
     "cadeira-saldo": {
       "nome": "Vagas não preenchidas e matrículas excedentes",
-      "descricao": "Calcula os saldos separadamente em cada turma antes de somar. *2026.2 representa turmas abertas; os demais semestres usam consolidadas. Sem oferta aparece como lacuna.",
+      "descricao": "Calcula os saldos separadamente em cada turma antes de somar. O asterisco identifica semestres que incluem turmas abertas. Sem oferta aparece como lacuna.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -1415,7 +1415,7 @@
     },
     "cadeira-turmas": {
       "nome": "Quantidade de turmas por semestre",
-      "descricao": "Acompanha a frequência da oferta da disciplina. *2026.2 representa turmas abertas; os demais semestres usam consolidadas. Sem oferta aparece como lacuna.",
+      "descricao": "Acompanha a frequência da oferta da disciplina. O asterisco identifica semestres que incluem turmas abertas. Sem oferta aparece como lacuna.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -1426,7 +1426,7 @@
     },
     "cadeira-por-turma": {
       "nome": "Ocupação de cada turma",
-      "descricao": "Cada barra identifica uma turma no semestre. * indica oferta aberta em 2026.2.",
+      "descricao": "Cada barra identifica uma turma no semestre. O asterisco indica uma turma aberta.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -1471,7 +1471,7 @@
     },
     "computacao-vagas": {
       "nome": "Vagas e matrículas por semestre",
-      "descricao": "Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "descricao": "Turmas presenciais do recorte selecionado.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -1482,7 +1482,7 @@
     },
     "computacao-comparacao": {
       "nome": "Ocupação do curso e do CCT",
-      "descricao": "Ocupação é a soma das matrículas dividida pela soma das vagas. O total do CCT inclui o curso. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "descricao": "Ocupação é a soma das matrículas dividida pela soma das vagas. O total do CCT inclui o curso. Turmas presenciais do recorte selecionado.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -1493,7 +1493,7 @@
     },
     "computacao-natureza": {
       "nome": "Ocupação de obrigatórias e optativas",
-      "descricao": "As disciplinas são agrupadas conforme a natureza indicada na matriz de referência do curso. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "descricao": "As disciplinas são agrupadas conforme a natureza indicada na matriz de referência do curso. Turmas presenciais do recorte selecionado.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -1504,7 +1504,7 @@
     },
     "computacao-faixas": {
       "nome": "Turmas por faixa de ocupação",
-      "descricao": "Cada turma é contada na faixa correspondente às suas matrículas divididas pelas vagas. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "descricao": "Cada turma é contada na faixa correspondente às suas matrículas divididas pelas vagas. Turmas presenciais do recorte selecionado.",
       "tipo": "stackedBar",
       "tipos_permitidos": [
         "bar",
@@ -1515,7 +1515,7 @@
     },
     "computacao-indicador-turmas": {
       "nome": "Turmas e disciplinas ofertadas",
-      "descricao": "Cada código de disciplina é contado uma vez por semestre. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "descricao": "Cada código de disciplina é contado uma vez por semestre. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "mixed",
       "tipos_permitidos": [
         "mixed"
@@ -1523,7 +1523,7 @@
     },
     "computacao-indicador-saldo": {
       "nome": "Vagas não preenchidas e matrículas acima da capacidade",
-      "descricao": "Os dois totais são calculados turma a turma e somados separadamente. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "descricao": "Os dois totais são calculados turma a turma e somados separadamente. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -1534,7 +1534,7 @@
     },
     "computacao-indicador-extremos": {
       "nome": "Percentual de turmas com baixa ocupação ou lotadas",
-      "descricao": "Mostra a parcela de turmas abaixo de 25% e a parcela com ocupação de 100% ou mais. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "descricao": "Mostra a parcela de turmas abaixo de 25% e a parcela com ocupação de 100% ou mais. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -1545,7 +1545,7 @@
     },
     "computacao-historico-obrigatorias": {
       "nome": "Ocupação das obrigatórias por disciplina",
-      "descricao": "Inclui os códigos com oferta na base. Um traço indica ausência de oferta no recorte. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "descricao": "As linhas seguem o semestre curricular da matriz selecionada. As colunas mostram os semestres da oferta. Um traço indica ausência de oferta.",
       "tipo": "heatmap",
       "tipos_permitidos": [
         "heatmap"
@@ -1553,7 +1553,7 @@
     },
     "computacao-historico-optativas": {
       "nome": "Ocupação das optativas por disciplina",
-      "descricao": "Inclui os códigos com oferta na base. Um traço indica ausência de oferta no recorte. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "descricao": "Inclui os códigos com oferta na base. Um traço indica ausência de oferta no recorte. Turmas presenciais do recorte selecionado.",
       "tipo": "heatmap",
       "tipos_permitidos": [
         "heatmap"
@@ -1657,7 +1657,7 @@
     },
     "computacao-abertas-ocupacao": {
       "nome": "Ocupação das disciplinas abertas",
-      "descricao": "Todas as disciplinas com oferta aberta em 2026.2, em ordem decrescente de ocupação.",
+      "descricao": "Todas as disciplinas com oferta aberta na oferta aberta, em ordem decrescente de ocupação.",
       "tipo": "horizontalBar",
       "tipos_permitidos": [
         "horizontalBar"
@@ -1665,7 +1665,7 @@
     },
     "computacao-abertas-vagas": {
       "nome": "Vagas ainda não preenchidas",
-      "descricao": "Todas as disciplinas com oferta aberta em 2026.2. Soma as vagas não preenchidas turma a turma.",
+      "descricao": "Todas as disciplinas com oferta aberta na oferta aberta. Soma as vagas não preenchidas turma a turma.",
       "tipo": "horizontalBar",
       "tipos_permitidos": [
         "horizontalBar"
@@ -1673,7 +1673,7 @@
     },
     "computacao-abertas-matriculas": {
       "nome": "Mais matrículas nas turmas abertas",
-      "descricao": "Até dez disciplinas pelo total de matrículas nas turmas abertas em 2026.2.",
+      "descricao": "Até dez disciplinas pelo total de matrículas nas turmas abertas.",
       "tipo": "horizontalBar",
       "tipos_permitidos": [
         "horizontalBar"
@@ -1681,7 +1681,7 @@
     },
     "computacao-abertas-menor-ocupacao": {
       "nome": "Menor ocupação nas turmas abertas",
-      "descricao": "Até dez disciplinas pela menor razão entre matrículas e vagas em 2026.2.",
+      "descricao": "Até dez disciplinas pela menor razão entre matrículas e vagas na oferta aberta.",
       "tipo": "horizontalBar",
       "tipos_permitidos": [
         "horizontalBar"
@@ -1689,7 +1689,7 @@
     },
     "computacao-linha-ocupacao": {
       "nome": "Ocupação mediana e ocupação geral",
-      "descricao": "A mediana dá o mesmo peso a cada turma. A ocupação geral divide todas as matrículas por todas as vagas. *2026.2 contém turmas abertas e aparece com linha tracejada.",
+      "descricao": "A mediana dá o mesmo peso a cada turma. A ocupação geral divide todas as matrículas por todas as vagas. O trecho tracejado indica um semestre que inclui turmas abertas.",
       "tipo": "line",
       "tipos_permitidos": [
         "bar",
@@ -1700,7 +1700,7 @@
     },
     "computacao-linha-tamanho": {
       "nome": "Vagas e matrículas médias por turma",
-      "descricao": "Em cada semestre, divide vagas e matrículas pelo número de turmas presenciais. *2026.2 contém turmas abertas e aparece com linha tracejada.",
+      "descricao": "Em cada semestre, divide vagas e matrículas pelo número de turmas presenciais. O trecho tracejado indica um semestre que inclui turmas abertas.",
       "tipo": "line",
       "tipos_permitidos": [
         "bar",
@@ -1719,7 +1719,7 @@
       ]
     },
     "computacao-rosca-abertas": {
-      "nome": "Faixas de ocupação nas turmas abertas de 2026.2",
+      "nome": "Faixas de ocupação nas turmas abertas",
       "descricao": "Cada fatia mostra a parcela das turmas abertas na respectiva faixa de ocupação.",
       "tipo": "donut",
       "tipos_permitidos": [
@@ -1755,7 +1755,7 @@
     },
     "computacao-radar-faixas": {
       "nome": "Perfil de ocupação por faixa",
-      "descricao": "Compara a proporção de turmas em cada faixa no histórico consolidado e nas abertas de 2026.2. Cada eixo mostra uma parcela do total de turmas do respectivo recorte.",
+      "descricao": "Compara a proporção de turmas em cada faixa no histórico consolidado e nas abertas. Cada eixo mostra uma parcela do total de turmas do respectivo recorte.",
       "tipo": "radar",
       "tipos_permitidos": [
         "radar"
@@ -1763,7 +1763,7 @@
     },
     "computacao-faixas-percentual": {
       "nome": "Composição da ocupação ao longo dos semestres",
-      "descricao": "As colunas representam 100% das turmas de cada semestre e facilitam a comparação das proporções. *2026.2 contém turmas abertas.",
+      "descricao": "As colunas representam 100% das turmas de cada semestre e facilitam a comparação das proporções. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "stackedPercent",
       "tipos_permitidos": [
         "stackedPercent"
@@ -1779,7 +1779,7 @@
     },
     "computacao-area-natureza": {
       "nome": "Matrículas por natureza curricular",
-      "descricao": "As áreas empilhadas somam as matrículas de cada semestre, classificadas pelos códigos da matriz de referência. Códigos compartilhados ou sem classificação aparecem em uma categoria própria. *2026.2 contém turmas abertas.",
+      "descricao": "As áreas empilhadas somam as matrículas de cada semestre, classificadas pelos códigos da matriz de referência. Códigos compartilhados ou sem classificação aparecem em uma categoria própria. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "area",
       "tipos_permitidos": [
         "bar",
@@ -1790,7 +1790,7 @@
     },
     "computacao-estat-histograma": {
       "nome": "Distribuição detalhada da ocupação",
-      "descricao": "Compara as proporções de turmas consolidadas e abertas em 2026.2 em seis intervalos de ocupação.",
+      "descricao": "Compara as proporções de turmas consolidadas e abertas em seis intervalos de ocupação.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -1932,7 +1932,7 @@
     },
     "civil-vagas": {
       "nome": "Vagas e matrículas por semestre",
-      "descricao": "Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "descricao": "Turmas presenciais do recorte selecionado.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -1943,7 +1943,7 @@
     },
     "civil-comparacao": {
       "nome": "Ocupação do curso e do CCT",
-      "descricao": "Ocupação é a soma das matrículas dividida pela soma das vagas. O total do CCT inclui o curso. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "descricao": "Ocupação é a soma das matrículas dividida pela soma das vagas. O total do CCT inclui o curso. Turmas presenciais do recorte selecionado.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -1954,7 +1954,7 @@
     },
     "civil-natureza": {
       "nome": "Ocupação de obrigatórias e optativas",
-      "descricao": "As disciplinas são agrupadas conforme a natureza indicada na matriz de referência do curso. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "descricao": "As disciplinas são agrupadas conforme a natureza indicada na matriz de referência do curso. Turmas presenciais do recorte selecionado.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -1965,7 +1965,7 @@
     },
     "civil-faixas": {
       "nome": "Turmas por faixa de ocupação",
-      "descricao": "Cada turma é contada na faixa correspondente às suas matrículas divididas pelas vagas. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "descricao": "Cada turma é contada na faixa correspondente às suas matrículas divididas pelas vagas. Turmas presenciais do recorte selecionado.",
       "tipo": "stackedBar",
       "tipos_permitidos": [
         "bar",
@@ -1976,7 +1976,7 @@
     },
     "civil-indicador-turmas": {
       "nome": "Turmas e disciplinas ofertadas",
-      "descricao": "Cada código de disciplina é contado uma vez por semestre. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "descricao": "Cada código de disciplina é contado uma vez por semestre. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "mixed",
       "tipos_permitidos": [
         "mixed"
@@ -1984,7 +1984,7 @@
     },
     "civil-indicador-saldo": {
       "nome": "Vagas não preenchidas e matrículas acima da capacidade",
-      "descricao": "Os dois totais são calculados turma a turma e somados separadamente. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "descricao": "Os dois totais são calculados turma a turma e somados separadamente. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -1995,7 +1995,7 @@
     },
     "civil-indicador-extremos": {
       "nome": "Percentual de turmas com baixa ocupação ou lotadas",
-      "descricao": "Mostra a parcela de turmas abaixo de 25% e a parcela com ocupação de 100% ou mais. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "descricao": "Mostra a parcela de turmas abaixo de 25% e a parcela com ocupação de 100% ou mais. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -2006,7 +2006,7 @@
     },
     "civil-historico-obrigatorias": {
       "nome": "Ocupação das obrigatórias por disciplina",
-      "descricao": "Inclui os códigos com oferta na base. Um traço indica ausência de oferta no recorte. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "descricao": "As linhas seguem o semestre curricular da matriz selecionada. As colunas mostram os semestres da oferta. Um traço indica ausência de oferta.",
       "tipo": "heatmap",
       "tipos_permitidos": [
         "heatmap"
@@ -2014,7 +2014,7 @@
     },
     "civil-historico-optativas": {
       "nome": "Ocupação das optativas por disciplina",
-      "descricao": "Inclui os códigos com oferta na base. Um traço indica ausência de oferta no recorte. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "descricao": "Inclui os códigos com oferta na base. Um traço indica ausência de oferta no recorte. Turmas presenciais do recorte selecionado.",
       "tipo": "heatmap",
       "tipos_permitidos": [
         "heatmap"
@@ -2118,7 +2118,7 @@
     },
     "civil-abertas-ocupacao": {
       "nome": "Ocupação das disciplinas abertas",
-      "descricao": "Todas as disciplinas com oferta aberta em 2026.2, em ordem decrescente de ocupação.",
+      "descricao": "Todas as disciplinas com oferta aberta na oferta aberta, em ordem decrescente de ocupação.",
       "tipo": "horizontalBar",
       "tipos_permitidos": [
         "horizontalBar"
@@ -2126,7 +2126,7 @@
     },
     "civil-abertas-vagas": {
       "nome": "Vagas ainda não preenchidas",
-      "descricao": "Todas as disciplinas com oferta aberta em 2026.2. Soma as vagas não preenchidas turma a turma.",
+      "descricao": "Todas as disciplinas com oferta aberta na oferta aberta. Soma as vagas não preenchidas turma a turma.",
       "tipo": "horizontalBar",
       "tipos_permitidos": [
         "horizontalBar"
@@ -2134,7 +2134,7 @@
     },
     "civil-abertas-matriculas": {
       "nome": "Mais matrículas nas turmas abertas",
-      "descricao": "Até dez disciplinas pelo total de matrículas nas turmas abertas em 2026.2.",
+      "descricao": "Até dez disciplinas pelo total de matrículas nas turmas abertas.",
       "tipo": "horizontalBar",
       "tipos_permitidos": [
         "horizontalBar"
@@ -2142,7 +2142,7 @@
     },
     "civil-abertas-menor-ocupacao": {
       "nome": "Menor ocupação nas turmas abertas",
-      "descricao": "Até dez disciplinas pela menor razão entre matrículas e vagas em 2026.2.",
+      "descricao": "Até dez disciplinas pela menor razão entre matrículas e vagas na oferta aberta.",
       "tipo": "horizontalBar",
       "tipos_permitidos": [
         "horizontalBar"
@@ -2150,7 +2150,7 @@
     },
     "civil-linha-ocupacao": {
       "nome": "Ocupação mediana e ocupação geral",
-      "descricao": "A mediana dá o mesmo peso a cada turma. A ocupação geral divide todas as matrículas por todas as vagas. *2026.2 contém turmas abertas e aparece com linha tracejada.",
+      "descricao": "A mediana dá o mesmo peso a cada turma. A ocupação geral divide todas as matrículas por todas as vagas. O trecho tracejado indica um semestre que inclui turmas abertas.",
       "tipo": "line",
       "tipos_permitidos": [
         "bar",
@@ -2161,7 +2161,7 @@
     },
     "civil-linha-tamanho": {
       "nome": "Vagas e matrículas médias por turma",
-      "descricao": "Em cada semestre, divide vagas e matrículas pelo número de turmas presenciais. *2026.2 contém turmas abertas e aparece com linha tracejada.",
+      "descricao": "Em cada semestre, divide vagas e matrículas pelo número de turmas presenciais. O trecho tracejado indica um semestre que inclui turmas abertas.",
       "tipo": "line",
       "tipos_permitidos": [
         "bar",
@@ -2180,7 +2180,7 @@
       ]
     },
     "civil-rosca-abertas": {
-      "nome": "Faixas de ocupação nas turmas abertas de 2026.2",
+      "nome": "Faixas de ocupação nas turmas abertas",
       "descricao": "Cada fatia mostra a parcela das turmas abertas na respectiva faixa de ocupação.",
       "tipo": "donut",
       "tipos_permitidos": [
@@ -2216,7 +2216,7 @@
     },
     "civil-radar-faixas": {
       "nome": "Perfil de ocupação por faixa",
-      "descricao": "Compara a proporção de turmas em cada faixa no histórico consolidado e nas abertas de 2026.2. Cada eixo mostra uma parcela do total de turmas do respectivo recorte.",
+      "descricao": "Compara a proporção de turmas em cada faixa no histórico consolidado e nas abertas. Cada eixo mostra uma parcela do total de turmas do respectivo recorte.",
       "tipo": "radar",
       "tipos_permitidos": [
         "radar"
@@ -2224,7 +2224,7 @@
     },
     "civil-faixas-percentual": {
       "nome": "Composição da ocupação ao longo dos semestres",
-      "descricao": "As colunas representam 100% das turmas de cada semestre e facilitam a comparação das proporções. *2026.2 contém turmas abertas.",
+      "descricao": "As colunas representam 100% das turmas de cada semestre e facilitam a comparação das proporções. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "stackedPercent",
       "tipos_permitidos": [
         "stackedPercent"
@@ -2240,7 +2240,7 @@
     },
     "civil-area-natureza": {
       "nome": "Matrículas por natureza curricular",
-      "descricao": "As áreas empilhadas somam as matrículas de cada semestre, classificadas pelos códigos da matriz de referência. Códigos compartilhados ou sem classificação aparecem em uma categoria própria. *2026.2 contém turmas abertas.",
+      "descricao": "As áreas empilhadas somam as matrículas de cada semestre, classificadas pelos códigos da matriz de referência. Códigos compartilhados ou sem classificação aparecem em uma categoria própria. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "area",
       "tipos_permitidos": [
         "bar",
@@ -2251,7 +2251,7 @@
     },
     "civil-estat-histograma": {
       "nome": "Distribuição detalhada da ocupação",
-      "descricao": "Compara as proporções de turmas consolidadas e abertas em 2026.2 em seis intervalos de ocupação.",
+      "descricao": "Compara as proporções de turmas consolidadas e abertas em seis intervalos de ocupação.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -2393,7 +2393,7 @@
     },
     "materiais-vagas": {
       "nome": "Vagas e matrículas por semestre",
-      "descricao": "Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "descricao": "Turmas presenciais do recorte selecionado.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -2404,7 +2404,7 @@
     },
     "materiais-comparacao": {
       "nome": "Ocupação do curso e do CCT",
-      "descricao": "Ocupação é a soma das matrículas dividida pela soma das vagas. O total do CCT inclui o curso. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "descricao": "Ocupação é a soma das matrículas dividida pela soma das vagas. O total do CCT inclui o curso. Turmas presenciais do recorte selecionado.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -2415,7 +2415,7 @@
     },
     "materiais-natureza": {
       "nome": "Ocupação de obrigatórias e optativas",
-      "descricao": "As disciplinas são agrupadas conforme a natureza indicada na matriz de referência do curso. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "descricao": "As disciplinas são agrupadas conforme a natureza indicada na matriz de referência do curso. Turmas presenciais do recorte selecionado.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -2426,7 +2426,7 @@
     },
     "materiais-faixas": {
       "nome": "Turmas por faixa de ocupação",
-      "descricao": "Cada turma é contada na faixa correspondente às suas matrículas divididas pelas vagas. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "descricao": "Cada turma é contada na faixa correspondente às suas matrículas divididas pelas vagas. Turmas presenciais do recorte selecionado.",
       "tipo": "stackedBar",
       "tipos_permitidos": [
         "bar",
@@ -2437,7 +2437,7 @@
     },
     "materiais-indicador-turmas": {
       "nome": "Turmas e disciplinas ofertadas",
-      "descricao": "Cada código de disciplina é contado uma vez por semestre. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "descricao": "Cada código de disciplina é contado uma vez por semestre. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "mixed",
       "tipos_permitidos": [
         "mixed"
@@ -2445,7 +2445,7 @@
     },
     "materiais-indicador-saldo": {
       "nome": "Vagas não preenchidas e matrículas acima da capacidade",
-      "descricao": "Os dois totais são calculados turma a turma e somados separadamente. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "descricao": "Os dois totais são calculados turma a turma e somados separadamente. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -2456,7 +2456,7 @@
     },
     "materiais-indicador-extremos": {
       "nome": "Percentual de turmas com baixa ocupação ou lotadas",
-      "descricao": "Mostra a parcela de turmas abaixo de 25% e a parcela com ocupação de 100% ou mais. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "descricao": "Mostra a parcela de turmas abaixo de 25% e a parcela com ocupação de 100% ou mais. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -2467,7 +2467,7 @@
     },
     "materiais-historico-obrigatorias": {
       "nome": "Ocupação das obrigatórias por disciplina",
-      "descricao": "Inclui os códigos com oferta na base. Um traço indica ausência de oferta no recorte. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "descricao": "As linhas seguem o semestre curricular da matriz selecionada. As colunas mostram os semestres da oferta. Um traço indica ausência de oferta.",
       "tipo": "heatmap",
       "tipos_permitidos": [
         "heatmap"
@@ -2475,7 +2475,7 @@
     },
     "materiais-historico-optativas": {
       "nome": "Ocupação das optativas por disciplina",
-      "descricao": "Inclui os códigos com oferta na base. Um traço indica ausência de oferta no recorte. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "descricao": "Inclui os códigos com oferta na base. Um traço indica ausência de oferta no recorte. Turmas presenciais do recorte selecionado.",
       "tipo": "heatmap",
       "tipos_permitidos": [
         "heatmap"
@@ -2579,7 +2579,7 @@
     },
     "materiais-abertas-ocupacao": {
       "nome": "Ocupação das disciplinas abertas",
-      "descricao": "Todas as disciplinas com oferta aberta em 2026.2, em ordem decrescente de ocupação.",
+      "descricao": "Todas as disciplinas com oferta aberta na oferta aberta, em ordem decrescente de ocupação.",
       "tipo": "horizontalBar",
       "tipos_permitidos": [
         "horizontalBar"
@@ -2587,7 +2587,7 @@
     },
     "materiais-abertas-vagas": {
       "nome": "Vagas ainda não preenchidas",
-      "descricao": "Todas as disciplinas com oferta aberta em 2026.2. Soma as vagas não preenchidas turma a turma.",
+      "descricao": "Todas as disciplinas com oferta aberta na oferta aberta. Soma as vagas não preenchidas turma a turma.",
       "tipo": "horizontalBar",
       "tipos_permitidos": [
         "horizontalBar"
@@ -2595,7 +2595,7 @@
     },
     "materiais-abertas-matriculas": {
       "nome": "Mais matrículas nas turmas abertas",
-      "descricao": "Até dez disciplinas pelo total de matrículas nas turmas abertas em 2026.2.",
+      "descricao": "Até dez disciplinas pelo total de matrículas nas turmas abertas.",
       "tipo": "horizontalBar",
       "tipos_permitidos": [
         "horizontalBar"
@@ -2603,7 +2603,7 @@
     },
     "materiais-abertas-menor-ocupacao": {
       "nome": "Menor ocupação nas turmas abertas",
-      "descricao": "Até dez disciplinas pela menor razão entre matrículas e vagas em 2026.2.",
+      "descricao": "Até dez disciplinas pela menor razão entre matrículas e vagas na oferta aberta.",
       "tipo": "horizontalBar",
       "tipos_permitidos": [
         "horizontalBar"
@@ -2611,7 +2611,7 @@
     },
     "materiais-linha-ocupacao": {
       "nome": "Ocupação mediana e ocupação geral",
-      "descricao": "A mediana dá o mesmo peso a cada turma. A ocupação geral divide todas as matrículas por todas as vagas. *2026.2 contém turmas abertas e aparece com linha tracejada.",
+      "descricao": "A mediana dá o mesmo peso a cada turma. A ocupação geral divide todas as matrículas por todas as vagas. O trecho tracejado indica um semestre que inclui turmas abertas.",
       "tipo": "line",
       "tipos_permitidos": [
         "bar",
@@ -2622,7 +2622,7 @@
     },
     "materiais-linha-tamanho": {
       "nome": "Vagas e matrículas médias por turma",
-      "descricao": "Em cada semestre, divide vagas e matrículas pelo número de turmas presenciais. *2026.2 contém turmas abertas e aparece com linha tracejada.",
+      "descricao": "Em cada semestre, divide vagas e matrículas pelo número de turmas presenciais. O trecho tracejado indica um semestre que inclui turmas abertas.",
       "tipo": "line",
       "tipos_permitidos": [
         "bar",
@@ -2641,7 +2641,7 @@
       ]
     },
     "materiais-rosca-abertas": {
-      "nome": "Faixas de ocupação nas turmas abertas de 2026.2",
+      "nome": "Faixas de ocupação nas turmas abertas",
       "descricao": "Cada fatia mostra a parcela das turmas abertas na respectiva faixa de ocupação.",
       "tipo": "donut",
       "tipos_permitidos": [
@@ -2677,7 +2677,7 @@
     },
     "materiais-radar-faixas": {
       "nome": "Perfil de ocupação por faixa",
-      "descricao": "Compara a proporção de turmas em cada faixa no histórico consolidado e nas abertas de 2026.2. Cada eixo mostra uma parcela do total de turmas do respectivo recorte.",
+      "descricao": "Compara a proporção de turmas em cada faixa no histórico consolidado e nas abertas. Cada eixo mostra uma parcela do total de turmas do respectivo recorte.",
       "tipo": "radar",
       "tipos_permitidos": [
         "radar"
@@ -2685,7 +2685,7 @@
     },
     "materiais-faixas-percentual": {
       "nome": "Composição da ocupação ao longo dos semestres",
-      "descricao": "As colunas representam 100% das turmas de cada semestre e facilitam a comparação das proporções. *2026.2 contém turmas abertas.",
+      "descricao": "As colunas representam 100% das turmas de cada semestre e facilitam a comparação das proporções. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "stackedPercent",
       "tipos_permitidos": [
         "stackedPercent"
@@ -2701,7 +2701,7 @@
     },
     "materiais-area-natureza": {
       "nome": "Matrículas por natureza curricular",
-      "descricao": "As áreas empilhadas somam as matrículas de cada semestre, classificadas pelos códigos da matriz de referência. Códigos compartilhados ou sem classificação aparecem em uma categoria própria. *2026.2 contém turmas abertas.",
+      "descricao": "As áreas empilhadas somam as matrículas de cada semestre, classificadas pelos códigos da matriz de referência. Códigos compartilhados ou sem classificação aparecem em uma categoria própria. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "area",
       "tipos_permitidos": [
         "bar",
@@ -2712,7 +2712,7 @@
     },
     "materiais-estat-histograma": {
       "nome": "Distribuição detalhada da ocupação",
-      "descricao": "Compara as proporções de turmas consolidadas e abertas em 2026.2 em seis intervalos de ocupação.",
+      "descricao": "Compara as proporções de turmas consolidadas e abertas em seis intervalos de ocupação.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -2854,7 +2854,7 @@
     },
     "software-vagas": {
       "nome": "Vagas e matrículas por semestre",
-      "descricao": "Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "descricao": "Turmas presenciais do recorte selecionado.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -2865,7 +2865,7 @@
     },
     "software-comparacao": {
       "nome": "Ocupação do curso e do CCT",
-      "descricao": "Ocupação é a soma das matrículas dividida pela soma das vagas. O total do CCT inclui o curso. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "descricao": "Ocupação é a soma das matrículas dividida pela soma das vagas. O total do CCT inclui o curso. Turmas presenciais do recorte selecionado.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -2876,7 +2876,7 @@
     },
     "software-natureza": {
       "nome": "Ocupação de obrigatórias e optativas",
-      "descricao": "As disciplinas são agrupadas conforme a natureza indicada na matriz de referência do curso. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "descricao": "As disciplinas são agrupadas conforme a natureza indicada na matriz de referência do curso. Turmas presenciais do recorte selecionado.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -2887,7 +2887,7 @@
     },
     "software-faixas": {
       "nome": "Turmas por faixa de ocupação",
-      "descricao": "Cada turma é contada na faixa correspondente às suas matrículas divididas pelas vagas. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "descricao": "Cada turma é contada na faixa correspondente às suas matrículas divididas pelas vagas. Turmas presenciais do recorte selecionado.",
       "tipo": "stackedBar",
       "tipos_permitidos": [
         "bar",
@@ -2898,7 +2898,7 @@
     },
     "software-indicador-turmas": {
       "nome": "Turmas e disciplinas ofertadas",
-      "descricao": "Cada código de disciplina é contado uma vez por semestre. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "descricao": "Cada código de disciplina é contado uma vez por semestre. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "mixed",
       "tipos_permitidos": [
         "mixed"
@@ -2906,7 +2906,7 @@
     },
     "software-indicador-saldo": {
       "nome": "Vagas não preenchidas e matrículas acima da capacidade",
-      "descricao": "Os dois totais são calculados turma a turma e somados separadamente. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "descricao": "Os dois totais são calculados turma a turma e somados separadamente. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -2917,7 +2917,7 @@
     },
     "software-indicador-extremos": {
       "nome": "Percentual de turmas com baixa ocupação ou lotadas",
-      "descricao": "Mostra a parcela de turmas abaixo de 25% e a parcela com ocupação de 100% ou mais. *Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas.",
+      "descricao": "Mostra a parcela de turmas abaixo de 25% e a parcela com ocupação de 100% ou mais. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",
@@ -2928,7 +2928,7 @@
     },
     "software-historico-obrigatorias": {
       "nome": "Ocupação das obrigatórias por disciplina",
-      "descricao": "Inclui os códigos com oferta na base. Um traço indica ausência de oferta no recorte. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "descricao": "As linhas seguem o semestre curricular da matriz selecionada. As colunas mostram os semestres da oferta. Um traço indica ausência de oferta.",
       "tipo": "heatmap",
       "tipos_permitidos": [
         "heatmap"
@@ -2936,7 +2936,7 @@
     },
     "software-historico-optativas": {
       "nome": "Ocupação das optativas por disciplina",
-      "descricao": "Inclui os códigos com oferta na base. Um traço indica ausência de oferta no recorte. Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2.",
+      "descricao": "Inclui os códigos com oferta na base. Um traço indica ausência de oferta no recorte. Turmas presenciais do recorte selecionado.",
       "tipo": "heatmap",
       "tipos_permitidos": [
         "heatmap"
@@ -3040,7 +3040,7 @@
     },
     "software-abertas-ocupacao": {
       "nome": "Ocupação das disciplinas abertas",
-      "descricao": "Todas as disciplinas com oferta aberta em 2026.2, em ordem decrescente de ocupação.",
+      "descricao": "Todas as disciplinas com oferta aberta na oferta aberta, em ordem decrescente de ocupação.",
       "tipo": "horizontalBar",
       "tipos_permitidos": [
         "horizontalBar"
@@ -3048,7 +3048,7 @@
     },
     "software-abertas-vagas": {
       "nome": "Vagas ainda não preenchidas",
-      "descricao": "Todas as disciplinas com oferta aberta em 2026.2. Soma as vagas não preenchidas turma a turma.",
+      "descricao": "Todas as disciplinas com oferta aberta na oferta aberta. Soma as vagas não preenchidas turma a turma.",
       "tipo": "horizontalBar",
       "tipos_permitidos": [
         "horizontalBar"
@@ -3056,7 +3056,7 @@
     },
     "software-abertas-matriculas": {
       "nome": "Mais matrículas nas turmas abertas",
-      "descricao": "Até dez disciplinas pelo total de matrículas nas turmas abertas em 2026.2.",
+      "descricao": "Até dez disciplinas pelo total de matrículas nas turmas abertas.",
       "tipo": "horizontalBar",
       "tipos_permitidos": [
         "horizontalBar"
@@ -3064,7 +3064,7 @@
     },
     "software-abertas-menor-ocupacao": {
       "nome": "Menor ocupação nas turmas abertas",
-      "descricao": "Até dez disciplinas pela menor razão entre matrículas e vagas em 2026.2.",
+      "descricao": "Até dez disciplinas pela menor razão entre matrículas e vagas na oferta aberta.",
       "tipo": "horizontalBar",
       "tipos_permitidos": [
         "horizontalBar"
@@ -3072,7 +3072,7 @@
     },
     "software-linha-ocupacao": {
       "nome": "Ocupação mediana e ocupação geral",
-      "descricao": "A mediana dá o mesmo peso a cada turma. A ocupação geral divide todas as matrículas por todas as vagas. *2026.2 contém turmas abertas e aparece com linha tracejada.",
+      "descricao": "A mediana dá o mesmo peso a cada turma. A ocupação geral divide todas as matrículas por todas as vagas. O trecho tracejado indica um semestre que inclui turmas abertas.",
       "tipo": "line",
       "tipos_permitidos": [
         "bar",
@@ -3083,7 +3083,7 @@
     },
     "software-linha-tamanho": {
       "nome": "Vagas e matrículas médias por turma",
-      "descricao": "Em cada semestre, divide vagas e matrículas pelo número de turmas presenciais. *2026.2 contém turmas abertas e aparece com linha tracejada.",
+      "descricao": "Em cada semestre, divide vagas e matrículas pelo número de turmas presenciais. O trecho tracejado indica um semestre que inclui turmas abertas.",
       "tipo": "line",
       "tipos_permitidos": [
         "bar",
@@ -3102,7 +3102,7 @@
       ]
     },
     "software-rosca-abertas": {
-      "nome": "Faixas de ocupação nas turmas abertas de 2026.2",
+      "nome": "Faixas de ocupação nas turmas abertas",
       "descricao": "Cada fatia mostra a parcela das turmas abertas na respectiva faixa de ocupação.",
       "tipo": "donut",
       "tipos_permitidos": [
@@ -3138,7 +3138,7 @@
     },
     "software-radar-faixas": {
       "nome": "Perfil de ocupação por faixa",
-      "descricao": "Compara a proporção de turmas em cada faixa no histórico consolidado e nas abertas de 2026.2. Cada eixo mostra uma parcela do total de turmas do respectivo recorte.",
+      "descricao": "Compara a proporção de turmas em cada faixa no histórico consolidado e nas abertas. Cada eixo mostra uma parcela do total de turmas do respectivo recorte.",
       "tipo": "radar",
       "tipos_permitidos": [
         "radar"
@@ -3146,7 +3146,7 @@
     },
     "software-faixas-percentual": {
       "nome": "Composição da ocupação ao longo dos semestres",
-      "descricao": "As colunas representam 100% das turmas de cada semestre e facilitam a comparação das proporções. *2026.2 contém turmas abertas.",
+      "descricao": "As colunas representam 100% das turmas de cada semestre e facilitam a comparação das proporções. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "stackedPercent",
       "tipos_permitidos": [
         "stackedPercent"
@@ -3162,7 +3162,7 @@
     },
     "software-area-natureza": {
       "nome": "Matrículas por natureza curricular",
-      "descricao": "As áreas empilhadas somam as matrículas de cada semestre, classificadas pelos códigos da matriz de referência. Códigos compartilhados ou sem classificação aparecem em uma categoria própria. *2026.2 contém turmas abertas.",
+      "descricao": "As áreas empilhadas somam as matrículas de cada semestre, classificadas pelos códigos da matriz de referência. Códigos compartilhados ou sem classificação aparecem em uma categoria própria. O asterisco identifica semestres que incluem turmas abertas.",
       "tipo": "area",
       "tipos_permitidos": [
         "bar",
@@ -3173,7 +3173,7 @@
     },
     "software-estat-histograma": {
       "nome": "Distribuição detalhada da ocupação",
-      "descricao": "Compara as proporções de turmas consolidadas e abertas em 2026.2 em seis intervalos de ocupação.",
+      "descricao": "Compara as proporções de turmas consolidadas e abertas em seis intervalos de ocupação.",
       "tipo": "bar",
       "tipos_permitidos": [
         "bar",

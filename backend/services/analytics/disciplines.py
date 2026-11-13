@@ -1,18 +1,17 @@
 """Análises por código de disciplina, mantendo a oferta aberta separada."""
 
 from statistics import median
+from services.data.selection import split_offers
 from services.domain.courses import COURSES, curriculum
 
 from services.analytics.metrics import (
     chart, codes, sources, days, distribution, group, hourly_slots, metrics,
-    occupancy_bands, occupancy_details, rate, shift,
+    occupancy_bands, occupancy_details, rate, semester_label, shift,
 )
 
 
 def discipline_analyses(offers):
-    eligible = [r for r in offers if r['modalidade'] == 'Presencial' and r['capacidade'] > 0]
-    hist = [r for r in eligible if r['situacao'] == 'CONSOLIDADA']
-    opened = [r for r in eligible if r['situacao'] == 'ABERTA' and r['periodo'] == '2026.2']
+    hist, opened = split_offers(offers)
     periods = sorted({r['periodo'] for r in hist + opened})
     return discipline_cohort_analyses(hist, opened, periods)
 
@@ -39,8 +38,8 @@ def discipline_cohort_analyses(primary_rows, comparison_rows, periods, known_dis
             plots.append(plot)
 
         by_period = group(rows, lambda r: r['periodo'])
-        summaries = [(p + '*' if p == '2026.2' else p, metrics(by_period[p]), by_period[p]) for p in periods]
-        note = ' *2026.2 representa turmas abertas; os demais semestres usam consolidadas. Sem oferta aparece como lacuna.'
+        summaries = [(semester_label(p, by_period[p]), metrics(by_period[p]), by_period[p]) for p in periods]
+        note = ' O asterisco identifica semestres que incluem turmas abertas. Sem oferta aparece como lacuna.'
         for key, title, description, series, values, percent in [
             ('oferta', 'Vagas e matrículas por semestre', 'Totais da disciplina por semestre.', ['Vagas', 'Matrículas'], lambda m, rs: [m['c'], m['m']], False),
             ('ocupacao', 'Ocupação geral e mediana por semestre', 'Compara a razão entre totais com a mediana das ocupações das turmas.', ['Ocupação geral', 'Mediana'], lambda m, rs: [m['rate'], median(map(rate, rs))], True),
@@ -54,7 +53,7 @@ def discipline_cohort_analyses(primary_rows, comparison_rows, periods, known_dis
                 [[p, *values(m, rs)] if rs else [p, *([None] * len(series))] for p, m, rs in summaries],
                 [occupancy_details(m) for _, m, _ in summaries])
 
-        add('por-turma', 'Ocupação de cada turma', 'Cada barra identifica uma turma no semestre. * indica oferta aberta em 2026.2.',
+        add('por-turma', 'Ocupação de cada turma', 'Cada barra identifica uma turma no semestre. O asterisco indica uma turma aberta.',
             dict(type='bar', x='Turma', y=['Ocupação'], valueFormat={'style': 'percent'}), ['Turma', 'Ocupação'],
             [[f"{r['periodo']}{'*' if r['situacao'] == 'ABERTA' else ''} · {r['turma']} · {i + 1}", rate(r)] for i, r in enumerate(rows)],
             [occupancy_details(metrics([r])) + '\n' + r['horario'] for r in rows])

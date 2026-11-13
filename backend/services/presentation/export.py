@@ -349,7 +349,7 @@ def page(bundle):
 
 def render_dashboard(data_path):
     bundle = dashboard_data(data_path)
-    # A exportação acompanha o acumulado principal até 2026.2.
+    # A exportação acompanha o acumulado da base.
     return page({**bundle, 'paineis': bundle['views']['accumulated']['paineis'],
                  'groups': bundle['views']['accumulated']['groups'],
                  'courseComparisons': bundle['views']['accumulated']['courseComparisons'],

@@ -16,6 +16,9 @@
   const id = $derived(anchor + plot.id);
   let visible = $state(false);
   let showBaseline = $state(false);
+  let selectedCurriculum = $state('');
+  const curriculum = $derived(plot.curriculumOptions?.find(item => item.id === selectedCurriculum) ?? plot.curriculumOptions?.[0]);
+  const activePlot = $derived(plot.curriculumAlternatives?.[curriculum?.id] ?? plot);
 
   function reveal() {
     visible = true;
@@ -34,22 +37,40 @@
   </div>
   <h4>{plot.title}</h4>
   {#if plot.scopeNote}<p class="scope-note">{plot.scopeNote}</p>{/if}
-  <p class="description">{plot.description}</p>
+  {#if curriculum}
+    <div class="curriculum-controls">
+      {#if plot.curriculumOptions.length > 1}
+        <label>Matriz curricular
+          <select value={curriculum.id} onchange={event => selectedCurriculum = event.currentTarget.value}>
+            {#each plot.curriculumOptions as option (option.id)}
+              <option value={option.id}>{option.label}</option>
+            {/each}
+          </select>
+        </label>
+      {:else}
+        <span>{curriculum.label}</span>
+      {/if}
+      <a href={curriculum.source} target="_blank" rel="noreferrer">Matriz da UFCA ↗</a>
+    </div>
+  {/if}
+  <p class="description">{activePlot.description}</p>
 
   {#if visible}
-    <ChartFigure {plot} />
-    <ComparisonDetails comparison={plot.comparison}>
-      {#if plot.comparison?.baselinePlot}
-        <details class="baseline-preview" ontoggle={event => { showBaseline = event.currentTarget.open; }}>
-          <summary>Ver gráfico de referência · {plot.comparison.baselinePeriod}</summary>
-          {#if showBaseline}
-            <div class="baseline-content">
-              <h5>{plot.comparison.baselinePlot.title}</h5>
-              <ChartFigure plot={{ ...plot.comparison.baselinePlot, id: plot.id + '-reference' }} />
-            </div>
-          {/if}
-        </details>
-      {/if}
-    </ComparisonDetails>
+    <ChartFigure plot={activePlot} />
+    {#if activePlot.scopeId !== 'accumulated'}
+      <ComparisonDetails comparison={activePlot.comparison}>
+        {#if activePlot.comparison?.baselinePlot}
+          <details class="baseline-preview" ontoggle={event => { showBaseline = event.currentTarget.open; }}>
+            <summary>Ver gráfico de referência · {activePlot.comparison.baselinePeriod}</summary>
+            {#if showBaseline}
+              <div class="baseline-content">
+                <h5>{activePlot.comparison.baselinePlot.title}</h5>
+                <ChartFigure plot={{ ...activePlot.comparison.baselinePlot, id: plot.id + '-reference' }} />
+              </div>
+            {/if}
+          </details>
+        {/if}
+      </ComparisonDetails>
+    {/if}
   {/if}
 </article>

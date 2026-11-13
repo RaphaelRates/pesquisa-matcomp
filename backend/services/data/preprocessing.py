@@ -7,6 +7,7 @@ import math
 import re
 import unicodedata
 from services.data.consistency import find_consistency_issues
+from services.data.selection import split_offers
 
 
 MAX_SAFE_INTEGER = 2**53 - 1
@@ -150,9 +151,9 @@ def preprocess_offers(raw):
     excluded = Counter()
     if suspicious:
         excluded['Registros sinalizados por possível oferta conjunta ou choque de sala ou docente.'] = len(suspicious)
-    in_scope = 0
+    historical, opened = split_offers(accepted)
+    in_scope = len(historical) + len(opened)
     eligible = 0
-    out_of_scope = Counter()
     for row in accepted:
         if row["modalidade"] != "Presencial":
             excluded["Modalidade diferente de Presencial."] += 1
@@ -160,12 +161,6 @@ def preprocess_offers(raw):
             excluded["Capacidade cadastrada igual a zero."] += 1
         else:
             eligible += 1
-            if (row["situacao"] == "CONSOLIDADA" and row["periodo"] < "2026.2") or (
-                row["situacao"] == "ABERTA" and row["periodo"] == "2026.2"
-            ):
-                in_scope += 1
-            else:
-                out_of_scope["Situação ou semestre fora do recorte consolidado e aberto de 2026.2."] += 1
 
     conflicts = [(identity, len(signatures)) for identity, signatures in identities.items()
                  if len(signatures) > 1]
@@ -180,10 +175,13 @@ def preprocess_offers(raw):
         "eligibleRows": eligible,
         "excludedRows": sum(excluded.values()),
         "inScopeRows": in_scope,
-        "outOfScopeRows": sum(out_of_scope.values()),
+        "outOfScopeRows": eligible - in_scope,
         "issues": [{"reason": reason, "count": count} for reason, count in sorted(issues.items())],
         "exclusionReasons": [{"reason": reason, "count": count} for reason, count in sorted(excluded.items())],
-        "outOfScopeReasons": [{"reason": reason, "count": count} for reason, count in sorted(out_of_scope.items())],
+        "outOfScopeReasons": [{
+            "reason": "Situação diferente de Consolidada e Aberta.",
+            "count": eligible - in_scope,
+        }] if eligible > in_scope else [],
         "warnings": [{"reason": reason, "count": count} for reason, count in sorted(warnings.items())],
         "examples": examples,
         "warningExamples": warning_examples,

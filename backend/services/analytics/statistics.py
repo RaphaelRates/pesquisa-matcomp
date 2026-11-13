@@ -182,14 +182,14 @@ def statistical_panel(prefix, title, hist, latest, periods, *, summary=None):
     ]
     distribution_plots.append(plot(
         "histograma", "Distribuição detalhada da ocupação",
-        "Compara as proporções de turmas consolidadas e abertas em 2026.2 em seis intervalos de ocupação.",
-        dict(type="bar", x="Intervalo", y=["Consolidadas", "Abertas em 2026.2"], valueFormat=PERCENT),
-        ["Intervalo", "Consolidadas", "Abertas em 2026.2"], histogram_rows,
+        "Compara as proporções de turmas consolidadas e abertas em seis intervalos de ocupação.",
+        dict(type="bar", x="Intervalo", y=["Consolidadas", "Abertas"], valueFormat=PERCENT),
+        ["Intervalo", "Consolidadas", "Abertas"], histogram_rows,
         "Histograma com classes de largura de 25 pontos percentuais e uma última classe aberta.",
         "O formato evidencia onde as turmas se concentram. Cada série é dividida pelo seu próprio total.",
         [f"Consolidadas: {hist_counts[i]} de {len(hist)}\nAbertas: {open_counts[i]} de {len(latest)}"
          for i in range(len(histogram_labels))],
-    ) | {"scope": "Consolidadas e abertas de 2026.2, em séries separadas"})
+    ) | {"scope": "Consolidadas e abertas, em séries separadas"})
     distribution_plots.append(plot(
         "quartis", "Faixa central de ocupação por semestre", note,
         dict(type="distributionBand", x="Semestre", y=["Q1", "Mediana", "Q3"], valueFormat=PERCENT),
@@ -233,15 +233,15 @@ def statistical_panel(prefix, title, hist, latest, periods, *, summary=None):
     distribution_plots.append(plot(
         "acumulada", "Distribuição acumulada da ocupação",
         "Compara a proporção de turmas com ocupação menor ou igual a cada valor do eixo horizontal.",
-        dict(type="line", x="Ocupação", y=["Consolidadas", "Abertas em 2026.2"], numericX=True,
+        dict(type="line", x="Ocupação", y=["Consolidadas", "Abertas"], numericX=True,
              xValueFormat=PERCENT, valueFormat=PERCENT, stepped="before", yDomain=[0, 1]),
-        ["Ocupação", "Consolidadas", "Abertas em 2026.2"],
+        ["Ocupação", "Consolidadas", "Abertas"],
         [[threshold, bisect_right(sorted_hist, threshold) / len(hist) if hist else None,
           bisect_right(sorted_open, threshold) / len(latest) if latest else None] for threshold in ecdf_thresholds]
         if hist or latest else [],
         "Função de distribuição empírica F(t) = número de turmas com ocupação ≤ t / total de turmas do recorte.",
         "Uma curva mais alta em um limiar significa maior parcela de turmas com ocupação até esse valor.",
-    ) | {"scope": "Consolidadas e abertas de 2026.2, em séries separadas"})
+    ) | {"scope": "Consolidadas e abertas, em séries separadas"})
 
     by_code = defaultdict(int)
     for row in hist:
@@ -357,7 +357,7 @@ def statistical_panel(prefix, title, hist, latest, periods, *, summary=None):
     return {
         "id": f"{prefix}-estatistica", "title": title,
         "description": "Estatísticas descritivas, concentração e associações das turmas consolidadas. "
-                       "As abertas de 2026.2 aparecem em séries próprias nas comparações de distribuição. "
+                       "As abertas aparecem em séries próprias nas comparações de distribuição. "
                        "Os resultados descrevem a base observada.",
         "statisticalSummary": summary,
         "sections": [

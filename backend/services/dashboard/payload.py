@@ -16,7 +16,7 @@ def dashboard_data(data_path=DEFAULT_DATA):
     views = build_period_views(offers)
     enrich_groups(offers, views)
     baseline = views['baseline']
-    attach_comparisons(views['current'], baseline, views['baselinePeriod'])
+    attach_comparisons(views['current'], baseline, views['baselinePeriod'], views['currentPeriod'])
     attach_group_comparisons(views)
     views.pop('baseline')
 
@@ -31,8 +31,6 @@ def dashboard_data(data_path=DEFAULT_DATA):
     for plot in current_plots.values():
         if views['baselinePeriod'] and plot['id'] in reference_plots:
             plot['comparison']['baselinePlot'] = reference_plots[plot['id']]
-    # O acumulado inclui 2026.2; as diferenças continuam comparando dois
-    # semestres, sem usar todo o histórico como base de um único semestre.
     for scope in ('historical', 'accumulated'):
         for plot in plots(views[scope]):
             if plot['id'] in current_plots:
@@ -59,8 +57,7 @@ def dashboard_data(data_path=DEFAULT_DATA):
     for scope in ('historical', 'accumulated'):
         for plot in plots(views[scope]):
             plot.pop('comparison', None)
-    source['currentEligibleRows'] = sum(r['periodo'] == '2026.2' and r['modalidade'] == 'Presencial'
-                                        and r['situacao'] == 'ABERTA' and r['capacidade'] > 0 for r in offers)
+    source['currentEligibleRows'] = views['current']['groups']['cct']['summary']['selected']['n']
     return {"titulo": TITLE, "courses": list(COURSES), "groups": list(GROUPS), "views": views, "plotComparisons": comparisons, "source": source, "quality": report,
             "generatedAt": datetime.now(timezone.utc).isoformat()}
 

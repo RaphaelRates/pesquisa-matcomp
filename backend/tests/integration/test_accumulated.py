@@ -33,34 +33,37 @@ class AccumulatedViewTests(unittest.TestCase):
         self.assertEqual(offers, original)
         cct = panel(view, 'evolucao')['summary']
         mc = panel(view, 'matematica-computacional')['summary']
-        for summary, expected in [(cct, (1485, 59924, 32592)), (mc, (147, 6765, 3061))]:
+        for summary, expected in [(cct, (2500, 103735, 55460)), (mc, (222, 10320, 4285))]:
             m = summary['selected']
             self.assertEqual((m['n'], m['c'], m['m']), expected)
             self.assertAlmostEqual(m['rate'], expected[2] / expected[1])
             self.assertEqual(summary['historico']['n'] + summary['abertas']['n'], m['n'])
-        self.assertEqual(cct['historico']['n'], 1317)
-        self.assertEqual(cct['abertas']['n'], 168)
+        self.assertEqual(cct['historico']['n'], 2330)
+        self.assertEqual(cct['abertas']['n'], 170)
         chart = next(p for s in panel(view, 'evolucao')['sections'] for p in s['plots']
                      if p['id'] == 'ufca-capacidade-matriculas')
-        self.assertEqual(chart['rows'][0], ['2022.1', 5927, 3447])
+        self.assertEqual(chart['rows'][0], ['2019.1', 6420, 4052])
+        self.assertIn(['2022.1', 5927, 3447], chart['rows'])
+        self.assertIn(['2022.2', 6693, 3137], chart['rows'])
         self.assertEqual(chart['rows'][-1], ['2026.2*', 6845, 3948])
         self.assertIn('2023.1', view['scope']['periods'])
         self.assertIn('2026.2', view['scope']['periods'])
         self.assertEqual(view['scope']['status'], 'MISTA')
 
-    def test_accumulated_excludes_before_2022_1_and_unselected_statuses(self):
-        offers = [offer('2021.2', 99, 99), offer('2022.1', 10, 2), offer('2026.1', 20, 10),
-                  offer('2026.2', 30, 18, 'ABERTA'), offer('2026.2', 99, 99),
-                  offer('2027.1', 99, 99)]
+    def test_accumulated_includes_all_dates_and_excludes_unselected_statuses(self):
+        offers = [offer('2018.2', 99, 99), offer('2019.1', 10, 2), offer('2026.1', 20, 10),
+                  offer('2026.2', 30, 18, 'ABERTA'), offer('2026.2', 5, 2),
+                  offer('2027.1', 40, 12), offer('2027.2', 99, 99, 'INTERROMPIDA')]
         original = deepcopy(offers)
         views = build_period_views(offers)
         summary = panel(views['accumulated'], 'evolucao')['summary']
         self.assertEqual(offers, original)
-        self.assertEqual((summary['selected']['n'], summary['selected']['c'], summary['selected']['m']), (3, 60, 30))
-        self.assertEqual(summary['historico']['n'], 2)
+        self.assertEqual((summary['selected']['n'], summary['selected']['c'], summary['selected']['m']), (6, 204, 143))
+        self.assertEqual(summary['historico']['n'], 5)
         self.assertEqual(summary['abertas']['n'], 1)
-        self.assertEqual(panel(views['historical'], 'evolucao')['summary']['selected']['n'], 3)
-        self.assertEqual(views['accumulated']['scope']['periods'], ['2022.1', '2026.1', '2026.2'])
+        self.assertEqual(panel(views['historical'], 'evolucao')['summary']['selected']['n'], 5)
+        self.assertEqual(views['accumulated']['scope']['periods'], ['2018.2', '2019.1', '2026.1', '2026.2', '2027.1'])
+        self.assertIsNone(views['currentPeriod'])
 
     def test_accumulated_metadata_describes_mixed_offering(self):
         view = build_period_views([offer('2026.1', 10, 5), offer('2026.2', 10, 8, 'ABERTA')])['accumulated']

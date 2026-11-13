@@ -2,6 +2,8 @@
 
 Aplicação local para explorar vagas, matrículas, ocupação e distribuição das turmas do CCT. Python calcula os indicadores a partir dos arquivos por semestre. O frontend usa Svelte 5 e a cópia local do Chart.js.
 
+A base incluída cobre **16 semestres, de 2019.1 a 2026.2**, com 2.643 registros. No panorama do CCT e nas páginas dos cinco cursos, é possível consultar o resumo anual, comparar semestres e explorar a oferta por disciplina.
+
 ## Executar
 
 Requer Python 3.12 ou superior e Node.js 20.19+ na série 20 ou 22.12+. Na raiz do projeto:
@@ -12,7 +14,7 @@ npm --prefix frontend run build
 python backend/app.py
 ```
 
-O Vite compila o frontend em `frontend/dist/`. O servidor Python entrega a interface e a API no mesmo endereço. Durante alterações no frontend, mantenha `npm --prefix frontend run dev` em outro terminal para recompilar ao salvar.
+O Vite compila o frontend em `frontend/dist/`. O processo Python serve a interface e a API em portas separadas. Durante alterações no frontend, mantenha `npm --prefix frontend run dev` em outro terminal para recompilar ao salvar.
 
 Abra [o frontend](http://localhost:8000/) ou consulte [a API](http://localhost:8001/api/v1/painel/cct). Para escolher outras portas no PowerShell:
 
@@ -90,15 +92,31 @@ Os cursos usam os códigos das matrizes de referência, incluindo os códigos CA
 
 ### Recortes temporais
 
-- **Acumulado · 2022.1 a 2026.2** é a opção inicial. Inclui consolidadas de 2022.1 até 2026.1 e abertas de 2026.2. A base não tem registros de 2022.2.
-- **Histórico consolidado** reúne as turmas consolidadas anteriores a 2026.2.
-- **2026.2 · oferta aberta** apresenta somente as turmas abertas desse semestre.
+- **Todos os dados** reúne turmas consolidadas e abertas de todos os semestres disponíveis.
+- **Mais recente × anterior** compara os dois últimos semestres com oferta do curso.
+- **Escolher semestres** permite selecionar o semestre de referência e o semestre comparado. Clique em **Aplicar à página** para atualizar os indicadores, o resumo anual, os gráficos e a análise por cadeira.
 
 Cada curso usa os semestres em que há pelo menos uma turma elegível de sua matriz no recorte selecionado. Na base incluída, Engenharia de Software tem oferta em 2025.1, 2025.2, 2026.1 e 2026.2. Na análise de uma cadeira, uma lacuna indica que a cadeira ficou sem oferta naquele semestre do curso.
 
-O recorte é preservado ao navegar entre cursos e pode ser compartilhado na URL, como em `/cursos/mc?recorte=historical`. Para compartilhar uma seleção de cadeira, use `disciplina`, por exemplo `/cursos/mc?disciplina=MC0002#cadeiras-individual`. O asterisco identifica 2026.2 aberto nas séries que o usam. As matrículas e ocupações desse semestre ainda podem mudar.
+O **Resumo anual** mostra os semestres com oferta no recorte e seus totais de turmas, vagas e matrículas. A ocupação do ano divide o total de matrículas pelo total de vagas.
 
-As tabelas de diferença comparam **2026.2 com o último semestre consolidado disponível**, 2026.1 na base incluída. Contagens apresentam diferenças absolutas e relativas. Proporções apresentam também pontos percentuais. Bases iguais a zero deixam a variação relativa indefinida. Ausência de categoria não vira valor zero. Turmas e pontos de dispersão de semestres distintos não são pareados artificialmente. Grupos de composição variável como Outras capacidades ficam fora das diferenças.
+O modo é preservado ao navegar entre cursos. Cada curso abre sua própria seleção de semestres. Um par pode ser compartilhado em uma URL como `/cursos/mc?recorte=compare&referencia=2025.2&semestre=2026.2`. Para compartilhar uma seleção de cadeira, use `disciplina`. O asterisco identifica séries que incluem turmas abertas.
+
+Nos modos de comparação, os detalhes dos gráficos usam os mesmos semestres escolhidos no topo. Contagens apresentam diferenças absolutas e relativas. Ocupação apresenta também a diferença em pontos percentuais. A variação relativa é definida para bases positivas.
+
+### Matrizes curriculares
+
+Em **Análises específicas do curso**, abra **Ocupação das obrigatórias por disciplina**. As linhas seguem o semestre curricular e a ordem das disciplinas dentro dele. Cada coluna representa um semestre de oferta. Um traço indica ausência de oferta elegível para a disciplina naquele semestre.
+
+O painel oferece dez matrizes. A versão padrão de cada curso segue a aba **Matriz Curricular** no portal da UFCA. Quando há versões anteriores, escolha a grade no seletor **Matriz curricular**. O link **Matriz da UFCA** no gráfico abre a fonte da versão selecionada. Uma turma pode aparecer em duas matrizes quando seu código consta em ambas.
+
+| Curso | Matriz padrão | Matrizes anteriores |
+| --- | --- | --- |
+| Matemática Computacional | MC002 · 2023.1 | MC001 · 2019.1 |
+| Ciência da Computação | CC002 · 2023 | CC001 · 2019 |
+| Engenharia de Materiais | EM01 · 2023.1 | 2010.1 · PPC 2009 |
+| Engenharia Civil | ECI01 · 2023.1 | 2018.1 · PPC 2018.2 e 2006.2 |
+| Engenharia de Software | ES01 · 2025.1 | — |
 
 ## Dados por semestre
 
@@ -109,7 +127,14 @@ data/
 ├── graficos.json
 └── ufca/
     ├── README.md
+    ├── 2019.1.json
+    ├── 2019.2.json
+    ├── 2020.1.json
+    ├── 2020.2.json
+    ├── 2021.1.json
+    ├── 2021.2.json
     ├── 2022.1.json
+    ├── 2022.2.json
     ├── 2023.1.json
     ├── 2023.2.json
     ├── 2024.1.json
@@ -120,15 +145,15 @@ data/
     └── 2026.2.json
 ```
 
-A coleção contém **1.555 registros**. Os 165 registros de 2022.1 vêm da listagem do SIGAA fornecida no anexo. Desse semestre, 150 turmas entram nos indicadores. Quatorze foram sinalizadas por coincidências de oferta ou sala e uma está interrompida. Os 1.390 registros dos outros semestres preservam os campos e a ordem originais. 2026.2 contém a oferta aberta.
+Os 1.253 registros de 2019.1 a 2022.2 vêm das listagens do SIGAA fornecidas em anexos. A oferta aberta mais recente da base é de 2026.2.
 
-O carregador lê os arquivos em ordem de semestre e exige que o campo `periodo` de cada registro coincida com o nome do arquivo. Nomes de semestre inválidos, períodos conflitantes, fontes vazias ou JSON malformado produzem uma mensagem de erro. Documentos como o README são ignorados.
+Para acrescentar um semestre, coloque um arquivo `AAAA.1.json` ou `AAAA.2.json` em `data/ufca/` e use **Atualizar dados**. A API relê a pasta, valida o JSON e recalcula os recortes sem alterações no código ou reinício. Use uma lista de objetos em UTF-8 e informe em cada objeto o mesmo `periodo` do nome do arquivo. Nomes de semestre inválidos, períodos conflitantes e JSON malformado geram erro de leitura.
 
 Cada registro contém `periodo`, `codigo`, `disciplina`, `turma`, `docentes`, `tipo`, `modalidade`, `situacao`, `horario`, `local`, `matriculas` e `capacidade`; os campos de proveniência `origem` e `linha` também são preservados.
 
 Textos, códigos, números e horários são normalizados antes dos cálculos. Duplicatas exatas com identidade confirmada são removidas em memória; conflitos são preservados e informados. Entram nos gráficos as turmas presenciais com capacidade positiva e situação compatível com o recorte. EAD e registros de outras situações permanecem nos arquivos, mas ficam fora desses indicadores.
 
-Na base incluída, o acumulado do CCT contém **1.485 turmas, 59.924 vagas e 32.592 matrículas**, com **54,4% de ocupação**. Os números somam nove semestres, com as matrículas contadas por registro de turma e as vagas por oferta.
+Na base incluída, o acumulado do CCT contém **2.500 turmas, 103.735 vagas e 55.460 matrículas**, com **53,5% de ocupação**. Os números somam 16 semestres, com as matrículas contadas por registro de turma e as vagas por oferta.
 
 O botão **Atualizar dados**, na seção de qualidade, relê a base e o catálogo. A identificação SHA-256 da fonte considera os nomes e conteúdos dos arquivos. A preparação e os cálculos ocorrem em memória.
 
@@ -142,7 +167,7 @@ São indícios, não duplicatas confirmadas: a capacidade pode representar uma c
 
 Edite `data/graficos.json` para alterar `nome`, `descricao` e `tipo`. O campo `tipos_permitidos` documenta os formatos compatíveis, validados no servidor. Os gráficos gerais de grupo compartilham as entradas originais por `catalogKey`; os quatro rankings gerais e as três comparações entre cursos têm entradas próprias. As chaves `cadeira-*` personalizam as análises individuais. Salve e use Atualizar dados; não é necessário reiniciar o servidor para alterações nos dados ou catálogo.
 
-As matrizes ficam em `backend/services/domain/curricula.py`, e o cadastro dos cursos em `backend/services/domain/courses.py`. Ciência da Computação usa CC002 como referência atual, acrescentando os códigos exclusivos de CC001. O recorte curricular pode diferir da seleção de todos os códigos com um prefixo; os demais códigos continuam acessíveis no grupo CCT.
+O cadastro dos cursos fica em `backend/services/domain/courses.py`. As classificações de referência ficam em `backend/services/domain/curricula.py`, e a ordem de obrigatórias de cada PPC em `backend/services/domain/ppcs.py`. O recorte do curso inclui também códigos obrigatórios exclusivos de matrizes anteriores. A classificação da matriz atual tem precedência nas análises gerais.
 
 | Indicador | Cálculo |
 | --- | --- |
@@ -192,13 +217,13 @@ A API versionada usa `/api/v1` na porta definida por `API_PORT`, com padrão 800
 
 | Rota | Parâmetros de consulta | Campos principais em `data` |
 | --- | --- | --- |
-| `/api/v1/painel/{grupo}` | `recorte` | `group`, `scope`, `scopes`, `summary`, `sections`, `disciplines`, `source`, `quality`, `generatedAt`, `currentPeriod`, `baselinePeriod` |
-| `/api/v1/painel/{grupo}/secoes/{secao}` | `recorte`, `revisao` obrigatória | `sections`, `statisticalSummary` quando aplicável, `description` quando disponível |
-| `/api/v1/painel/{grupo}/disciplinas/{codigo}` | `recorte`, `revisao` obrigatória | `code`, `name`, `summary`, `offeredSemesters`, `sections` |
+| `/api/v1/painel/{grupo}` | `recorte`, `referencia` e `semestre` no modo `compare` | `group`, `scope`, `scopes`, `summary`, `periodBreakdown`, `sections`, `disciplines`, `source`, `quality`, `generatedAt`, `currentPeriod`, `baselinePeriod`, `comparedPeriod` |
+| `/api/v1/painel/{grupo}/secoes/{secao}` | Mesmo recorte e par da página, com `revisao` obrigatória | `sections`, `statisticalSummary` quando aplicável, `description` quando disponível |
+| `/api/v1/painel/{grupo}/disciplinas/{codigo}` | Mesmo recorte e par da página, com `revisao` obrigatória | `code`, `name`, `summary`, `offeredSemesters`, `sections` |
 | `/api/v1/graficos` | Nenhum | Catálogo de `data/graficos.json` |
 
 - `grupo` aceita `cct`, `mc`, `cc`, `em`, `eci` e `es`.
-- `recorte` aceita `accumulated` (padrão), `historical` e `current`. Envie o mesmo recorte da página nas consultas dependentes.
+- `recorte` aceita `accumulated` (padrão), `latest` e `compare`. `historical` e `current` continuam disponíveis na API. Em `compare`, envie `referencia` e `semestre` juntos e use dois períodos distintos com oferta no grupo. Ao omitir ambos, a API seleciona os dois últimos semestres disponíveis.
 - `secao` aceita `evolucao`, `horarios`, `distribuicao`, `rankings` e `estatisticas`. A seção `comparacao` pertence ao CCT e `curso` às páginas de curso. Use os IDs em `data.sections` da página.
 - `codigo` é um código em maiúsculas presente na lista `data.disciplines` da página, como `MC0002`.
 - `revisao` recebe `meta.revision` devolvida pela consulta da página. O servidor prepara e mantém em memória a revisão mais recente, calculada sobre a base e o catálogo. Ao receber HTTP 409, consulte a página novamente para obter a revisão atual.
@@ -210,7 +235,7 @@ O envelope é `{"data": {...}, "meta": {"version": 1, "revision": "..."}, "error
 | HTTP | `error.code` | Significado |
 | --- | --- | --- |
 | 200 | — | Consulta concluída, inclusive recortes válidos sem turmas |
-| 400 | `invalid_query` | Parâmetro inválido, repetido ou revisão ausente na consulta de gráficos |
+| 400 | `invalid_query` | Parâmetro inválido ou repetido, par de semestres inválido ou revisão ausente na consulta de gráficos |
 | 400 | `invalid_host`, `invalid_target`, `unexpected_body` | Endereço local incorreto, alvo inválido ou corpo em uma consulta |
 | 403 | `origin_not_allowed` | Origem de navegador diferente do painel local |
 | 404 | `not_found` | Rota, grupo, seção ou disciplina inexistente no grupo |
@@ -221,9 +246,11 @@ O envelope é `{"data": {...}, "meta": {"version": 1, "revision": "..."}, "error
 
 Na resposta de página, `summary.selected` tem `n` (turmas), `c` (vagas), `m` (matrículas), `rate` (fração ocupada), `free` (vagas não preenchidas) e `extra` (matrículas excedentes), além de contagens por faixa. `source` identifica os arquivos e `quality.consistency` detalha todas as turmas sinalizadas na base. Nas páginas de curso, `data.consistency` traz os casos da matriz do curso. Cada registro da matriz é contado uma vez, mesmo que apareça em vários casos.
 
-Nas páginas de curso, `scope.periods` e `scopes[].periods` listam os semestres com turmas elegíveis da matriz no respectivo recorte. Uma lista vazia indica ausência de oferta.
+Nas páginas de curso, `scope.periods` lista os semestres selecionados. `periodBreakdown.years` traz os totais anuais do recorte e `periodBreakdown.semesters` inclui os semestres disponíveis para comparação. `baselinePeriod` e `comparedPeriod` identificam o par ativo nos modos de comparação.
 
 Nas respostas de gráficos, cada item em `sections[].plots` tem `id`, `title`, `description`, `columns`, `rows` e `spec` (tipo e eixos). Os valores em `rows` seguem a ordem de `columns`. As comparações contêm `baselinePeriod`, `currentPeriod`, `rows` e, quando disponível, `baselinePlot`. Uma proporção como `0.54` representa 54%. Medidas indefinidas são `null`.
+
+No gráfico de obrigatórias, `curriculumOptions` lista os PPCs e suas fontes. `curriculumAlternatives` contém os gráficos das versões anteriores, indexados pelo ID do PPC. Em cada versão, `spec.yOrder` define a ordem das disciplinas e `spec.yGroups` indica o semestre curricular de cada linha.
 
 ### Segurança do acesso local
 
@@ -232,7 +259,7 @@ O servidor valida o cabeçalho `Host` e autoriza no navegador apenas a origem ex
 ### Fluxo assíncrono
 
 1. O Svelte consulta a rota de página ao abrir um curso ou alterar o recorte. A resposta traz os indicadores, a revisão, os IDs das seções e a lista de disciplinas.
-2. Ao se aproximar da área visível, cada seção solicita seus gráficos com o mesmo `recorte` e `revisao`. Cada resposta é renderizada de forma independente.
+2. Ao se aproximar da área visível, cada seção solicita seus gráficos com o mesmo recorte e par de semestres da página, além da `revisao`. Cada resposta é renderizada de forma independente.
 3. A busca de cadeiras usa a lista da página. A consulta de gráficos é feita para o código selecionado quando a área de cadeiras se torna visível ou recebe foco.
 4. Ao trocar de recorte ou de disciplina, o cliente cancela as requisições que ficaram obsoletas. Falhas são exibidas junto ao conteúdo afetado, com opção de repetir a consulta. Uma revisão vencida oferece atualizar os dados.
 
@@ -243,15 +270,16 @@ Exemplo em PowerShell para consultar a página, a evolução e uma disciplina:
 ```powershell
 $port = if ($env:API_PORT) { $env:API_PORT } else { '8001' }
 $base = "http://localhost:${port}/api/v1/painel/mc"
-$page = Invoke-RestMethod "${base}?recorte=accumulated"
+$query = 'recorte=compare&referencia=2025.2&semestre=2026.2'
+$page = Invoke-RestMethod "${base}?$query"
 $revision = $page.meta.revision
-Invoke-RestMethod "${base}/secoes/evolucao?recorte=accumulated&revisao=$revision"
-Invoke-RestMethod "${base}/disciplinas/MC0002?recorte=accumulated&revisao=$revision"
+Invoke-RestMethod "${base}/secoes/evolucao?${query}&revisao=$revision"
+Invoke-RestMethod "${base}/disciplinas/MC0005?${query}&revisao=$revision"
 ```
 
 ### Rotas anteriores
 
-`GET /api/painel` entrega a resposta completa com todos os recortes e grupos. `GET /api/graficos` devolve o catálogo diretamente. Essas rotas mantêm o formato anterior, incluindo o campo `erro` na resposta 503 de `/api/painel`.
+`GET /api/painel` entrega a resposta completa dos grupos nos recortes acumulado, histórico e oferta aberta. Use a API v1 para escolher um par de semestres. `GET /api/graficos` devolve o catálogo diretamente. Essas rotas mantêm o formato anterior, incluindo o campo `erro` na resposta 503 de `/api/painel`.
 
 ## Testes e exportação
 

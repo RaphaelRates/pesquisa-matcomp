@@ -11,10 +11,9 @@ from fractions import Fraction
 from services.analytics.metrics import chart, metrics, overview_panels, sources, varied_charts
 from services.analytics.statistics import statistical_panel, statistical_summary
 from services.analytics.comparison import compare_plots, compare_statistics, compare_summary
-from services.config import CURRENT_PERIOD, START_PERIOD
 from services.domain.courses import COURSES, curriculum
 from services.dashboard.catalog import apply_catalog
-from services.dashboard.periods import scope_summary
+from services.dashboard.periods import period_samples, scope_summary
 from services.dashboard.scopes import course_scope, scope_plot as _scope_plot, scope_text as _scope_text
 
 
@@ -27,17 +26,6 @@ GROUPS = (
     dict(id='es', label='ES · Engenharia de Software', title='Engenharia de Software', courseKey='software'),
 )
 VIEW_KEYS = ('accumulated', 'historical', 'current', 'baseline')
-
-
-def _scope_rows(offers, scope):
-    def selected(row):
-        if scope['status'] == 'MISTA':
-            return START_PERIOD <= row['periodo'] <= CURRENT_PERIOD and (
-                row['situacao'] == 'CONSOLIDADA' and row['periodo'] < CURRENT_PERIOD
-                or row['situacao'] == 'ABERTA' and row['periodo'] == CURRENT_PERIOD)
-        return row['situacao'] == scope['status']
-    return [row for row in offers if row['modalidade'] == 'Presencial' and row['capacidade'] > 0
-            and row['periodo'] in scope['periods'] and selected(row)]
 
 
 def _rankings(rows):
@@ -147,11 +135,12 @@ def course_comparisons(rows, scope, catalog=None):
 def enrich_groups(offers, views):
     """Acrescenta grupos padronizados e comparações entre cursos em cada recorte."""
     courses = {course['key']: course for course in COURSES}
+    samples, _, _ = period_samples(offers)
     for key in VIEW_KEYS:
         if key not in views:
             continue
         view = views[key]
-        rows = _scope_rows(offers, view['scope'])
+        rows = samples[key]
         groups = {}
         for definition in GROUPS:
             config = courses.get(definition['courseKey'])
@@ -169,21 +158,24 @@ def _plots(view):
 
 
 def attach_group_comparisons(views):
-    """Compara 2026.2 com a referência e compartilha a tabela entre as abas."""
+    """Compara a oferta aberta com a referência e compartilha a tabela entre as abas."""
     current = views['current']
     baseline = views.get('baseline', {})
     period = views.get('baselinePeriod')
+    current_period = views.get('currentPeriod')
     old_plots = {plot['id']: plot for plot in _plots(baseline)}
     current_plots = {plot['id']: plot for plot in _plots(current)}
     for plot_id, plot in current_plots.items():
         old = old_plots.get(plot_id)
-        plot['comparison'] = compare_plots(old, plot, period)
+        plot['comparison'] = compare_plots(old, plot, period, current_period)
         if period and old is not None:
             plot['comparison']['baselinePlot'] = old
     for group_id, group in current['groups'].items():
         old = baseline.get('groups', {}).get(group_id, {})
-        group['summary']['comparison'] = compare_summary(old.get('summary', {}).get('selected'), group['summary']['selected'], period)
-        group['statisticalSummary']['comparison'] = compare_statistics(old.get('statisticalSummary'), group['statisticalSummary'], period)
+        group['summary']['comparison'] = compare_summary(
+            old.get('summary', {}).get('selected'), group['summary']['selected'], period, current_period)
+        group['statisticalSummary']['comparison'] = compare_statistics(
+            old.get('statisticalSummary'), group['statisticalSummary'], period, current_period)
     for key in ('accumulated', 'historical'):
         if key not in views:
             continue

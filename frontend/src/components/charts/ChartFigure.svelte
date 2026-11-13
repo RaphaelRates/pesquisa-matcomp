@@ -6,7 +6,7 @@
   let { plot } = $props();
   const isHeatmap = $derived(plot.spec?.type === 'heatmap');
   const hasValues = $derived(plot.rows.length > 0
-    && (!isHeatmap || plot.rows.some(row => row.at(-1) != null)));
+    && (!isHeatmap || plot.spec.yGroups || plot.rows.some(row => row.at(-1) != null)));
   let showTable = $state(false);
 </script>
 

@@ -1214,6 +1214,62 @@ details table {
   background: #fff
 }
 
+#resumo-anual,
+#comparacao-semestres {
+  scroll-margin-top: 100px
+}
+
+.annual-overview h2,
+.comparison-heading h2 {
+  font-size: 1.15rem
+}
+
+.annual-overview .scroll {
+  margin: 14px 0
+}
+
+.annual-overview thead {
+  background: #f3f7fc
+}
+
+.semester-selects {
+  margin: 16px 0 0;
+  max-width: 560px
+}
+
+.curriculum-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 8px 16px;
+  margin: 14px 0;
+  font-size: .85rem
+}
+
+.curriculum-controls label {
+  display: grid;
+  gap: 4px
+}
+
+.curriculum-controls select {
+  font: inherit;
+  color: inherit;
+  background: white;
+  border: 1px solid #b4c7df;
+  border-radius: 6px;
+  padding: 7px
+}
+
+.curriculum-controls a {
+  color: #285f9a;
+  padding-bottom: 7px
+}
+
+.heat .heat-curriculum-group th {
+  background: #edf4fc;
+  color: #274a72
+}
+
 .comparison-heading {
   display: flex;
   justify-content: space-between;

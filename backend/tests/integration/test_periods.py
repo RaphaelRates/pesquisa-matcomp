@@ -30,8 +30,8 @@ class PeriodViewTests(unittest.TestCase):
             offer('CC0001', '2026.1', 10, 9),
             offer('MC0001', '2026.2', 20, 18, 'ABERTA'),
             offer('CC0001', '2026.2', 10, 5, 'ABERTA'),
-            offer('MC0001', '2026.2', 99, 99),  # Situação diferente da oferta aberta.
-            offer('MC0001', '2027.1', 99, 99),  # Não pertence ao histórico anterior.
+            offer('MC0001', '2026.2', 5, 2),  # Consolidada no semestre da oferta aberta.
+            offer('MC0001', '2027.1', 99, 99, 'INTERROMPIDA'),
             offer('MC0001', '2026.2', 99, 99, 'ABERTA', 'A Distância'),
             offer('MC0001', '2026.2', 0, 0, 'ABERTA'),
         ]
@@ -41,8 +41,8 @@ class PeriodViewTests(unittest.TestCase):
         views = build_period_views(self.offers)
         self.assertEqual(self.offers, original)
         self.assertEqual(views['baselinePeriod'], '2026.1')
-        self.assertEqual(views['historicalPeriods'], ['2025.2', '2026.1'])
-        for key, counts in [('historical', (3, 40, 21)), ('current', (2, 30, 23)), ('baseline', (2, 30, 19)), ('accumulated', (5, 70, 44))]:
+        self.assertEqual(views['historicalPeriods'], ['2025.2', '2026.1', '2026.2'])
+        for key, counts in [('historical', (4, 45, 23)), ('current', (2, 30, 23)), ('baseline', (2, 30, 19)), ('accumulated', (6, 75, 46))]:
             summary = panel(views[key], 'evolucao')['summary']['selected']
             self.assertEqual((summary['n'], summary['c'], summary['m']), counts)
         self.assertEqual(panel(views['current'], 'evolucao')['summary']['historico']['n'], 0)

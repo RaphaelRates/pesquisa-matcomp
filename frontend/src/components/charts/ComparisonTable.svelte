@@ -11,7 +11,7 @@
       <thead>
         <tr>
           <th scope="col">Categoria / métrica</th><th scope="col">{comparison.baselinePeriod ?? 'Referência'}</th>
-          <th scope="col">{comparison.currentPeriod} · aberta</th><th scope="col">Diferença</th>
+          <th scope="col">{comparison.currentPeriod ?? 'Semestre comparado'}</th><th scope="col">Diferença</th>
           <th scope="col">Variação relativa</th>
         </tr>
       </thead>

@@ -1,0 +1,137 @@
+"""Ordem das obrigatórias no portal da UFCA e nas matrizes anteriores do SIGAA."""
+
+from typing import NamedTuple
+
+
+class PPC(NamedTuple):
+    id: str
+    label: str
+    source: str
+    semesters: tuple[str, ...]
+
+
+def _source(course_id):
+    return f'https://sigaa.ufca.edu.br/sigaa/public/curso/curriculo.jsf?id={course_id}&lc=pt_BR'
+
+
+def _portal(course):
+    return f'https://www.ufca.edu.br/cursos/graduacao/{course}/#tab-2'
+
+
+PPCS = {
+    'mc': (
+        PPC('mc002', 'MC002 · 2023.1', _portal('matematica-computacional'), (
+            'MC0001 MC0002 MC0003 MC0004',
+            'MC0005 MC0006 MC0007 MC0009 MC0018',
+            'MC0011 MC0041 MC0042 MC0043',
+            'MC0014 MC0016 MC0017 MC0044',
+            'MC0019 MC0020 MC0021 MC0022',
+            'MC0023 MC0026 MC0036 MC0045',
+        )),
+        PPC('mc001', 'MC001 · 2019.1', _source(32650450), (
+            'MC0001 MC0002 MC0003 MC0004',
+            'MC0005 MC0006 MC0007 MC0008 MC0009',
+            'MC0010 MC0011 MC0012 MC0013',
+            'MC0014 MC0015 MC0016 MC0017 MC0018',
+            'MC0019 MC0020 MC0021 MC0022',
+            'MC0023 MC0024 MC0025 MC0026',
+            'MC0027',
+        )),
+    ),
+    'cc': (
+        PPC('cc002', 'CC002 · 2023', _portal('ciencia-da-computacao'), (
+            'CC0001 CC0002 CC0004 CC0005 CC0015',
+            'CC0007 CC0020 CC0061 CC0062 CC0063',
+            'CC0017 CC0018 CC0019 CC0026 CC0064',
+            'CC0010 CC0022 CC0024 CC0025 CC0065',
+            'CC0029 CC0030 CC0044 CC0066',
+            'CC0027 CC0032 CC0042 CC0067 CC0068',
+        )),
+        PPC('cc001', 'CC001 · 2019', _source(32652294), (
+            'CC0001 CC0002 CC0003 CC0004 CC0005',
+            'CC0006 CC0007 CC0008 CC0009 CC0010 CC0011',
+            'CC0012 CC0013 CC0014 CC0015 CC0016',
+            'CC0017 CC0018 CC0019 CC0020 CC0021 CC0022',
+            'CC0023 CC0024 CC0025 CC0026 CC0027',
+            'CC0028 CC0029 CC0030 CC0031',
+            'CC0032 CC0033 CC0034',
+            'CC0035',
+        )),
+    ),
+    'materiais': (
+        PPC('em01', 'EM01 · 2023.1', _portal('engenharia-de-materiais'), (
+            'CAR0001 EM0004 EM0076 EM0077 EM0079 EM0084',
+            'CAR0004 EM0010 EM0078 EM0080 EM0081 EM0082 EM0083',
+            'CAR0005 EM0002 EM0014 EM0015 EM0017 EM0024 EM0085',
+            'EM0019 EM0022 EM0086 EM0087 EM0088 EM0089',
+            'EM0020 EM0030 EM0042 EM0090 EM0091 EM0092',
+            'EM0043 EM0050 EM0093 EM0094 EM0095 EM0096',
+            'EM0033 EM0051 EM0097 EM0098 EM0099 EM0100',
+            'CAR0003 EM0060 EM0101 EM0102',
+            'EM0103',
+            'EM0104',
+        )),
+        PPC('em2010', '2010.1 · PPC 2009', _source(628409), (
+            'CAR0001 EM0002 EM0003 EM0004 EM0005 EM0011',
+            'CAR0002 CAR0003 CAR0004 EM0006 EM0009 EM0010 EM0013',
+            'CAR0005 EM0014 EM0015 EM0017 EM0018 EM0048',
+            'EM0019 EM0020 EM0021 EM0022 EM0023 EM0024 EM0027',
+            'EM0028 EM0029 EM0030 EM0031 EM0032 EM0033',
+            'EM0034 EM0036 EM0037 EM0038 EM0039 EM0071',
+            'EM0040 EM0041 EM0042 EM0043',
+            'EM0049 EM0050 EM0051 EM0052',
+            'EM0060',
+            'EM0070 EM0072',
+        )),
+    ),
+    'civil': (
+        PPC('eci01', 'ECI01 · 2023.1', _portal('engenharia-civil'), (
+            'CAR0008 CAR0033 ECI0079 ECI0088 ECI0089',
+            'CAR0002 CAR0003 CAR0011 ECI0002 ECI0009 ECI0078',
+            'CAR0012 CAR0034 ECI0025 ECI0098 ECI0099 ECI0100',
+            'ECI0011 ECI0016 ECI0023 ECI0080 ECI0103 ECI0104',
+            'ECI0021 ECI0028 ECI0031 ECI0105 ECI0106 ECI0135',
+            'ECI0034 ECI0036 ECI0037 ECI0044 ECI0045 ECI0107',
+            'ECI0090 ECI0109 ECI0113 ECI0136 ECI0137 ECI0138',
+            'ECI0050 ECI0091 ECI0117 ECI0118 ECI0139 ECI0140 ECI0141',
+            'ECI0041 ECI0053 ECI0054 ECI0092 ECI0120 ECI0122',
+            'ECI0055',
+        )),
+        PPC('eci2018', '2018.1 · PPC 2018.2', _source(628403), (
+            'CAR0008 CAR0009 ECI0079 ECI0087 ECI0088 ECI0089',
+            'CAR0002 CAR0003 CAR0011 ECI0002 ECI0009 ECI0078',
+            'CAR0012 CAR0017 ECI0097 ECI0098 ECI0099 ECI0100',
+            'ECI0023 ECI0080 ECI0101 ECI0102 ECI0103 ECI0104',
+            'ECI0028 ECI0031 ECI0032 ECI0105 ECI0106',
+            'ECI0034 ECI0036 ECI0037 ECI0044 ECI0107',
+            'ECI0090 ECI0109 ECI0110 ECI0111 ECI0112 ECI0113',
+            'ECI0091 ECI0114 ECI0115 ECI0116 ECI0117 ECI0118 ECI0119',
+            'ECI0053 ECI0054 ECI0092 ECI0120 ECI0121 ECI0122',
+            'ECI0132',
+        )),
+        PPC('eci2006', '2006.2', _source(628403), (
+            'CAR0001 CAR0002 ECI0002 ECI0006 ECI0079',
+            'CAR0003 CAR0004 ECI0007 ECI0009 ECI0025 ECI0078',
+            'CAR0005 ECI0011 ECI0012 ECI0013 ECI0014 ECI0015 ECI0016',
+            'ECI0017 ECI0018 ECI0020 ECI0021 ECI0022 ECI0023 ECI0080',
+            'ECI0028 ECI0029 ECI0030 ECI0031 ECI0032 ECI0033',
+            'ECI0034 ECI0035 ECI0036 ECI0037 ECI0038',
+            'ECI0039 ECI0040 ECI0041 ECI0042 ECI0043 ECI0044 ECI0045',
+            'ECI0046 ECI0047 ECI0048 ECI0049 ECI0050 ECI0051 ECI0052',
+            'ECI0053 ECI0054',
+            'ECI0055',
+        )),
+    ),
+    'software': (
+        PPC('es01', 'ES01 · 2025.1', _portal('engenharia-de-software'), (
+            'ES0001 ES0002 ES0003 ES0004 ES0005',
+            'ES0006 ES0007 ES0008 ES0009 ES0010',
+            'ES0011 ES0012 ES0013 ES0014 ES0015',
+            'ES0016 ES0017 ES0018 ES0019 ES0020',
+            'ES0021 ES0022 ES0023 ES0024 ES0025',
+            'ES0026 ES0027 ES0028 ES0029 ES0030',
+            'ES0031 ES0032 ES0033 ES0034',
+            'ES0035 ES0036',
+        )),
+    ),
+}

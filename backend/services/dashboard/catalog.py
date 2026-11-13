@@ -42,7 +42,8 @@ def apply_catalog(panels, disciplines, entries=None):
         for field in ['nome', 'descricao']:
             if not isinstance(entry.get(field), str) or not entry[field].strip():
                 raise ValueError(f'Campo {field} inválido no gráfico {key}')
-        plot['title'], plot['description'] = entry['nome'], entry['descricao']
+        for variant in (plot, *plot.get('curriculumAlternatives', {}).values()):
+            variant['title'], variant['description'] = entry['nome'], entry['descricao']
         if 'formato' in plot:
             plot['formato'] = kind
         else:

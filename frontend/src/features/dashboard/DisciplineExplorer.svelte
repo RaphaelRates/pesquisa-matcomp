@@ -8,7 +8,7 @@
   import SummaryCards from './SummaryCards.svelte';
   import { nearViewport } from '../../lib/visibility.js';
 
-  let { disciplines, scope, group, revision, hash, refresh, syncLocation } = $props();
+  let { disciplines, scope, group, revision, pair, hash, refresh, syncLocation } = $props();
   const normalize = text => text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('pt-BR');
   const searchIndex = $derived(disciplines.map(item => ({ ...item, text: normalize(`${item.code} ${item.name}`) })));
   let search = $state('');
@@ -47,7 +47,7 @@
     if (!selected) return;
     const { signal } = (controller = new AbortController());
     try {
-      const response = await requestDashboard(group, scope.id, '/disciplinas/' + encodeURIComponent(selected), signal, revision);
+      const response = await requestDashboard(group, scope.id, '/disciplinas/' + encodeURIComponent(selected), signal, revision, pair);
       if (signal.aborted) return;
       payload = response.data;
     } catch (failure) {
@@ -89,7 +89,9 @@
       {@const m = payload.summary.selected}
       <h3 class="section-heading">{payload.code} · {payload.name}</h3>
       <SummaryCards summary={payload.summary} {scope} />
-      <ComparisonOverview comparison={payload.summary.comparison} heading="Comparação desta cadeira" />
+      {#if scope.id !== 'accumulated'}
+        <ComparisonOverview comparison={payload.summary.comparison} heading="Comparação desta cadeira" id={null} />
+      {/if}
       <p class="discipline-reading">
         {#if m.n}
           {format(m.free)} vagas não preenchidas e {format(m.extra)} matrículas acima da capacidade.

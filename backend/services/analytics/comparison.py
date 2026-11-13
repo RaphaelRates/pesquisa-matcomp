@@ -12,7 +12,6 @@ import re
 import unicodedata
 
 
-CURRENT_PERIOD = '2026.2'
 SUMMARY_METRICS = [
     ('n', 'Turmas', 'number'), ('c', 'Vagas ofertadas', 'number'),
     ('m', 'Matrículas', 'number'), ('rate', 'Ocupação geral', 'percent'),
@@ -52,22 +51,22 @@ def _row(category, metric, before, after, unit='number'):
                 delta=delta, relativeChange=relative, unit=unit, status=status)
 
 
-def _comparison(rows, baseline_period, note=''):
-    return dict(baselinePeriod=baseline_period, currentPeriod=CURRENT_PERIOD, rows=rows, note=note)
+def _comparison(rows, baseline_period, current_period, note):
+    return dict(baselinePeriod=baseline_period, currentPeriod=current_period, rows=rows, note=note)
 
 
-def compare_summary(before, after, baseline_period):
+def compare_summary(before, after, baseline_period, current_period=None):
     """Compara métricas de amostras de um semestre, nunca histórico acumulado."""
     before, after = (before or {}) if baseline_period else {}, after or {}
     return _comparison([
         _row('Total do semestre', name, before.get(key), after.get(key), unit)
         for key, name, unit in SUMMARY_METRICS
-    ], baseline_period,
-        'Cada coluna representa um semestre. Ocupação varia em pontos percentuais; '
-        'a variação relativa não é definida com base zero. A oferta de 2026.2 ainda está aberta.')
+    ], baseline_period, current_period,
+        'A diferença de ocupação é expressa em pontos percentuais. '
+        'A variação relativa só é calculada com referência positiva.')
 
 
-def compare_statistics(before, after, baseline_period):
+def compare_statistics(before, after, baseline_period, current_period=None):
     before, after = (before or {}) if baseline_period else {}, after or {}
     fields = [
         ('occupancy', 'mean', 'Ocupação média por turma', 'percent'),
@@ -96,7 +95,7 @@ def compare_statistics(before, after, baseline_period):
         _row('Estatísticas do semestre', name, before.get(section, {}).get(key),
              after.get(section, {}).get(key), unit)
         for section, key, name, unit in fields
-    ], baseline_period, 'Os índices usam as distribuições de cada semestre. Diferenças são descritivas; '
+    ], baseline_period, current_period, 'Os índices usam as distribuições de cada semestre. Diferenças são descritivas; '
         'índices e coeficientes são comparados na própria escala, sem variação relativa.')
 
 
@@ -123,8 +122,7 @@ def _metric(value):
     }
     if text in names:
         return names[text]
-    if _fold(text) in {'consolidadas', 'consolidadas ate 2026.1',
-                       'abertas em 2026.2', 'abertas 2026.2', 'recorte selecionado'}:
+    if _fold(text) in {'consolidadas', 'abertas', 'recorte selecionado'}:
         return 'Recorte selecionado'
     return text
 
@@ -182,14 +180,14 @@ def _extract(plot):
     return result
 
 
-def compare_plots(before, after, baseline_period):
+def compare_plots(before, after, baseline_period, current_period=None):
     """Compara as medidas do gráfico por categoria e série compatível."""
     if not baseline_period:
         before = None
     plot = after or before or {}
     kind = plot.get('formato', plot.get('spec', {}).get('type'))
     if kind in {'scatter', 'bubble', 'statisticalScatter'} or plot.get('catalogKey') == 'cadeira-por-turma':
-        return _comparison([], baseline_period,
+        return _comparison([], baseline_period, current_period,
             'Os pontos e as turmas não são as mesmas observações nos dois semestres. '
             'A comparação ponto a ponto não se aplica; consulte os indicadores do semestre e o gráfico de referência.')
     old, new = _extract(before), _extract(after)
@@ -199,7 +197,7 @@ def compare_plots(before, after, baseline_period):
         before_value, old_unit = old.get((category, metric), (None, None))
         after_value, new_unit = new.get((category, metric), (None, None))
         rows.append(_row(category, metric, before_value, after_value, new_unit or old_unit or 'number'))
-    note = ('Diferença = 2026.2 menos o semestre de referência. Percentuais usam pontos percentuais. '
+    note = ('A diferença subtrai o semestre de referência do semestre comparado. Percentuais usam pontos percentuais. '
             'Sem valor indica ausência de categoria, oferta ou medida definida; não equivale a zero.')
     if kind in {'ranking', 'horizontalBar'}:
         note += ' Categorias fora de um ranking limitado não são tratadas como zero.'
@@ -210,14 +208,14 @@ def compare_plots(before, after, baseline_period):
         # O agrupamento de capacidades menos frequentes muda de composição.
         rows = [r for r in rows if _fold(r['category']) not in {'outras', 'outras capacidades'}]
         note += ' O grupo Outras foi omitido da diferença porque sua composição pode variar entre semestres.'
-    return _comparison(rows, baseline_period, note)
+    return _comparison(rows, baseline_period, current_period, note)
 
 
 def _selected(summary):
     return (summary or {}).get('selected')
 
 
-def attach_comparisons(current, baseline, baseline_period):
+def attach_comparisons(current, baseline, baseline_period, current_period=None):
     """Acrescenta tabelas de diferenças sem modificar as medidas dos gráficos."""
     baseline = baseline or {'paineis': [], 'disciplines': {}}
     old_panels = {p['id']: p for p in baseline.get('paineis', [])}
@@ -227,21 +225,21 @@ def attach_comparisons(current, baseline, baseline_period):
         old_panel = old_panels.get(panel['id'], {})
         if 'summary' in panel:
             panel['summary']['comparison'] = compare_summary(_selected(old_panel.get('summary')),
-                                                            _selected(panel['summary']), baseline_period)
+                                                            _selected(panel['summary']), baseline_period, current_period)
         if 'statisticalSummary' in panel:
             panel['statisticalSummary']['comparison'] = compare_statistics(
-                old_panel.get('statisticalSummary'), panel['statisticalSummary'], baseline_period)
+                old_panel.get('statisticalSummary'), panel['statisticalSummary'], baseline_period, current_period)
         for section in panel.get('sections', []):
             for plot in section.get('plots', []):
-                plot['comparison'] = compare_plots(old_plots.get(plot['id']), plot, baseline_period)
+                plot['comparison'] = compare_plots(old_plots.get(plot['id']), plot, baseline_period, current_period)
     # MC compartilha os objetos da lista CCT. Uma única passagem evita trabalho
     # duplicado e conserva o resultado em ambos os recortes.
     old_disciplines = {d['code']: d for d in baseline.get('disciplines', {}).get('cct', [])}
     for discipline in current.get('disciplines', {}).get('cct', []):
         old_discipline = old_disciplines.get(discipline['code'], {})
         discipline['summary']['comparison'] = compare_summary(_selected(old_discipline.get('summary')),
-                                                              _selected(discipline['summary']), baseline_period)
+                                                              _selected(discipline['summary']), baseline_period, current_period)
         old_discipline_plots = {p['id']: p for p in old_discipline.get('plots', [])}
         for plot in discipline.get('plots', []):
-            plot['comparison'] = compare_plots(old_discipline_plots.get(plot['id']), plot, baseline_period)
+            plot['comparison'] = compare_plots(old_discipline_plots.get(plot['id']), plot, baseline_period, current_period)
     return current

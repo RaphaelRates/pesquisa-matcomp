@@ -85,19 +85,18 @@ class PreprocessingTests(unittest.TestCase):
         self.assertEqual(result['recordIndices'], [0, 1])
         self.assertEqual(find_consistency_issues([first, dict(first)])['findings'], [])
 
-    def test_quality_count_excludes_current_or_future_consolidated_classes(self):
+    def test_quality_count_includes_eligible_classes_from_all_semesters(self):
         raw = [offer('2026.1', 'CONSOLIDADA'), offer('2026.2', 'ABERTA'),
                offer('2026.2', 'CONSOLIDADA', code='MC0002'),
                offer('2027.1', 'CONSOLIDADA'), offer('2025.2', 'ABERTA'),
                offer('2026.1', 'CONSOLIDADA', modality='A Distância'),
                offer('2026.1', 'CONSOLIDADA', code='MC0003', capacity=0)]
         rows, report = preprocess_offers(raw)
-        self.assertEqual(report['inScopeRows'], 2)
-        self.assertEqual(report['outOfScopeRows'], 3)
+        self.assertEqual(report['inScopeRows'], 5)
+        self.assertEqual(report['outOfScopeRows'], 0)
         self.assertEqual(report['excludedRows'], 2)
         views = build_period_views(rows)
-        displayed = sum(next(p for p in views[key]['paineis'] if p['id'] == 'evolucao')
-                        ['summary']['selected']['n'] for key in ['historical', 'current'])
+        displayed = next(p for p in views['accumulated']['paineis'] if p['id'] == 'evolucao')['summary']['selected']['n']
         self.assertEqual(report['inScopeRows'], displayed)
 
     def test_duplicate_provenance_does_not_double_count_but_conflict_is_preserved(self):

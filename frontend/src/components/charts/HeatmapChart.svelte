@@ -21,7 +21,11 @@
   <table class="heat" aria-label={plot.title}>
     <thead><tr><th scope="col">{spec.y}</th>{#each columns as column}<th scope="col">{column}</th>{/each}</tr></thead>
     <tbody>
-      {#each labels as label}
+      {#each labels as label, index}
+        {@const semester = spec.yGroups?.[label]}
+        {#if semester && semester !== spec.yGroups[labels[index - 1]]}
+          <tr class="heat-curriculum-group"><th colspan={columns.length + 1}>{semester}</th></tr>
+        {/if}
         <tr>
           <th scope="row">{label}</th>
           {#each columns as column}

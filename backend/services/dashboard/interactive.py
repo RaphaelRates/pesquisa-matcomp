@@ -8,10 +8,10 @@ from services.analytics.comparison import compare_plots, compare_statistics, com
 from services.analytics.disciplines import discipline_cohort_analyses
 from services.analytics.metrics import course_panel, metrics, sources
 from services.analytics.statistics import statistical_summary
-from services.config import CATALOG_PATH, CURRENT_PERIOD
+from services.config import CATALOG_PATH
 from services.dashboard.catalog import apply_catalog, load_catalog_entries
 from services.dashboard.groups import GROUPS, GROUP_FAMILIES, course_comparisons, group_sections
-from services.dashboard.periods import _keep_plot, period_samples, scope_summary
+from services.dashboard.periods import _keep_plot, period_breakdown, period_samples, scope_summary
 from services.dashboard.scopes import course_scope, scope_plot, scope_text
 from services.data.consistency import course_consistency
 from services.data.loader import load_offers
@@ -22,6 +22,7 @@ from services.domain.courses import COURSES, curriculum
 GROUP_BY_ID = {group['id']: group for group in GROUPS}
 COURSE_BY_KEY = {course['key']: course for course in COURSES}
 SCOPES = ('accumulated', 'historical', 'current')
+COMPARISON_SCOPES = ('latest', 'compare')
 FAMILIES = {**GROUP_FAMILIES, 'curso': 'Análises específicas do curso', 'comparacao': 'Comparação entre cursos'}
 SPECIFIC_CHARTS = {
     'comparacao', 'natureza', 'historico-obrigatorias', 'historico-optativas',
@@ -35,6 +36,10 @@ class DisciplineNotFound(LookupError):
     """Código ausente do grupo consultado."""
 
 
+class InvalidSemesterPair(ValueError):
+    """A comparação exige dois semestres distintos com oferta no grupo."""
+
+
 class DashboardSnapshot:
     def __init__(self, offers, quality, source, catalog, revision):
         self.quality = quality
@@ -43,44 +48,70 @@ class DashboardSnapshot:
         self.generated_at = datetime.now(timezone.utc).isoformat()
         self.samples, self.scopes, self.known = period_samples(offers)
         self.source = dict(source, currentEligibleRows=len(self.samples['current']))
+        self.current = next(iter(self.scopes['current']['periods']), None)
         self.baseline = next(iter(self.scopes['baseline']['periods']), None)
 
-    def page(self, group_id, scope_id):
+    def _context(self, group_id, scope_id, pair):
         group = GROUP_BY_ID[group_id]
         course = COURSE_BY_KEY.get(group['courseKey'])
         allowed = set.union(*curriculum(sources, course)) if course else self.known.keys()
-        samples, scopes = self.samples, self.scopes
+        samples, scopes = dict(self.samples), dict(self.scopes)
         if course:
-            samples = {key: [row for row in rows if row['codigo'] in allowed]
-                       for key, rows in self.samples.items()}
-            scopes = {key: course_scope(self.scopes[key], rows) for key, rows in samples.items()}
+            scopes = {key: course_scope(self.scopes[key], [row for row in rows if row['codigo'] in allowed])
+                      for key, rows in self.samples.items()}
+        baseline_period, current_period = self.baseline, self.current
+        if scope_id in COMPARISON_SCOPES:
+            periods = scopes['accumulated']['periods']
+            if scope_id == 'latest' or pair is None:
+                pair = tuple(([None, None] + periods)[-2:])
+            elif pair[0] == pair[1] or any(period not in periods for period in pair):
+                raise InvalidSemesterPair
+            baseline_period, current_period = pair
+            all_rows = self.samples['accumulated']
+            definitions = (
+                ('baseline', 'Semestre de referência', (baseline_period,)),
+                ('current', 'Semestre comparado', (current_period,)),
+                (scope_id, 'Semestres selecionados', pair),
+            )
+            for key, label, selected_periods in definitions:
+                samples[key] = [row for row in all_rows if row['periodo'] in selected_periods]
+                selected = [row for row in samples[key] if row['codigo'] in allowed]
+                scopes[key] = course_scope(dict(id=key, label=label, status='MISTA'), selected, course=bool(course))
+        return group, course, allowed, samples, scopes, baseline_period, current_period
+
+    def page(self, group_id, scope_id, pair=None):
+        group, course, allowed, samples, scopes, baseline_period, current_period = self._context(group_id, scope_id, pair)
         scope = scopes[scope_id]
         selected, current, baseline = (
-            samples[key] for key in (scope_id, 'current', 'baseline')
+            [row for row in samples[key] if row['codigo'] in allowed] for key in (scope_id, 'current', 'baseline')
         )
         summary = scope_summary(selected, scope)
-        summary['comparison'] = compare_summary(
-            metrics(baseline) if self.baseline else None, metrics(current), self.baseline)
+        if current_period:
+            summary['comparison'] = compare_summary(
+                metrics(baseline) if baseline else None, metrics(current) if current else None,
+                baseline_period, current_period)
+        breakdown = period_breakdown(selected)
+        if scope_id == 'current' or scope_id in COMPARISON_SCOPES:
+            breakdown['semesters'] = period_breakdown(samples['accumulated'])['semesters']
         sections = list(GROUP_FAMILIES) + (['curso'] if course else ['comparacao'])
+        disciplines = {row['codigo'] for row in selected} if scope_id in COMPARISON_SCOPES else allowed & self.known.keys()
         context = {'consistency': course_consistency(self.quality['consistency'], allowed)} if course else {}
         return dict(group=group, scope=scope, scopes=[scopes[key] for key in SCOPES],
-                    summary=summary, source=self.source, quality=self.quality, generatedAt=self.generated_at,
+                    summary=summary, periodBreakdown=breakdown, source=self.source, quality=self.quality,
+                    generatedAt=self.generated_at,
                     sections=[dict(id=key, title=FAMILIES[key]) for key in sections],
-                    disciplines=[dict(code=code, name=self.known[code]) for code in sorted(allowed & self.known.keys())],
-                    currentPeriod=CURRENT_PERIOD, baselinePeriod=self.baseline, **context)
+                    disciplines=[dict(code=code, name=self.known[code]) for code in sorted(disciplines)],
+                    currentPeriod=self.current, baselinePeriod=baseline_period,
+                    comparedPeriod=current_period if scope_id in COMPARISON_SCOPES else None, **context)
 
-    def charts(self, group_id, scope_id, family=None, code=None):
-        group = GROUP_BY_ID[group_id]
-        course = COURSE_BY_KEY.get(group['courseKey'])
-        allowed = set.union(*curriculum(sources, course)) if course else self.known.keys()
+    def charts(self, group_id, scope_id, family=None, code=None, pair=None):
+        group, course, allowed, samples, scopes, baseline_period, current_period = self._context(group_id, scope_id, pair)
         if code is not None and (code not in self.known or code not in allowed):
             raise DisciplineNotFound(code)
 
         def sample(key):
-            rows, scope = self.samples[key], self.scopes[key]
+            rows, scope = samples[key], scopes[key]
             selected = [row for row in rows if row['codigo'] in allowed] if course else rows
-            if course:
-                scope = course_scope(scope, selected)
             if code is not None:
                 return self._discipline([row for row in selected if row['codigo'] == code], scope, code)
             if family == 'comparacao':
@@ -94,27 +125,44 @@ class DashboardSnapshot:
             return dict(statisticalSummary=stats, sections=group_sections(
                 selected, scope, group, course, family, summary=stats, catalog=self.catalog))
 
-        current, baseline = sample('current'), sample('baseline')
+        if not current_period or not baseline_period:
+            result = sample(scope_id)
+            for section in result['sections']:
+                for plot in section['plots']:
+                    plot.pop('comparisonRecords', None)
+            return result
+        current = sample('current')
+        baseline = sample('baseline')
         result = current if scope_id == 'current' else sample(scope_id)
 
         def plots(payload):
             return {p['id']: p for section in payload['sections'] for p in section['plots']}
 
         current_plots, reference = plots(current), plots(baseline)
-        for key, plot in plots(result).items():
-            old = reference.get(key)
-            comparison = compare_plots(old, current_plots[key], self.baseline)
-            if self.baseline and old is not None:
+
+        def attach(plot, old, new):
+            comparison = compare_plots(old, new, baseline_period, current_period)
+            if old is not None:
                 old.pop('comparisonRecords', None)
-                comparison['baselinePlot'] = old
+                comparison['baselinePlot'] = {key: value for key, value in old.items()
+                                              if key not in {'curriculumOptions', 'curriculumAlternatives'}}
             plot.pop('comparisonRecords', None)
             plot['comparison'] = comparison
+
+        for key, plot in plots(result).items():
+            old = reference.get(key)
+            new = current_plots[key]
+            for matrix, variant in plot.get('curriculumAlternatives', {}).items():
+                attach(variant, old['curriculumAlternatives'][matrix], new['curriculumAlternatives'][matrix])
+            attach(plot, old, new)
         if 'summary' in result:
             result['summary']['comparison'] = compare_summary(
-                baseline['summary']['selected'], current['summary']['selected'], self.baseline)
+                baseline['summary']['selected'] if baseline['summary']['selected']['n'] else None,
+                current['summary']['selected'] if current['summary']['selected']['n'] else None,
+                baseline_period, current_period)
         if result.get('statisticalSummary'):
             result['statisticalSummary']['comparison'] = compare_statistics(
-                baseline['statisticalSummary'], current['statisticalSummary'], self.baseline)
+                baseline['statisticalSummary'], current['statisticalSummary'], baseline_period, current_period)
         return result
 
     def _course(self, rows, scope, course, count):

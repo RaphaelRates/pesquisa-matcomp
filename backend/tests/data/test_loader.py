@@ -13,17 +13,18 @@ from services.config import DEFAULT_DATA
 
 SOURCE = DEFAULT_DATA
 ORIGINAL_CANONICAL_SHA256 = 'f82db114a0319be61348cc6f43662e48d0c943b0affcdaa441ef114271a069d1'
-COUNTS = {'2022.1': 165, '2023.1': 172, '2023.2': 176, '2024.1': 173, '2024.2': 179,
+COUNTS = {'2019.1': 159, '2019.2': 154, '2020.1': 154, '2020.2': 144, '2021.1': 149, '2021.2': 161,
+          '2022.1': 165, '2022.2': 167, '2023.1': 172, '2023.2': 176, '2024.1': 173, '2024.2': 179,
           '2025.1': 175, '2025.2': 170, '2026.1': 172, '2026.2': 173}
 
 
 class SemesterLoaderTests(unittest.TestCase):
     def test_migrated_dataset_preserves_every_record_field_and_order(self):
         rows, source = load_offers(SOURCE)
-        original = [row for row in rows if row['periodo'] != '2022.1']
+        original = [row for row in rows if row['periodo'] >= '2023.1']
         canonical = json.dumps(original, ensure_ascii=False, sort_keys=True, separators=(',', ':')).encode()
         self.assertEqual(hashlib.sha256(canonical).hexdigest(), ORIGINAL_CANONICAL_SHA256)
-        self.assertEqual(len(rows), 1555)
+        self.assertEqual(len(rows), 2643)
         self.assertEqual(dict(Counter(row['periodo'] for row in rows)), COUNTS)
         self.assertEqual([file['period'] for file in source['files']], list(COUNTS))
         self.assertEqual(source['currentRows'], 173)

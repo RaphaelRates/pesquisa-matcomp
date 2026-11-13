@@ -1,16 +1,16 @@
 # Possíveis turmas conjuntas e inconsistências de horário
 
-Verificação da base em 12/11/2026. Esta é uma lista de indícios para revisão cadastral, não uma confirmação de duplicidade.
+Verificação da base em 13/11/2026. Os casos abaixo são indícios para revisão cadastral.
 
-Fonte: `data/ufca/` · 1555 registros · SHA-256 da coleção: `f8cf50dae9492c48c4e4ca1cd9669b2d28e87c56776b7b197210f8a1cda76a72`.
+Fonte `data/ufca/` · 2643 registros · SHA-256 da coleção `6e54cf1d4eda61ebb72fd8f937a92d76bd0ef44cc57c2edd1ee9681d7a4a38e7`.
 
 ## Resultado
 
-- 9 grupos com códigos diferentes, conjunto de docentes e faixas completas de horário coincidentes: seis com local normalizado igual e três com equivalência Sala/Bloco inferida.
-- 8 pares adicionais com docente em comum e sobreposição parcial ou total de horário, sem coincidência completa de todos os metadados.
-- 14 pares adicionais de turmas distintas com sobreposição na mesma sala.
-- Entre os nove grupos, apenas CC0017/MC0016 tem também o mesmo nome de disciplina. Os outros oito exigem distinguir oferta conjunta de possível erro de horário, local ou associação de docente.
-- Política atual: os 60 registros envolvidos ficam fora dos indicadores até revisão, incluindo 14 de 2022.1. Os arquivos originais e seus valores permanecem intactos.
+- 29 grupos com códigos diferentes, mesmo conjunto de docentes e faixas completas de horário coincidentes. Em 26, o local normalizado coincide. Em três, há equivalência de local inferida.
+- Em 15 desses grupos, o nome da disciplina também coincide.
+- 20 pares adicionais com docente em comum e sobreposição parcial ou total de horário.
+- 20 pares adicionais com sobreposição de horário na mesma sala.
+- Os 133 registros envolvidos ficam fora dos indicadores até revisão.
 
 ## Critérios e limites
 
@@ -21,6 +21,51 @@ O choque de sala exige código de sala identificável, duas turmas com capacidad
 As informações não revelam se a capacidade é uma cota por código, uma capacidade compartilhada, nem se os estudantes se repetem. Não há base para fundir registros ou substituir a ocupação de MC pela ocupação agregada de outro código. Por solicitação do responsável, os registros sinalizados são excluídos integralmente dos cálculos enquanto aguardam revisão. O CCT soma ofertas por código; essa contagem pode exceder a de turmas físicas.
 
 ## Casos para revisão
+
+### Casos de 2019.1 a 2022.2, exceto 2022.1
+
+O painel detalha os docentes, horários, datas, locais e linhas de origem de cada registro.
+
+| Semestre | Indício | Turmas |
+| --- | --- | --- |
+| [2019.1](../data/ufca/2019.1.json) | Choque de sala (K03) | ECI0012 · Turma 01A / ECI0012 · Turma 01B |
+| [2019.2](../data/ufca/2019.2.json) | Choque de sala (M105) | CAR0001 · Turma 01 / CAR0001 · Turma 02 |
+| [2019.2](../data/ufca/2019.2.json) | Choque de sala (E03) | ECI0100 · Turma 01A / ECI0100 · Turma 01B |
+| [2019.2](../data/ufca/2019.2.json) | Coincidência entre disciplinas diferentes | CC0007 · Turma 01 / MC0005 · Turma 01 |
+| [2019.2](../data/ufca/2019.2.json) | Choque de horário de docente | CC0005 · Turma 01 / MC0003 · Turma 01 |
+| [2019.2](../data/ufca/2019.2.json) | Choque de horário de docente | ECI0012 · Turma 01A / ECI0100 · Turma 01A |
+| [2019.2](../data/ufca/2019.2.json) | Choque de horário de docente | ECI0012 · Turma 01A / ECI0100 · Turma 01B |
+| [2019.2](../data/ufca/2019.2.json) | Choque de horário de docente | ECI0050 · Turma 01 / ECI0012 · Turma 01A |
+| [2019.2](../data/ufca/2019.2.json) | Choque de horário de docente | ECI0052 · Turma 01 / ECI0122 · Turma 01 |
+| [2019.2](../data/ufca/2019.2.json) | Choque de horário de docente | ECI0063 · Turma 01 / ECI0014 · Turma 01A |
+| [2020.1](../data/ufca/2020.1.json) | Possível oferta conjunta | CC0004 · Turma 02 / MC0002 · Turma 02 |
+| [2020.1](../data/ufca/2020.1.json) | Possível oferta conjunta | CC0016 · Turma 02 / MC0012 · Turma 03 |
+| [2020.1](../data/ufca/2020.1.json) | Possível oferta conjunta | ECI0080 · Turma 02A / MC0014 · Turma 01 |
+| [2020.1](../data/ufca/2020.1.json) | Coincidência entre disciplinas diferentes | CAR0012 · Turma 02 / CC0013 · Turma 02 |
+| [2020.1](../data/ufca/2020.1.json) | Coincidência entre disciplinas diferentes | MC0013 · Turma 02 / CC0012 · Turma 02 |
+| [2020.1](../data/ufca/2020.1.json) | Choque de horário de docente | CC0014 · Turma 02 / MC0010 · Turma 02 |
+| [2020.1](../data/ufca/2020.1.json) | Choque de horário de docente | EM0004 · Turma 02 / CAR0009 · Turma 02 |
+| [2020.2](../data/ufca/2020.2.json) | Possível oferta conjunta | CC0017 · Turma 01 / MC0016 · Turma 01 |
+| [2020.2](../data/ufca/2020.2.json) | Possível oferta conjunta | ECI0020 · Turma 01 / EM0027 · Turma 01 |
+| [2020.2](../data/ufca/2020.2.json) | Possível oferta conjunta | EM0004 · Turma 01 / CAR0009 · Turma 01 |
+| [2020.2](../data/ufca/2020.2.json) | Choque de horário de docente | ECI0100 · Turma 01A / ECI0131 · Turma 01 |
+| [2021.1](../data/ufca/2021.1.json) | Possível oferta conjunta | CC0014 · Turma 01 / MC0010 · Turma 01 |
+| [2021.1](../data/ufca/2021.1.json) | Possível oferta conjunta | CC0016 · Turma 01 / MC0012 · Turma 01 |
+| [2021.1](../data/ufca/2021.1.json) | Possível oferta conjunta | CC0016 · Turma 02 / MC0012 · Turma 02 |
+| [2021.1](../data/ufca/2021.1.json) | Possível oferta conjunta | EM0004 · Turma 01 / CAR0009 · Turma 01 |
+| [2021.1](../data/ufca/2021.1.json) | Coincidência entre disciplinas diferentes | CAR0012 · Turma 01 / CC0013 · Turma 01 / MC0011 · Turma 01 |
+| [2021.1](../data/ufca/2021.1.json) | Coincidência entre disciplinas diferentes | MC0013 · Turma 01 / CC0012 · Turma 01 |
+| [2021.1](../data/ufca/2021.1.json) | Choque de horário de docente | ECI0020 · Turma 02 / EM0027 · Turma 01 |
+| [2021.1](../data/ufca/2021.1.json) | Choque de horário de docente | ECI0100 · Turma 01A / ECI0131 · Turma 01 |
+| [2021.2](../data/ufca/2021.2.json) | Possível oferta conjunta | CC0005 · Turma 01 / MC0003 · Turma 01 |
+| [2021.2](../data/ufca/2021.2.json) | Possível oferta conjunta | CC0018 · Turma 01 / MC0014 · Turma 01 |
+| [2021.2](../data/ufca/2021.2.json) | Possível oferta conjunta | ECI0022 · Turma 01 / EM0028 · Turma 01 |
+| [2021.2](../data/ufca/2021.2.json) | Choque de sala (A25S) | EM0021 · Turma 01A / EM0021 · Turma 02A |
+| [2022.2](../data/ufca/2022.2.json) | Possível oferta conjunta | CC0017 · Turma 01 / MC0016 · Turma 01 |
+| [2022.2](../data/ufca/2022.2.json) | Choque de sala (E01) | ECI0122 · Turma 01 / MC0038 · Turma 01 |
+| [2022.2](../data/ufca/2022.2.json) | Choque de sala (I102) | EM0021 · Turma 01A / EM0021 · Turma 01B |
+| [2022.2](../data/ufca/2022.2.json) | Coincidência entre disciplinas diferentes | EM0028 · Turma 01 / ECI0115 · Turma 01 |
+| [2022.2](../data/ufca/2022.2.json) | Choque de horário de docente | ECI0105 · Turma 01A / ECI0109 · Turma 01 |
 
 ### 2022.1 — ECI0115 / EM0028
 
@@ -332,7 +377,7 @@ Consultar no sistema acadêmico ou com a coordenação: identificador da turma f
 
 O painel recebe a lista atualizada em `quality.consistency` a cada carregamento e a mostra em Qualidade e preparação da base. A regra de deduplicação exata continua separada desse alerta.
 
-## Pares adicionais com choque de sala
+## Pares adicionais com choque de sala na base anterior
 
 As faixas abaixo são os trechos sobrepostos. O painel mostra os registros completos de cada par.
 

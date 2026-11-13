@@ -2,29 +2,26 @@
 
 import re
 
-from services.config import CURRENT_PERIOD
-
-SERIES_NAMES = {'Consolidadas': 'Recorte selecionado',
-                'Consolidadas até 2026.1': 'Recorte selecionado'}
+SERIES_NAMES = {'Consolidadas': 'Recorte selecionado'}
 
 
-def course_scope(scope, rows):
-    """Descreve os semestres com oferta elegível da matriz no recorte."""
+def course_scope(scope, rows, *, course=True):
+    """Descreve os semestres com oferta elegível no recorte."""
     periods = sorted({row['periodo'] for row in rows})
+    open_periods = sorted({row['periodo'] for row in rows if row['situacao'] == 'ABERTA'})
     title = scope['label'].partition(' · ')[0]
+    group = ' do curso' if course else ''
     if not periods:
         return dict(scope, periods=periods, label=f'{title} · sem oferta',
-                    note='Sem turmas elegíveis do curso neste recorte.')
+                    note=f'Sem turmas elegíveis{group} neste recorte.')
 
     span = f'{periods[0]} a {periods[-1]}' if len(periods) > 1 else periods[0]
-    listed = ', '.join(periods)
-    if scope['id'] == 'accumulated' and CURRENT_PERIOD in periods:
-        note = (f'Oferta do curso em {listed}. Inclui turmas abertas de {CURRENT_PERIOD}, '
-                'com matrículas e ocupação ainda sujeitas a mudanças.')
-    elif scope['id'] == 'current':
-        note = f'Turmas presenciais abertas do curso em {span}. Matrículas e ocupação ainda podem mudar.'
-    else:
-        note = f'Turmas presenciais consolidadas do curso em {listed}.'
+    status = {'ABERTA': ' abertas', 'CONSOLIDADA': ' consolidadas'}.get(scope['status'], '')
+    note = f'Turmas presenciais{status}{group} no recorte de {span}.'
+    if open_periods:
+        if scope['id'] != 'current' or scope['status'] == 'MISTA':
+            note += f' Inclui turmas abertas de {", ".join(open_periods)}.'
+        note += ' Matrículas e ocupação da oferta aberta ainda podem mudar.'
     return dict(scope, periods=periods, label=f'{title} · {span}', note=note)
 
 
@@ -35,23 +32,21 @@ def scope_text(text, scope, *, title=False):
     if not title:
         sentences = re.split(r'(?<=[.!?])\s+(?=[A-ZÁÉÍÓÚÂÊÔÃÕÇ*])', text)
         text = ' '.join(sentence for sentence in sentences
-                        if '2026.2' not in sentence and 'asterisco' not in sentence.lower())
+                        if not sentence.startswith('*') and 'asterisco' not in sentence.lower())
     text = re.sub(r'\*Turmas abertas\.?', '', text, flags=re.I)
-    text = re.sub(r'\s+até 2026\.1', '', text, flags=re.I)
-    text = text.replace('somadas nos sete semestres', 'somadas no recorte selecionado')
     text = text.replace('histórico consolidado', 'recorte selecionado')
-    if scope['id'] == 'current':
+    if scope['status'] == 'ABERTA':
         text = re.sub(r'consolidadas', 'abertas', text, flags=re.I)
         text = re.sub(r'consolidada', 'aberta', text, flags=re.I)
         text = text.replace('histórico', 'recorte selecionado').replace('Histórico', 'Recorte selecionado')
-    elif scope['id'] == 'accumulated':
+    elif scope['status'] == 'MISTA':
         text = re.sub(r'consolidadas?', 'do recorte', text, flags=re.I)
     return text.strip()
 
 
 def _drop_comparison_series(plot):
     """O recorte possui uma amostra; a comparação entre períodos é externa."""
-    removed = [i for i, name in enumerate(plot['columns']) if name == 'Abertas em 2026.2']
+    removed = [i for i, name in enumerate(plot['columns']) if name == 'Abertas']
     if not removed:
         return
     plot['columns'] = [name for i, name in enumerate(plot['columns']) if i not in removed]
@@ -59,7 +54,7 @@ def _drop_comparison_series(plot):
     spec = plot.get('spec', {})
     for axis in ('x', 'y'):
         if isinstance(spec.get(axis), list):
-            spec[axis] = [name for name in spec[axis] if name != 'Abertas em 2026.2']
+            spec[axis] = [name for name in spec[axis] if name != 'Abertas']
 
 
 def scope_plot(plot, scope, row_count):
@@ -99,4 +94,6 @@ def scope_plot(plot, scope, row_count):
             plot['tooltips'] = []
         if 'rankingValues' in plot:
             plot['rankingValues'] = []
+    for alternative in plot.get('curriculumAlternatives', {}).values():
+        scope_plot(alternative, scope, row_count)
 

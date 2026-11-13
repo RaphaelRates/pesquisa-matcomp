@@ -5,14 +5,14 @@ continuam ABERTA; não se alteram as situações para simular uma consolidação
 """
 
 import re
-from services.config import CURRENT_PERIOD, START_PERIOD
 from services.dashboard.scopes import course_scope, scope_text as _scope_text, scope_plot as _scope_plot
 
-from services.analytics.metrics import build_cohort_panels, codes, metrics, select
+from services.analytics.metrics import build_cohort_panels, group, metrics, select
 from services.dashboard.catalog import apply_catalog
 from services.analytics.disciplines import discipline_cohort_analyses
 from services.domain.courses import COURSES, curriculum
 from services.analytics.metrics import sources
+from services.data.selection import split_offers
 
 
 def _keep_plot(plot):
@@ -28,10 +28,25 @@ def _keep_plot(plot):
 def scope_summary(rows, scope):
     return dict(
         selected=metrics(rows),
-        historico=metrics([r for r in rows if r['situacao'] == 'CONSOLIDADA' and r['periodo'] < CURRENT_PERIOD]),
-        abertas=metrics([r for r in rows if r['situacao'] == 'ABERTA' and r['periodo'] == CURRENT_PERIOD]),
+        historico=metrics([r for r in rows if r['situacao'] == 'CONSOLIDADA']),
+        abertas=metrics([r for r in rows if r['situacao'] == 'ABERTA']),
         scope=scope,
     )
+
+
+def period_breakdown(rows):
+    by_semester = group(rows, lambda row: row['periodo'])
+    by_year = group(rows, lambda row: row['periodo'].partition('.')[0])
+    semesters = [
+        dict(period=period, open=any(row['situacao'] == 'ABERTA' for row in sample), summary=metrics(sample))
+        for period, sample in sorted(by_semester.items())
+    ]
+    years = [
+        dict(year=year, periods=sorted({row['periodo'] for row in sample}),
+             summary=metrics(sample))
+        for year, sample in sorted(by_year.items())
+    ]
+    return dict(years=years, semesters=semesters)
 
 
 def _view(rows, periods, scope, known_disciplines):
@@ -83,34 +98,23 @@ def _view(rows, periods, scope, known_disciplines):
 
 def period_samples(offers):
     """Seleciona as amostras e os metadados usados pelas duas interfaces."""
-    eligible = [r for r in offers if r['modalidade'] == 'Presencial' and r['capacidade'] > 0]
-    historical = [r for r in eligible if r['situacao'] == 'CONSOLIDADA' and r['periodo'] < CURRENT_PERIOD]
-    opened = [r for r in eligible if r['situacao'] == 'ABERTA' and r['periodo'] == CURRENT_PERIOD]
-    accumulated = [r for r in historical + opened if r['periodo'] >= START_PERIOD]
-    accumulated_periods = sorted({r['periodo'] for r in accumulated} | {CURRENT_PERIOD})
-    historical_periods = sorted({r['periodo'] for r in historical})
-    baseline_period = historical_periods[-1] if historical_periods else None
+    historical, opened = split_offers(offers)
+    accumulated = historical + opened
+    latest = max((row['periodo'] for row in accumulated), default=None)
+    current = [r for r in opened if r['periodo'] == latest]
+    current_period = latest if current else None
+    baseline_period = max((r['periodo'] for r in historical
+                           if current_period and r['periodo'] < current_period), default=None)
     baseline = [r for r in historical if r['periodo'] == baseline_period]
-    known = {r['codigo']: r['disciplina'] for r in historical + opened}
-    historical_label = (f'{historical_periods[0]} a {historical_periods[-1]}' if len(historical_periods) > 1
-                        else historical_periods[0] if historical_periods else 'sem registros')
-    scopes = {
-        'accumulated': dict(id='accumulated', label=f'Acumulado · {START_PERIOD} a {CURRENT_PERIOD}',
-                            note=f'Turmas presenciais de {START_PERIOD} a {CURRENT_PERIOD}: '
-                                 'consolidadas até 2026.1 e abertas de 2026.2. '
-                                 'Matrículas e ocupação de 2026.2 ainda podem mudar.',
-                            periods=accumulated_periods, status='MISTA'),
-        'historical': dict(id='historical', label=f'Histórico consolidado · {historical_label}',
-                           note=f'Somente turmas presenciais consolidadas de {historical_label}. A oferta aberta é consultada separadamente.',
-                           periods=historical_periods, status='CONSOLIDADA'),
-        'current': dict(id='current', label='Oferta aberta · 2026.2',
-                        note='Somente turmas presenciais abertas de 2026.2. Matrículas e ocupação ainda podem mudar.',
-                        periods=[CURRENT_PERIOD], status='ABERTA'),
-        'baseline': dict(id='baseline', label=f'Referência consolidada · {baseline_period or "sem registros"}',
-                         note=f'Somente turmas presenciais consolidadas de {baseline_period or "referência indisponível"}.',
-                         periods=[baseline_period] if baseline_period else [], status='CONSOLIDADA'),
-    }
-    return dict(accumulated=accumulated, historical=historical, current=opened, baseline=baseline), scopes, known
+    samples = dict(accumulated=accumulated, historical=historical, current=current, baseline=baseline)
+    scope_types = (
+        ('accumulated', 'Acumulado', 'MISTA'), ('historical', 'Histórico consolidado', 'CONSOLIDADA'),
+        ('current', 'Oferta aberta', 'ABERTA'), ('baseline', 'Referência consolidada', 'CONSOLIDADA'),
+    )
+    scopes = {key: course_scope(dict(id=key, label=label, status=status), samples[key], course=False)
+              for key, label, status in scope_types}
+    known = {r['codigo']: r['disciplina'] for r in sorted(accumulated, key=lambda row: row['periodo'])}
+    return samples, scopes, known
 
 
 def build_period_views(offers):
@@ -118,5 +122,6 @@ def build_period_views(offers):
     samples, scopes, known = period_samples(offers)
     views = {key: _view(rows, scopes[key]['periods'], scopes[key], known) for key, rows in samples.items()}
     views['baselinePeriod'] = next(iter(scopes['baseline']['periods']), None)
+    views['currentPeriod'] = next(iter(scopes['current']['periods']), None)
     views['historicalPeriods'] = scopes['historical']['periods']
     return views

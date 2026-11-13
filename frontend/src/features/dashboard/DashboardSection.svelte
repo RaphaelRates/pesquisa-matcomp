@@ -6,7 +6,7 @@
   import StatisticalOverview from './StatisticalOverview.svelte';
   import { nearViewport } from '../../lib/visibility.js';
 
-  let { section, group, scope, revision, hash, refresh } = $props();
+  let { section, group, scope, revision, pair, hash, refresh } = $props();
   let payload = $state.raw();
   let error = $state.raw();
   let loading = $state(false);
@@ -19,7 +19,7 @@
     loading = true;
     const { signal } = (controller = new AbortController());
     try {
-      const response = await requestDashboard(group, scope, '/secoes/' + section.id, signal, revision);
+      const response = await requestDashboard(group, scope, '/secoes/' + section.id, signal, revision, pair);
       if (signal.aborted) return;
       payload = response.data;
     } catch (failure) {
@@ -40,7 +40,10 @@
   <div class="section-body" aria-busy={loading}>
     {#if payload}
       {#if payload.description}<p class="area-description">{payload.description}</p>{/if}
-      {#if payload.statisticalSummary}<StatisticalOverview stats={payload.statisticalSummary} />{/if}
+      {#if payload.statisticalSummary}
+        <StatisticalOverview stats={scope === 'accumulated'
+          ? { ...payload.statisticalSummary, comparison: undefined } : payload.statisticalSummary} />
+      {/if}
       <div class="section-charts"><LazyChartSections sections={payload.sections} {anchor} {hash} /></div>
     {:else if error}
       <LoadError {error} retry={load} {refresh} />

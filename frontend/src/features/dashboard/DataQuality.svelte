@@ -48,8 +48,11 @@
       <div class="source-verification">
         <strong>{dataStatus}</strong>
         <p>Fonte: {source.name} · {source.files?.length ?? 1} arquivo(s) de turmas · identificação da base: <code>{source.sha256.slice(0, 12)}</code>.</p>
-        {#if showBaseReport}
-          <p>{currentPeriod}: {format(source.currentRows)} registros na base; {format(source.currentEligibleRows)} turmas presenciais abertas com capacidade positiva no painel.</p>
+        {#if showBaseReport && source.currentPeriod}
+          <p>{source.currentPeriod} é o último semestre da fonte, com {format(source.currentRows)} registros.</p>
+        {/if}
+        {#if showBaseReport && currentPeriod}
+          <p>Oferta aberta de {currentPeriod} · {format(source.currentEligibleRows)} turmas no painel.</p>
         {/if}
       </div>
     {/if}

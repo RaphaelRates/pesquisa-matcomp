@@ -2,23 +2,36 @@
 
 import hashlib
 import json
+from collections import Counter
 from pathlib import Path
 import re
 
 
-SEMESTER_FILE = re.compile(r'([1-9]\d{3}\.[12])\.json', re.IGNORECASE)
+SEMESTER = re.compile(r'[1-9][0-9]{3}\.[12]')
+SEMESTER_FILE = re.compile(rf'({SEMESTER.pattern})\.json', re.IGNORECASE)
 SEMESTER_LIKE_FILE = re.compile(r'^\d{4}[._-].*\.json$', re.IGNORECASE)
+
+
+def _reject_constant(value):
+    raise ValueError(f'{value} não é um valor JSON válido')
 
 
 def _read_list(path):
     content = path.read_bytes()
     try:
-        rows = json.loads(content.decode('utf-8-sig'))
-    except (UnicodeDecodeError, json.JSONDecodeError) as error:
+        rows = json.loads(content.decode('utf-8-sig'), parse_constant=_reject_constant)
+    except ValueError as error:
         raise ValueError(f'O arquivo {path.name} não contém um JSON UTF-8 válido: {error}') from error
     if not isinstance(rows, list):
         raise ValueError(f'O arquivo {path.name} deve conter uma lista de turmas.')
     return rows, content
+
+
+def _source(path, rows, files, digest):
+    counts = Counter(row['periodo'] for row in rows if isinstance(row, dict)
+                     and isinstance(row.get('periodo'), str) and SEMESTER.fullmatch(row['periodo']))
+    latest = max(counts, default=None)
+    return dict(name=path.name, sha256=digest, files=files, currentPeriod=latest, currentRows=counts[latest])
 
 
 def load_offers(path):
@@ -36,9 +49,8 @@ def load_offers(path):
     if path.is_file():
         rows, content = _read_list(path)
         digest = hashlib.sha256(content).hexdigest()
-        return rows, dict(name=path.name, sha256=digest,
-                          files=[dict(name=path.name, period=None, rows=len(rows), sha256=digest)],
-                          currentRows=sum(isinstance(row, dict) and row.get('periodo') == '2026.2' for row in rows))
+        files = [dict(name=path.name, period=None, rows=len(rows), sha256=digest)]
+        return rows, _source(path, rows, files, digest)
     if not path.is_dir():
         raise ValueError(f'A fonte deve ser um arquivo JSON ou diretório de semestres: {path}')
 
@@ -73,5 +85,4 @@ def load_offers(path):
         digest.update(b'\0')
         files.append(dict(name=file.name, period=period, rows=len(rows), sha256=hashlib.sha256(content).hexdigest()))
         result.extend(rows)
-    return result, dict(name=path.name, sha256=digest.hexdigest(), files=files,
-                        currentRows=sum(file['rows'] for file in files if file['period'] == '2026.2'))
+    return result, _source(path, result, files, digest.hexdigest())

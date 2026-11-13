@@ -6,7 +6,9 @@ from fractions import Fraction
 import re
 from statistics import median
 from services.analytics.statistics import statistical_panel
+from services.data.selection import split_offers
 from services.domain.courses import COURSES, curriculum
+from services.domain.ppcs import PPCS
 from services.domain.curricula import sources, current, codes, all_opt, all_required, cc_old, cc_new, changed, opt_only, req_only
 
 
@@ -58,14 +60,18 @@ def select(rows, allowed):
     return [r for r in rows if r["codigo"] in allowed]
 
 
+def semester_label(period, rows):
+    return f'{period}*' if any(row['situacao'] == 'ABERTA' for row in rows) else period
+
+
 notes = {
-    "ufca-capacidade-matriculas": "Cada par de barras compara a soma das vagas informadas com a soma das matrículas registradas nas turmas presenciais de um semestre. As barras mostram totais absolutos. Até 2026.1 entram turmas consolidadas. O asterisco em 2026.2 marca as turmas abertas.",
-    "ufca-faixas": "Cada segmento conta quantas turmas ficaram em uma faixa de ocupação. A faixa de cada turma é definida pelas suas matrículas divididas pela sua capacidade. A altura total da barra é o número de turmas presenciais do semestre. O segmento de 100% ou mais inclui turmas lotadas e acima da capacidade. O asterisco identifica as turmas abertas de 2026.2.",
+    "ufca-capacidade-matriculas": "Cada par de barras compara a soma das vagas informadas com a soma das matrículas registradas nas turmas presenciais de um semestre. As barras mostram totais absolutos. O asterisco identifica semestres que incluem turmas abertas.",
+    "ufca-faixas": "Cada segmento conta quantas turmas ficaram em uma faixa de ocupação. A faixa de cada turma é definida pelas suas matrículas divididas pela sua capacidade. A altura total da barra é o número de turmas presenciais do semestre. O segmento de 100% ou mais inclui turmas lotadas e acima da capacidade. O asterisco identifica semestres que incluem turmas abertas.",
     "ufca-prefixos": "Cada célula cruza um prefixo de código, como EM ou ECI, com um semestre. A cor e o percentual mostram a soma das matrículas dividida pela soma das vagas nas turmas presenciais consolidadas daquele prefixo e semestre. A unidade de agrupamento é o prefixo da disciplina.",
-    "ufca-codigos": "Cada linha acompanha um dos oito códigos selecionados. Em cada semestre, a célula soma matrículas e capacidade de todas as turmas incluídas daquele código e mostra a razão em porcentagem. Uma célula vazia indica ausência de turma no recorte. O asterisco marca as turmas abertas de 2026.2.",
+    "ufca-codigos": "Cada linha acompanha um dos oito códigos selecionados. Em cada semestre, a célula soma matrículas e capacidade de todas as turmas incluídas daquele código e mostra a razão em porcentagem. Uma célula vazia indica ausência de turma no recorte. O asterisco identifica semestres que incluem turmas abertas.",
     "ufca-grade-horaria": "Cada célula conta as turmas presenciais consolidadas com aula naquele dia da semana e naquela faixa de uma hora. Uma turma que ocupa duas horas ou tem aula em dois dias aparece nas respectivas células. Por isso, a soma das células conta ocorrências de horário.",
     "ufca-turnos": "Cada barra divide o total de matrículas pelo total de vagas das turmas presenciais consolidadas classificadas naquele turno. Aulas antes das 12h entram na manhã, das 12h às 18h na tarde e a partir das 18h na noite. Turmas com aulas em mais de um turno entram em Misto. O rótulo informa o número de turmas.",
-    "ufca-opt-curso": "Para cada curso, o gráfico seleciona os códigos listados como optativos na matriz pública de referência. Compara matrículas divididas por vagas nas turmas presenciais consolidadas até 2026.1 e nas abertas de 2026.2. Engenharia de Software ficou sem registros correspondentes nos arquivos.",
+    "ufca-opt-curso": "Para cada curso, o gráfico seleciona os códigos listados como optativos na matriz pública de referência. A ocupação divide as matrículas pelas vagas das turmas selecionadas.",
     "ufca-opt-periodo": "Em cada semestre, as duas barras mostram a ocupação de optativas e obrigatórias presenciais consolidadas, calculada separadamente pela soma de matrículas dividida pela soma de vagas. O recorte original exclui códigos sem classificação ou com mudança de natureza conhecida e usa as matrizes de referência dessa análise.",
 }
 
@@ -89,10 +95,10 @@ ranking = [
      "Agrupa as turmas pelas letras iniciais do código da disciplina. Cada percentual usa as matrículas e vagas de todas as turmas daquele prefixo no recorte.",
      "Agrupa as turmas pelos códigos que constam na matriz de cada curso e divide matrículas por vagas. Códigos compartilhados podem aparecer em mais de um curso.",
      "Compara turmas com capacidade cadastrada de 20, 25, 30, 40 ou 50 vagas. Cada percentual divide as matrículas pelo total de vagas das turmas daquele tamanho."],
-    ["Soma as matrículas das turmas abertas de 2026.2 por código e mostra os maiores totais.",
-     "Mostra os maiores percentuais de ocupação por código entre as turmas abertas de 2026.2. O rótulo informa a porcentagem e os totais de matrículas e vagas.",
-     "Soma as vagas que sobraram em cada turma aberta de 2026.2, agrupadas por código. Turmas acima da capacidade contribuem com zero para esse total.",
-     "Mostra os menores percentuais de ocupação por código entre as turmas abertas de 2026.2. O rótulo informa a porcentagem e os totais de matrículas e vagas."],
+    ["Soma as matrículas das turmas abertas por código e mostra os maiores totais.",
+     "Mostra os maiores percentuais de ocupação por código entre as turmas abertas. O rótulo informa a porcentagem e os totais de matrículas e vagas.",
+     "Soma as vagas que sobraram em cada turma aberta, agrupadas por código. Turmas acima da capacidade contribuem com zero para esse total.",
+     "Mostra os menores percentuais de ocupação por código entre as turmas abertas. O rótulo informa a porcentagem e os totais de matrículas e vagas."],
 ]
 
 
@@ -113,10 +119,10 @@ def occupancy_details(m, include_rate=True):
 def offer_indicators(prefix, by_period):
     semester = "Semestre"
     period_data = [
-        (p + "*" if p == "2026.2" else p, metrics(rows), len({r["codigo"] for r in rows}))
+        (semester_label(p, rows), metrics(rows), len({r["codigo"] for r in rows}))
         for p, rows in sorted(by_period.items()) if rows
     ]
-    note = "*Turmas abertas em 2026.2. Os demais semestres incluem turmas consolidadas."
+    note = "O asterisco identifica semestres que incluem turmas abertas."
     result = []
     for slug, title, description, series, values in [
         ("turmas", "Turmas e disciplinas ofertadas", "Cada código de disciplina é contado uma vez por semestre.",
@@ -161,7 +167,7 @@ def varied_charts(prefix, hist, latest, periods, classification=None):
     summaries = []
     for period in periods:
         rows = by_period[period]
-        label = f"{period}*" if period == "2026.2" else period
+        label = semester_label(period, rows)
         summaries.append((label, metrics(rows), median(map(rate, rows)) if rows else None))
 
     def line(key, title, description, series, values, percent_axis=False):
@@ -169,7 +175,7 @@ def varied_charts(prefix, hist, latest, periods, classification=None):
         if percent_axis:
             spec["valueFormat"] = {"style": "percent"}
         return chart(f"{prefix}-{key}", title,
-                     f"{description} *2026.2 contém turmas abertas e aparece com linha tracejada.",
+                     f"{description} O trecho tracejado indica um semestre que inclui turmas abertas.",
                      spec, ["Semestre", *series],
                      [[period, *values(m, middle)] if m["n"] else [period, None, None]
                       for period, m, middle in summaries] if hist or latest else [],
@@ -227,7 +233,7 @@ def varied_charts(prefix, hist, latest, periods, classification=None):
         donut("rosca-historico", "Faixas de ocupação nas turmas consolidadas",
               "Cada fatia mostra a parcela das turmas consolidadas na respectiva faixa de ocupação.",
               occupancy_bands, distribution(hist)),
-        donut("rosca-abertas", "Faixas de ocupação nas turmas abertas de 2026.2",
+        donut("rosca-abertas", "Faixas de ocupação nas turmas abertas",
               "Cada fatia mostra a parcela das turmas abertas na respectiva faixa de ocupação.",
               occupancy_bands, distribution(latest)),
         donut("rosca-turnos", "Distribuição das turmas consolidadas por turno",
@@ -244,18 +250,18 @@ def varied_charts(prefix, hist, latest, periods, classification=None):
               "As demais capacidades são agrupadas em Outras.",
               dict(type="pie", x="Capacidade", y="Turmas"), ["Capacidade", "Turmas"], size_rows),
         chart(f"{prefix}-radar-faixas", "Perfil de ocupação por faixa",
-              "Compara a proporção de turmas em cada faixa no histórico consolidado e nas abertas de 2026.2. "
+              "Compara a proporção de turmas em cada faixa no histórico consolidado e nas abertas. "
               "Cada eixo mostra uma parcela do total de turmas do respectivo recorte.",
-              dict(type="radar", x="Faixa", y=["Consolidadas", "Abertas em 2026.2"],
+              dict(type="radar", x="Faixa", y=["Consolidadas", "Abertas"],
                    valueFormat={"style": "percent"}),
-              ["Faixa", "Consolidadas", "Abertas em 2026.2"],
+              ["Faixa", "Consolidadas", "Abertas"],
               [[label, a / len(hist) if hist else None, b / len(latest) if latest else None]
                for label, a, b in zip(occupancy_bands, historical_bands, open_bands, strict=True)],
               tooltips=[f"Consolidadas: {a} de {len(hist)} turmas\nAbertas: {b} de {len(latest)} turmas"
                         for a, b in zip(historical_bands, open_bands, strict=True)]),
         chart(f"{prefix}-faixas-percentual", "Composição da ocupação ao longo dos semestres",
               "As colunas representam 100% das turmas de cada semestre e facilitam a comparação das proporções. "
-              "*2026.2 contém turmas abertas.",
+              "O asterisco identifica semestres que incluem turmas abertas.",
               dict(type="stackedPercent", x="Semestre", y=occupancy_bands, valueFormat={"style": "percent"}),
               ["Semestre", *occupancy_bands], distribution_rows,
               tooltips=[occupancy_details(m) for _, m, _ in summaries]),
@@ -267,7 +273,7 @@ def varied_charts(prefix, hist, latest, periods, classification=None):
         chart(f"{prefix}-area-natureza", "Matrículas por natureza curricular",
               "As áreas empilhadas somam as matrículas de cada semestre, classificadas pelos códigos da matriz "
               "de referência. Códigos compartilhados ou sem classificação aparecem em uma categoria própria. "
-              "*2026.2 contém turmas abertas.",
+              "O asterisco identifica semestres que incluem turmas abertas.",
               dict(type="area", x="Semestre", y=nature_series), ["Semestre", *nature_series], nature_rows,
               tooltips=[occupancy_details(m) for _, m, _ in summaries]),
     ]
@@ -277,7 +283,7 @@ def overview_panels(hist, latest, periods, *, only=None):
     percent = {"style":"percent", "maximumFractionDigits":1}
 
     by_period = group(hist + latest, lambda r: r["periodo"])
-    shown = {p: p + "*" if p == "2026.2" else p for p in periods}
+    shown = {p: semester_label(p, by_period[p]) for p in periods}
 
     panels = []
 
@@ -285,7 +291,7 @@ def overview_panels(hist, latest, periods, *, only=None):
         panels.append(dict(id=key, title=title, sections=[dict(title=None, plots=plots)]))
 
     if only in (None, 'evolucao'):
-        period_note = "Turmas presenciais consolidadas até 2026.1. *2026.2 contém turmas abertas."
+        period_note = "Turmas presenciais do recorte selecionado."
         period_metrics = {p:metrics(by_period[p]) for p in periods}
         bands = occupancy_bands
 
@@ -342,7 +348,7 @@ def overview_panels(hist, latest, periods, *, only=None):
 
         add("horarios-capacidade", "Horários, turnos e tamanho das turmas", [
             chart("ufca-grade-horaria", "Concentração da oferta ao longo da semana",
-                  "Turmas presenciais consolidadas por faixa de uma hora, somadas nos sete semestres.",
+                  "Turmas presenciais consolidadas por faixa de uma hora, somadas no recorte selecionado.",
                   dict(type="heatmap", x="Dia", y="Hora", value="Turmas", xOrder=list(active_days.values()),
                        yOrder=hours, showValues=True),
                   ["Dia","Hora","Turmas"],
@@ -387,8 +393,8 @@ def overview_panels(hist, latest, periods, *, only=None):
     optional_plots = [
         {"id":"ufca-opt-curso","title":"Ocupação das disciplinas listadas como optativas",
          "description":"Natureza na matriz de referência de cada curso. Software não tem registros de optativas na base.",
-         "height":320,"columns":["Curso","Consolidadas até 2026.1","Abertas em 2026.2"],"rows":course_rows,
-         "spec":{"type":"horizontalBar","y":"Curso","x":["Consolidadas até 2026.1","Abertas em 2026.2"],
+         "height":320,"columns":["Curso","Consolidadas","Abertas"],"rows":course_rows,
+         "spec":{"type":"horizontalBar","y":"Curso","x":["Consolidadas","Abertas"],
                  "xLabel":"Matrículas ÷ capacidade","xDomain":[0,1],"valueFormat":format_pct}},
         {"id":"ufca-opt-periodo","title":"Ocupação por semestre e natureza curricular",
          "description":"Turmas presenciais consolidadas. Códigos com mudança conhecida de natureza ou sem classificação nas listas de referência ficam fora.",
@@ -508,7 +514,7 @@ chart_groups = [
         ("Ocupação por matriz de curso","Matriz do curso","rate",5),
         ("Ocupação nas cinco capacidades de referência","Capacidade","rate",5),
     ]),
-    ("2026.2 · turmas abertas", [
+    ("Turmas abertas", [
         ("Mais matrículas","Disciplina","m",5),
         ("Maior ocupação","Disciplina","rate",5),
         ("Mais vagas não preenchidas","Disciplina","free",5),
@@ -568,9 +574,9 @@ def course_panel(hist, latest, periods, config, *, specific_only=False):
     code_by_period = group(past + opened, lambda r: (r["codigo"], r["periodo"]))
     by_code = group(past + opened, lambda r: r["codigo"])
     labels = {code: f'{code} · {rows[-1]["disciplina"].title()}' for code, rows in by_code.items()}
-    shown = {p: p + "*" if p == "2026.2" else p for p in periods}
+    shown = {p: semester_label(p, course_by_period[p]) for p in periods}
     pct = {"style": "percent"}
-    note = "Turmas presenciais consolidadas até 2026.1. *Turmas abertas em 2026.2."
+    note = "Turmas presenciais do recorte selecionado."
 
     def timeline(key, title, description, series, rows, kind="bar", percentage=False):
         spec = dict(type=kind, x="Semestre", y=series,
@@ -615,6 +621,21 @@ def course_panel(hist, latest, periods, config, *, specific_only=False):
                      [[p, label, m["rate"]] for p, label, m in entries],
                      tooltips=[occupancy_details(m, include_rate=False) for _, _, m in entries])
 
+    def required_heat(matrix):
+        ordered = [(semester, code) for semester, codes in enumerate(matrix.semesters, 1) for code in codes.split()]
+        y_order = [labels.get(code, code) for _, code in ordered]
+        groups = {labels.get(code, code): f'{semester}º semestre curricular' for semester, code in ordered}
+        entries = [(shown[p], labels.get(code, code), metrics(code_by_period.get((code, p), [])))
+                   for _, code in ordered for p in periods]
+        return chart(f'{prefix}-historico-obrigatorias', 'Ocupação das obrigatórias por disciplina',
+                     'Disciplinas agrupadas pelo semestre previsto na matriz. As colunas mostram os semestres da oferta.',
+                     dict(type='heatmap', x='Semestre', y='Disciplina', value='Ocupação',
+                          xOrder=[shown[p] for p in periods], yOrder=y_order, yGroups=groups,
+                          colorDomain=[0, 1], valueFormat=pct),
+                     ['Semestre', 'Disciplina', 'Ocupação'],
+                     [[p, label, m['rate']] for p, label, m in entries],
+                     tooltips=[occupancy_details(m, include_rate=False) if m['n'] else '' for _, _, m in entries])
+
     def discipline_bars(key, title, description, source, metric, column, limit=None,
                         *, ascending=False, positive=False):
         values = [
@@ -638,8 +659,12 @@ def course_panel(hist, latest, periods, config, *, specific_only=False):
                                    'comparisonRecords': comparison_records,
                                }
 
+    matrices = PPCS[config['key']]
+    required_plot = required_heat(matrices[0])
+    required_plot['curriculumOptions'] = [dict(id=m.id, label=m.label, source=m.source) for m in matrices]
+    required_plot['curriculumAlternatives'] = {matrix.id: required_heat(matrix) for matrix in matrices[1:]}
     history = [
-        history_heat("historico-obrigatorias", "Ocupação das obrigatórias por disciplina", required),
+        required_plot,
         history_heat("historico-optativas", "Ocupação das optativas por disciplina", optional),
     ]
     historical_rankings = [
@@ -697,20 +722,20 @@ def course_panel(hist, latest, periods, config, *, specific_only=False):
         return result
     current_charts = [
         discipline_bars("abertas-ocupacao", "Ocupação das disciplinas abertas",
-                        "Todas as disciplinas com oferta aberta em 2026.2, em ordem decrescente de ocupação.",
+                        "Todas as disciplinas com oferta aberta na oferta aberta, em ordem decrescente de ocupação.",
                         opened, "rate", "Ocupação"),
         discipline_bars("abertas-vagas", "Vagas ainda não preenchidas",
-                        "Todas as disciplinas com oferta aberta em 2026.2. Soma as vagas não preenchidas turma a turma.",
+                        "Todas as disciplinas com oferta aberta na oferta aberta. Soma as vagas não preenchidas turma a turma.",
                         opened, "free", "Vagas não preenchidas"),
         discipline_bars("abertas-matriculas", "Mais matrículas nas turmas abertas",
-                        "Até dez disciplinas pelo total de matrículas nas turmas abertas em 2026.2.",
+                        "Até dez disciplinas pelo total de matrículas nas turmas abertas.",
                         opened, "m", "Matrículas", 10),
         discipline_bars("abertas-menor-ocupacao", "Menor ocupação nas turmas abertas",
-                        "Até dez disciplinas pela menor razão entre matrículas e vagas em 2026.2.",
+                        "Até dez disciplinas pela menor razão entre matrículas e vagas na oferta aberta.",
                         opened, "rate", "Ocupação", 10, ascending=True),
     ]
     result['sections'].extend([
-        dict(title="Rankings das turmas abertas em 2026.2", plots=current_charts),
+        dict(title="Rankings das turmas abertas", plots=current_charts),
         dict(title="Explorações visuais", plots=varied_charts(prefix, past, opened, periods, (required, optional))),
     ])
     stats = statistical_panel(prefix, f"Análises estatísticas de {course}", past, opened, periods)
@@ -727,9 +752,7 @@ def build_panels(offers):
     """Recalcula todos os gráficos a partir do JSON de ofertas."""
     if not isinstance(offers, list) or not offers:
         raise ValueError("O JSON deve conter uma lista de turmas.")
-    eligible = [row for row in offers if row["modalidade"] == "Presencial" and row["capacidade"] > 0]
-    hist = [row for row in eligible if row["situacao"] == "CONSOLIDADA"]
-    latest = [row for row in eligible if row["periodo"] == "2026.2" and row["situacao"] == "ABERTA"]
+    hist, latest = split_offers(offers)
     periods = sorted({row["periodo"] for row in hist + latest})
     if not periods:
         raise ValueError("Não há turmas presenciais no recorte.")
